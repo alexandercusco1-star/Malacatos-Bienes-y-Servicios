@@ -1,0 +1,37 @@
+/* estilo básico para Malacatos */
+*{box-sizing:border-box}
+body{font-family:Inter, Arial, sans-serif;margin:0;background:#f2f6f8;color:#21303a}
+.site-header{background:#0a4d8c;color:#fff;padding:14px 12px;text-align:center}
+.site-header h1{margin:0;font-size:20px}
+.site-header p{margin:4px 0 0;font-size:13px;color:#d6e9ff}
+.topnav{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:8px}
+.topnav a, .dropbtn{color:#cfe6ff;text-decoration:none;padding:6px 10px;border-radius:6px;background:transparent;border:none;cursor:pointer}
+.card{padding:10px;margin:10px;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.card-lists{display:flex;gap:12px;padding:10px;margin:10px}
+.list-column{flex:1;min-width:200px}
+#list .item{padding:8px;border-radius:8px;background:#fff;margin-bottom:8px;border:1px solid #eee;cursor:pointer}
+#list .item:hover{background:#fbfdff}
+.legend{position:absolute;right:12px;top:12px;background:#fff;padding:8px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);z-index:3000}
+.legend img{width:22px;height:22px;margin-right:6px;vertical-align:middle}
+
+/* Panel lateral deslizante */
+.panel{position:fixed;right:-100%;top:0;width:100%;max-width:440px;height:100%;background:#fff;z-index:9999;box-shadow:-8px 0 30px rgba(0,0,0,.15);transition:right .28s ease;padding:16px;overflow:auto}
+.panel.open{right:0}
+.panel-close{position:absolute;left:8px;top:8px;border:none;background:#eee;border-radius:6px;padding:6px;cursor:pointer}
+.panel .photos{display:flex;gap:8px;margin:8px 0}
+.panel .photos img{width:48%;border-radius:6px}
+.panel h2{margin:6px 0 4px}
+.panel p{margin:6px 0;color:#37474f}
+.panel .cta{display:flex;gap:8px;margin-top:8px}
+.btn{padding:8px 10px;border-radius:8px;border:none;background:#0a4d8c;color:#fff;cursor:pointer}
+
+/* Dropdown menu */
+.dropdown{position:relative;display:inline-block}
+.dropdown-content{display:none;position:absolute;background:#fff;min-width:200px;box-shadow:0 8px 20px rgba(0,0,0,.12);padding:8px;border-radius:8px;z-index:999}
+.dropdown:hover .dropdown-content{display:block}
+.dropdown-content button{display:block;width:100%;text-align:left;padding:8px;border:none;background:transparent;cursor:pointer;border-radius:6px}
+@media(max-width:720px){
+  .card-lists{flex-direction:column}
+  .panel{max-width:100%}
+  .dropdown:hover .dropdown-content{display:none}
+}
