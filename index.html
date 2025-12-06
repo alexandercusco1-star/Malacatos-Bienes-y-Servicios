@@ -1,1 +1,52 @@
-<html><body>Malacatos Proyecto</body></html>
+<!-- Proyecto Malacatos: Página principal -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Malacatos - Lugares y Servicios</title>
+
+    <!-- ESTILOS DIRECTO EN LA RAÍZ -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
+        <nav>
+            <ul>
+                <li><a href="#mapa">Mapa</a></li>
+                <li><a href="#lugares">Lugares</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="mapa">
+        <h2>Mapa Interactivo</h2>
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31892.96949159796!2d-79.219!3d-4.2006"
+                width="100%" height="350" 
+                style="border:0;" allowfullscreen loading="lazy">
+            </iframe>
+        </div>
+    </section>
+
+    <section id="lugares">
+        <h2>Lugares Turísticos</h2>
+        <div id="lista-lugares"></div>
+    </section>
+
+    <section id="servicios">
+        <h2>Servicios</h2>
+        <div id="lista-servicios"></div>
+    </section>
+
+    <!-- SCRIPTS DIRECTO EN LA RAÍZ -->
+    <script src="app.js"></script>
+    <script src="main.js"></script>
+
+</body>
+</html>
