@@ -14,7 +14,15 @@ header {
     color: white;
     text-align: center;
 }
-
+.logo-personal {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 55px;
+    opacity: 0.9;
+    z-index: 9999;
+    pointer-events: none;
+}
 header h1 {
     margin: 0;
     font-size: 26px;
