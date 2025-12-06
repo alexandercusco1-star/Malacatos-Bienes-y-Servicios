@@ -1,27 +1,42 @@
-// app.js — carga los datos desde data/places.json y guarda en window.places
-const DATA_URL = "data/places.json";
+// app.js – Carga de datos de lugares y servicios
 
-function loadData(callback){
-  fetch(DATA_URL)
-    .then(r => r.json())
-    .then(json => {
-      const places = json.map(p => {
-        const lat = p.lat !== undefined ? p.lat : (p.coords && p.coords[0]) ;
-        const lon = p.lon !== undefined ? p.lon : (p.coords && p.coords[1]) ;
-        return Object.assign({}, p, {lat: lat, lon: lon});
-      });
-      window.places = places;
-      if (typeof callback === "function") callback(places);
-    })
-    .catch(err => {
-      console.error("Error cargando data/places.json", err);
-      window.places = [];
-      if (typeof callback === "function") callback([]);
-    });
+// Función para crear tarjetas
+function createCard(item) {
+    return `
+        <div class="card">
+            <h3>${item.nombre}</h3>
+            <p>${item.descripcion}</p>
+            <p><strong>Ubicación:</strong> ${item.ubicacion}</p>
+        </div>
+    `;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadData(function(){
-    if (typeof initMap === "function") initMap();
-  });
-});
+// Cargar lugares turísticos
+function cargarLugares() {
+    const contenedor = document.getElementById("lista-lugares");
+
+    if (typeof LUGARES === "undefined") {
+        contenedor.innerHTML = "<p>No se pudo cargar la lista de lugares.</p>";
+        return;
+    }
+
+    contenedor.innerHTML = LUGARES.map(createCard).join("");
+}
+
+// Cargar servicios
+function cargarServicios() {
+    const contenedor = document.getElementById("lista-servicios");
+
+    if (typeof SERVICIOS === "undefined") {
+        contenedor.innerHTML = "<p>No se pudo cargar la lista de servicios.</p>";
+        return;
+    }
+
+    contenedor.innerHTML = SERVICIOS.map(createCard).join("");
+}
+
+// Inicializar al cargar la página
+function iniciarApp() {
+    cargarLugares();
+    cargarServicios();
+}
