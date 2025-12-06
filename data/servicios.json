@@ -1,0 +1,12 @@
+[
+    {
+        "nombre": "Barbería Lauris",
+        "descripcion": "Cortes, maquillaje y diseño de uñas.",
+        "direccion": "Pio Montufar, Lauro Coronel esquina",
+        "telefono": "+593959007258",
+        "imagenes": [
+            "negocio peluquería 1.jpg"
+        ],
+        "subcategoria": "Peluquería"
+    }
+]

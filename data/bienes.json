@@ -1,0 +1,13 @@
+[
+    {
+        "nombre": "Parque Central de Malacatos",
+        "tipo": "publico",
+        "direccion": "Centro de Malacatos",
+        "latitud": "-4.219167",
+        "longitud": "-79.258333",
+        "imagenes": [
+            "foto 1.jpg"
+        ],
+        "subcategoria": "Parques"
+    }
+]
