@@ -1,54 +1,46 @@
-<!doctype html>
+<!-- Proyecto Malacatos: Página principal -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Malacatos - Turismo, bienes y servicios</title>
-
-  <link rel="stylesheet" href="assents/css/style.css">
-
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Malacatos - Lugares y Servicios</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <h1>Malacatos</h1>
-    <p>Guía de bienes, servicios y terrenos</p>
-    <nav class="topnav">
-      <a href="#mapa">Mapa</a>
-      <div class="dropdown">
-        <button class="dropbtn" id="btn-negocios">Negocios ▾</button>
-        <div class="dropdown-content" id="menu-negocios"></div>
-      </div>
-      <div class="dropdown">
-        <button class="dropbtn" id="btn-servicios">Servicios ▾</button>
-        <div class="dropdown-content" id="menu-servicios"></div>
-      </div>
-      <a href="#contacto">Contacto</a>
-    </nav>
-  </header>
+    <header>
+        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
+        <nav>
+            <ul>
+                <li><a href="#mapa">Mapa</a></li>
+                <li><a href="#lugares">Lugares</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
-    <section id="mapa" class="card">
-      <div id="map" style="height: 60vh;"></div>
-      <div id="legend" class="legend"></div>
+    <section id="mapa">
+        <h2>Mapa Interactivo</h2>
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31892.96949159796!2d-79.219!3d-4.2006" 
+                    width="100%" height="350" style="border:0;" 
+                    allowfullscreen loading="lazy">
+            </iframe>
+        </div>
     </section>
 
-    <section id="lists" class="card-lists">
-      <div id="list-results" class="list-column"><h3>Resultados</h3><div id="list"></div></div>
-      <div id="filters" class="list-column"><h3>Filtrar</h3><div id="filter-controls"></div></div>
+    <section id="lugares">
+        <h2>Lugares Turísticos</h2>
+        <div id="lista-lugares"></div>
     </section>
-  </main>
 
-  <!-- Panel deslizante -->
-  <aside id="panel" class="panel">
-    <button id="panel-close" class="panel-close">✕</button>
-    <div id="panel-content"></div>
-  </aside>
+    <section id="servicios">
+        <h2>Servicios</h2>
+        <div id="lista-servicios"></div>
+    </section>
 
-  <!-- Scripts -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
-  <script src="assents/js/app.js"></script>
-  <script src="assents/js/main.js"></script>
+    <script src="data/lugares.js"></script>
+    <script src="data/servicios.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
