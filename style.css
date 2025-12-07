@@ -6,13 +6,11 @@ body {
     background: #f5f5f5;
     color: #222;
 }
-
-/* LOGO */
 .logo-personal {
     position: fixed;
     top: 10px;
     right: 10px;
-    width: 55px;
+    width: 28px;   /* MITAD DEL TAMAÑO */
     opacity: 0.9;
     z-index: 9999;
     pointer-events: none;
