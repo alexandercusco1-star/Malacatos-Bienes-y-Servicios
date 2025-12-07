@@ -1,101 +1,81 @@
-// =============================
-// INICIALIZAR PÁGINA
-// =============================
-document.addEventListener("DOMContentLoaded", async () => {
-    
-    const categorias = await cargarCategorias();
-    const bienes = await cargarBienes();
-    const servicios = await cargarServicios();
+// ========== MAPA LEAFLET GRATIS ==========
 
-    mostrarCategorias(categorias);
-    mostrarBienes(bienes);
-    mostrarServicios(servicios);
-});
+let map = L.map('map').setView([-4.2005, -79.2150], 14);
 
-// =============================
-// MOSTRAR CATEGORÍAS
-// =============================
-function mostrarCategorias(categorias) {
-    console.log("Categorías cargadas:", categorias);
+// Capa de mapa GRATIS
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+// ========== ICONOS POR SUBCATEGORÍA ==========
+const ICONOS = {
+    "Peluquería": "💇‍♀️",
+    "Terrenos": "🟩",
+    "Parque": "🌳",
+    "Tienda": "🛍️",
+    "Ferretería": "🔧"
+};
+
+// ========== FUNCIÓN PARA CREAR POPUP ==========
+function crearPopup(item) {
+    let fotos = "";
+
+    if (item.fotos && item.fotos.length > 0) {
+        fotos = item.fotos.map(f => `<img src="data/${f}" class="popup-img">`).join("");
+    }
+
+    return `
+        <div class="popup-title">${item.nombre}</div>
+        <div>${item.descripcion}</div>
+        <div><strong>Ubicación:</strong> ${item.ubicacion}</div>
+        ${fotos}
+    `;
 }
 
-// =============================
-// CREAR ACORDEÓN
-// =============================
-function crearAcordeon(titulo, contenidoHTML) {
-    const cont = document.createElement("div");
-    cont.classList.add("acordeon");
+// ========== AGREGAR MARCADORES ==========
+function agregarMarcadores(lista) {
+    lista.forEach(item => {
+        let emoji = ICONOS[item.subcategoria] || "📍";
 
-    const header = document.createElement("div");
-    header.classList.add("acordeon-titulo");
-    header.textContent = titulo;
+        let marcador = L.marker([item.lat, item.lng], {
+            icon: L.divIcon({
+                className: "emoji-marker",
+                html: `<div style="font-size:28px">${emoji}</div>`
+            })
+        }).addTo(map);
 
-    const body = document.createElement("div");
-    body.classList.add("acordeon-contenido");
-    body.innerHTML = contenidoHTML;
-
-    header.addEventListener("click", () => {
-        document.querySelectorAll(".acordeon-contenido").forEach(c => {
-            if (c !== body) c.style.display = "none";
-        });
-
-        body.style.display = body.style.display === "block" ? "none" : "block";
-    });
-
-    cont.appendChild(header);
-    cont.appendChild(body);
-    return cont;
-}
-
-// =============================
-// MOSTRAR BIENES
-// =============================
-function mostrarBienes(bienes) {
-    const contenedor = document.getElementById("lista-lugares");
-    contenedor.innerHTML = "";
-
-    bienes.forEach(bien => {
-
-        const fotosHTML = bien.imagenes
-            .map(img => `<img src="data/${img}" />`)
-            .join("");
-
-        const contenido = `
-            <p><strong>Dirección:</strong> ${bien.direccion}</p>
-            <p><strong>Tipo:</strong> ${bien.tipo}</p>
-            <p><strong>Latitud:</strong> ${bien.latitud}</p>
-            <p><strong>Longitud:</strong> ${bien.longitud}</p>
-
-            <div class="carrusel">${fotosHTML}</div>
-        `;
-
-        const card = crearAcordeon(bien.nombre, contenido);
-        contenedor.appendChild(card);
+        marcador.bindPopup(crearPopup(item));
     });
 }
 
-// =============================
-// MOSTRAR SERVICIOS
-// =============================
-function mostrarServicios(servicios) {
-    const contenedor = document.getElementById("lista-servicios");
-    contenedor.innerHTML = "";
+// ======== CARGAR DATOS ========
+// (Se cargan desde main.js mismo para evitar errores)
 
-    servicios.forEach(serv => {
+const LUGARES = [
+    {
+        nombre: "Parque Central de Malacatos",
+        descripcion: "Parque público en el centro de Malacatos.",
+        ubicacion: "Centro de Malacatos",
+        subcategoria: "Parque",
+        lat: -4.21917,
+        lng: -79.25833,
+        fotos: ["foto1.jpg"]
+    }
+];
 
-        const fotosHTML = serv.imagenes
-            .map(img => `<img src="data/${img}" />`)
-            .join("");
+const SERVICIOS = [
+    {
+        nombre: "Barbería Lauris",
+        descripcion: "Cortes, maquillaje y diseño de uñas.",
+        ubicacion: "Pio Montufar y Lauro Coronel",
+        subcategoria: "Peluquería",
+        lat: -4.22050,
+        lng: -79.25710,
+        fotos: ["negocio_peluqueria_1.jpg"]
+    }
+];
 
-        const contenido = `
-            <p>${serv.descripcion}</p>
-            <p><strong>Dirección:</strong> ${serv.direccion}</p>
-            <p><strong>Teléfono:</strong> ${serv.telefono}</p>
 
-            <div class="carrusel">${fotosHTML}</div>
-        `;
-
-        const card = crearAcordeon(serv.nombre, contenido);
-        contenedor.appendChild(card);
-    });
-}
+// Agregar al mapa
+agregarMarcadores(LUGARES);
+agregarMarcadores(SERVICIOS);
