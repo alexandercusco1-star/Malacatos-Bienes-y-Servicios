@@ -1,42 +1,21 @@
-// app.js – Carga de datos de lugares y servicios
+// =============================
+// CARGA DE JSON DESDE /data
+// =============================
 
-// Función para crear tarjetas
-function createCard(item) {
-    return `
-        <div class="card">
-            <h3>${item.nombre}</h3>
-            <p>${item.descripcion}</p>
-            <p><strong>Ubicación:</strong> ${item.ubicacion}</p>
-        </div>
-    `;
+// Cargar Categorías
+async function cargarCategorias() {
+    const res = await fetch("data/categorias.json");
+    return await res.json();
 }
 
-// Cargar lugares turísticos
-function cargarLugares() {
-    const contenedor = document.getElementById("lista-lugares");
-
-    if (typeof LUGARES === "undefined") {
-        contenedor.innerHTML = "<p>No se pudo cargar la lista de lugares.</p>";
-        return;
-    }
-
-    contenedor.innerHTML = LUGARES.map(createCard).join("");
+// Cargar Bienes
+async function cargarBienes() {
+    const res = await fetch("data/bienes.json");
+    return await res.json();
 }
 
-// Cargar servicios
-function cargarServicios() {
-    const contenedor = document.getElementById("lista-servicios");
-
-    if (typeof SERVICIOS === "undefined") {
-        contenedor.innerHTML = "<p>No se pudo cargar la lista de servicios.</p>";
-        return;
-    }
-
-    contenedor.innerHTML = SERVICIOS.map(createCard).join("");
-}
-
-// Inicializar al cargar la página
-function iniciarApp() {
-    cargarLugares();
-    cargarServicios();
+// Cargar Servicios
+async function cargarServicios() {
+    const res = await fetch("data/servicios.json");
+    return await res.json();
 }
