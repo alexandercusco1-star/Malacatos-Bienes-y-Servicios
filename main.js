@@ -7,21 +7,57 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
 }).addTo(map);
 
-// ========== ICONOS POR SUBCATEGORÍA ==========
+// ================================================
+//     ÍCONOS DE TODAS LAS SUBCATEGORÍAS (EMOJIS)
+// ================================================
 const ICONOS = {
     "Peluquería": "💇‍♀️",
-    "Terrenos": "🟩",
-    "Parque": "🌳",
+    "Barbería": "💈",
+    "Ferretería": "🔧",
+    "Taller Mecánico": "🛠️",
+    "Taller de Motos": "🏍️",
+    "Restaurante": "🍽️",
+    "Comida Rápida": "🌮",
+    "Panadería": "🍞",
+    "Farmacia": "💊",
+    "Hospital / Salud": "🏥",
+    "Hostal": "🏨",
+    "Hotel": "🛏️",
     "Tienda": "🛍️",
-    "Ferretería": "🔧"
+    "Bazar": "👜",
+    "Papelería": "📚",
+    "Licorería": "🍾",
+    "Llantera": "🛞",
+    "Gasolinera": "⛽",
+    "Gimnasio": "🏋️",
+    "Artesanías": "🧵",
+    "Parque": "🌳",
+    "Terrenos": "🟩",
+    "Iglesia": "⛪",
+    "Escuela": "🏫",
+    "Colegio": "📘",
+    "Cancha Deportiva": "🏀",
+    "Lavandería": "🧺",
+    "Veterinaria": "🐾",
+    "Frutería": "🍎",
+    "Carnicería": "🥩",
+    "Cyber / Internet": "💻",
+    "Heladería": "🍦",
+    "Abarrotes": "🛒",
+    "Verdulería": "🥬",
+    "Spa": "💆‍♀️",
+    "Florería": "💐"
 };
 
-// ========== FUNCIÓN PARA CREAR POPUP ==========
+// ========== POPUP (DETALLE CON FOTOS) ==========
+
 function crearPopup(item) {
     let fotos = "";
 
     if (item.fotos && item.fotos.length > 0) {
-        fotos = item.fotos.map(f => `<img src="data/${f}" class="popup-img">`).join("");
+        fotos = item.fotos
+            .map(f => `<img src="data/${f}" class="popup-img">`)
+            .join("");
     }
 
     return `
@@ -40,7 +76,7 @@ function agregarMarcadores(lista) {
         let marcador = L.marker([item.lat, item.lng], {
             icon: L.divIcon({
                 className: "emoji-marker",
-                html: `<div style="font-size:28px">${emoji}</div>`
+                html: `<div style="font-size:30px">${emoji}</div>`
             })
         }).addTo(map);
 
@@ -48,8 +84,9 @@ function agregarMarcadores(lista) {
     });
 }
 
-// ======== CARGAR DATOS ========
-// (Se cargan desde main.js mismo para evitar errores)
+// ======================================================
+//  DATOS DE EJEMPLO (LOS QUE TÚ ME DISTE) – PUEDES AÑADIR MÁS
+// ======================================================
 
 const LUGARES = [
     {
@@ -75,7 +112,9 @@ const SERVICIOS = [
     }
 ];
 
-
-// Agregar al mapa
+// ========== AGREGAR TODO AL MAPA ==========
 agregarMarcadores(LUGARES);
 agregarMarcadores(SERVICIOS);
+
+// Al moverte, el popup se cierra:
+map.on("movestart", () => map.closePopup());
