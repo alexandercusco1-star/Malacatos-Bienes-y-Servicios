@@ -1,9 +1,6 @@
 {
-    "bienes": [
-        "Parques",
-        "Terrenos"
-    ],
-    "servicios": [
-        "Peluquería"
-    ]
+    "peluqueria": {
+        "nombre": "Peluquerías",
+        "icono": "data/iconos/tijera.png"
+    }
 }
