@@ -1,13 +1,9 @@
 [
     {
-        "nombre": "Parque Central de Malacatos",
-        "tipo": "publico",
-        "direccion": "Centro de Malacatos",
-        "latitud": "-4.219167",
-        "longitud": "-79.258333",
-        "imagenes": [
-            "foto 1.jpg"
-        ],
-        "subcategoria": "Parques"
+        "nombre": "Barbería Laury",
+        "descripcion": "Cortes, tintura, arreglo de barba",
+        "ubicacion": "Centro de Malacatos",
+        "categoria": "peluqueria",
+        "coords": { "lat": -4.2001, "lng": -79.2188 }
     }
 ]
