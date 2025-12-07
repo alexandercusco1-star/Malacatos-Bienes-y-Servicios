@@ -1,19 +1,24 @@
-<!-- Proyecto Malacatos: Página principal -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Malacatos - Lugares y Servicios</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malacatos - Bienes y Servicios</title>
 
-    <!-- ESTILOS DIRECTO EN LA RAÍZ -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet GRATIS sin API -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
-<img src="data/mi-logo.png" class="logo-personal">
+
+    <!-- Logo personal -->
+    <img src="data/mi-logo.png" class="logo-personal">
+
     <header>
-        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
+        <h1>Malacatos – Bienes y Servicios</h1>
         <nav>
             <ul>
                 <li><a href="#mapa">Mapa</a></li>
@@ -25,17 +30,7 @@
 
     <section id="mapa">
         <h2>Mapa Interactivo</h2>
-        <div class="map-container">
-            <iframe 
-  width="100%" 
-  height="350" 
-  style="border:0" 
-  loading="lazy" 
-  allowfullscreen 
-  referrerpolicy="no-referrer-when-downgrade" 
-  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31893.00555680359!2d-79.219173259886!3d-4.200578081237746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cd19f926fe7025%3A0xd0c47daa7eaccef2!2sMalacatos!5e0!3m2!1ses!2sec!4v1733360570000!5m2!1ses!2sec">
-</iframe>
-        </div>
+        <div id="map"></div>
     </section>
 
     <section id="lugares">
@@ -48,7 +43,6 @@
         <div id="lista-servicios"></div>
     </section>
 
-    <!-- SCRIPTS DIRECTO EN LA RAÍZ -->
     <script src="app.js"></script>
     <script src="main.js"></script>
 
