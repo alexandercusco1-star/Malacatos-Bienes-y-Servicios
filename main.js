@@ -1,120 +1,32 @@
-// ========== MAPA LEAFLET GRATIS ==========
+window.onload = async function () {
+    // Cargar las listas
+    await DataApp.cargarLugares();
+    await DataApp.cargarServicios();
 
-let map = L.map('map').setView([-4.2005, -79.2150], 14);
-
-// Capa de mapa GRATIS
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-}).addTo(map);
-
-// ================================================
-//     ÍCONOS DE TODAS LAS SUBCATEGORÍAS (EMOJIS)
-// ================================================
-const ICONOS = {
-    "Peluquería": "💇‍♀️",
-    "Barbería": "💈",
-    "Ferretería": "🔧",
-    "Taller Mecánico": "🛠️",
-    "Taller de Motos": "🏍️",
-    "Restaurante": "🍽️",
-    "Comida Rápida": "🌮",
-    "Panadería": "🍞",
-    "Farmacia": "💊",
-    "Hospital / Salud": "🏥",
-    "Hostal": "🏨",
-    "Hotel": "🛏️",
-    "Tienda": "🛍️",
-    "Bazar": "👜",
-    "Papelería": "📚",
-    "Licorería": "🍾",
-    "Llantera": "🛞",
-    "Gasolinera": "⛽",
-    "Gimnasio": "🏋️",
-    "Artesanías": "🧵",
-    "Parque": "🌳",
-    "Terrenos": "🟩",
-    "Iglesia": "⛪",
-    "Escuela": "🏫",
-    "Colegio": "📘",
-    "Cancha Deportiva": "🏀",
-    "Lavandería": "🧺",
-    "Veterinaria": "🐾",
-    "Frutería": "🍎",
-    "Carnicería": "🥩",
-    "Cyber / Internet": "💻",
-    "Heladería": "🍦",
-    "Abarrotes": "🛒",
-    "Verdulería": "🥬",
-    "Spa": "💆‍♀️",
-    "Florería": "💐"
+    // Cargar mapa con iconos
+    initMap();
 };
 
-// ========== POPUP (DETALLE CON FOTOS) ==========
+// MAPA + ICONOS
+async function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -4.2005, lng: -79.2191 },
+        zoom: 14,
+    });
 
-function crearPopup(item) {
-    let fotos = "";
+    const categorias = await (await fetch("data/categorias.json")).json();
+    const bienes = await (await fetch("data/bienes.json")).json();
 
-    if (item.fotos && item.fotos.length > 0) {
-        fotos = item.fotos
-            .map(f => `<img src="data/${f}" class="popup-img">`)
-            .join("");
-    }
-
-    return `
-        <div class="popup-title">${item.nombre}</div>
-        <div>${item.descripcion}</div>
-        <div><strong>Ubicación:</strong> ${item.ubicacion}</div>
-        ${fotos}
-    `;
-}
-
-// ========== AGREGAR MARCADORES ==========
-function agregarMarcadores(lista) {
-    lista.forEach(item => {
-        let emoji = ICONOS[item.subcategoria] || "📍";
-
-        let marcador = L.marker([item.lat, item.lng], {
-            icon: L.divIcon({
-                className: "emoji-marker",
-                html: `<div style="font-size:30px">${emoji}</div>`
-            })
-        }).addTo(map);
-
-        marcador.bindPopup(crearPopup(item));
+    bienes.forEach(item => {
+        const icono = categorias[item.categoria]?.icono || "";
+        new google.maps.Marker({
+            position: item.coords,
+            map,
+            title: item.nombre,
+            icon: {
+                url: icono,
+                scaledSize: new google.maps.Size(38, 38),
+            }
+        });
     });
 }
-
-// ======================================================
-//  DATOS DE EJEMPLO (LOS QUE TÚ ME DISTE) – PUEDES AÑADIR MÁS
-// ======================================================
-
-const LUGARES = [
-    {
-        nombre: "Parque Central de Malacatos",
-        descripcion: "Parque público en el centro de Malacatos.",
-        ubicacion: "Centro de Malacatos",
-        subcategoria: "Parque",
-        lat: -4.21917,
-        lng: -79.25833,
-        fotos: ["foto1.jpg"]
-    }
-];
-
-const SERVICIOS = [
-    {
-        nombre: "Barbería Lauris",
-        descripcion: "Cortes, maquillaje y diseño de uñas.",
-        ubicacion: "Pio Montufar y Lauro Coronel",
-        subcategoria: "Peluquería",
-        lat: -4.22050,
-        lng: -79.25710,
-        fotos: ["negocio_peluqueria_1.jpg"]
-    }
-];
-
-// ========== AGREGAR TODO AL MAPA ==========
-agregarMarcadores(LUGARES);
-agregarMarcadores(SERVICIOS);
-
-// Al moverte, el popup se cierra:
-map.on("movestart", () => map.closePopup());
