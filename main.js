@@ -1,106 +1,66 @@
-// main.js — Mapa + iconos + lectura de JSON
+// CARGA DE MAPA E ICONOS
+let map = L.map('map').setView([-4.219167, -79.258333], 15);
 
-let mapa;
-let capaBienes;
-let capaServicios;
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(map);
 
-// Crear mapa
-function iniciarMapa() {
-    mapa = L.map("map").setView([-4.2191, -79.2583], 15);
+// Cargar JSON
+async function cargarDatos() {
+  const bienes = await fetch("data/bienes.json").then(r => r.json());
+  const servicios = await fetch("data/servicios.json").then(r => r.json());
+  const categorias = await fetch("data/categorias.json").then(r => r.json());
 
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "© OpenStreetMap"
-    }).addTo(mapa);
+  llenarLeyenda(categorias);
 
-    capaBienes = L.layerGroup().addTo(mapa);
-    capaServicios = L.layerGroup().addTo(mapa);
+  colocarMarcadores(bienes);
+  colocarMarcadores(servicios);
 }
 
-// Cargar JSON desde carpeta data
-async function cargarJSON(ruta) {
-    const res = await fetch(`data/${ruta}`);
-    return res.json();
+function crearIcono(ruta) {
+  return L.icon({
+    iconUrl: "data/" + ruta,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -28]
+  });
 }
 
-// Generar popups
-function crearPopup(item) {
-    let html = `
-        <h3>${item.nombre}</h3>
-        <p>${item.descripcion || ""}</p>
-        <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion}</p>
-        <p><strong>Categoría:</strong> ${item.categoria}</p>
+function colocarMarcadores(lista){
+  lista.forEach(item => {
+    let icono = crearIcono(item.icono);
+
+    let popup = `
+      <b>${item.nombre}</b><br>
+      <small>${item.descripcion || item.ubicacion}</small><br><br>
+      ${item.imagenes.map(img => `<img src="data/${img}" class="popup-img">`).join("")}
     `;
 
-    if (item.telefono) {
-        html += `<p><strong>Teléfono:</strong> ${item.telefono}</p>`;
-    }
-
-    if (item.imagenes && item.imagenes.length > 0) {
-        html += `<img src="data/${item.imagenes[0]}" class="popup-img">`;
-    }
-
-    return html;
+    L.marker([item.latitud, item.longitud], {icon: icono})
+      .addTo(map)
+      .bindPopup(popup);
+  });
 }
 
-// Cargar marcadores
-function agregarMarcador(item, icono, capa) {
-    const customIcon = L.icon({
-        iconUrl: `data/${icono}`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-    });
+function llenarLeyenda(cat){
+  let box = document.getElementById("leyenda-items");
+  box.innerHTML = "";
+  
+  Object.keys(cat.bienes).forEach(c => {
+    box.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${cat.bienes[c].icono}" class="leyenda-icon">
+        <span>${c}</span>
+      </div>`;
+  });
 
-    const marker = L.marker([item.latitud, item.longitud], { icon: customIcon })
-        .bindPopup(crearPopup(item));
-
-    marker.addTo(capa);
+  Object.keys(cat.servicios).forEach(c => {
+    box.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${cat.servicios[c].icono}" class="leyenda-icon">
+        <span>${c}</span>
+      </div>`;
+  });
 }
 
-// Cargar leyenda
-function cargarLeyenda(categorias) {
-    const cont = document.getElementById("leyenda");
-    cont.innerHTML = "<h4>Simbología</h4>";
-
-    for (const tipo of Object.keys(categorias)) {
-        const grupo = categorias[tipo];
-
-        for (const sub of Object.keys(grupo)) {
-            const icono = grupo[sub].icono;
-
-            cont.innerHTML += `
-                <div class="leyenda-item">
-                    <img src="data/${icono}" class="leyenda-icon">
-                    <span>${sub}</span>
-                </div>
-            `;
-        }
-    }
-}
-
-// Cargar todo
-async function iniciarTodo() {
-    iniciarMapa();
-
-    const bienes = await cargarJSON("bienes.json");
-    const servicios = await cargarJSON("servicios.json");
-    const categorias = await cargarJSON("categorias.json");
-
-    cargarLeyenda(categorias);
-
-    // Bienes en el mapa
-    bienes.forEach(item => {
-        const icono = categorias.bienes[item.categoria]?.icono || "icono-default.png";
-        agregarMarcador(item, icono, capaBienes);
-    });
-
-    // Servicios en el mapa
-    servicios.forEach(item => {
-        const icono = categorias.servicios[item.categoria]?.icono || "icono-default.png";
-        agregarMarcador(item, icono, capaServicios);
-    });
-}
-
-// Iniciar
-document.addEventListener("DOMContentLoaded", iniciarTodo);
+cargarDatos();
