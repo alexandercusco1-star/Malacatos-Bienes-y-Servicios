@@ -1,30 +1,20 @@
-// app.js — Generar tarjetas de bienes y servicios
+async function cargarListas(){
+  const bienes = await fetch("data/bienes.json").then(r => r.json());
+  const servicios = await fetch("data/servicios.json").then(r => r.json());
 
-async function cargarJSON(ruta) {
-    const res = await fetch(`data/${ruta}`);
-    return res.json();
+  document.getElementById("lista-lugares").innerHTML =
+    bienes.map(x => `
+      <div class="card">
+        <h3>${x.nombre}</h3>
+        <p>${x.descripcion}</p>
+      </div>`).join("");
+
+  document.getElementById("lista-servicios").innerHTML =
+    servicios.map(x => `
+      <div class="card">
+        <h3>${x.nombre}</h3>
+        <p>${x.descripcion}</p>
+      </div>`).join("");
 }
 
-function cardHTML(item) {
-    return `
-        <div class="card">
-            <h3>${item.nombre}</h3>
-            <p>${item.descripcion}</p>
-            <p><strong>Categoría:</strong> ${item.categoria}</p>
-            <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion}</p>
-        </div>
-    `;
-}
-
-async function cargarListas() {
-    const bienes = await cargarJSON("bienes.json");
-    const servicios = await cargarJSON("servicios.json");
-
-    document.getElementById("lista-lugares").innerHTML =
-        bienes.map(cardHTML).join("");
-
-    document.getElementById("lista-servicios").innerHTML =
-        servicios.map(cardHTML).join("");
-}
-
-document.addEventListener("DOMContentLoaded", cargarListas);
+cargarListas();
