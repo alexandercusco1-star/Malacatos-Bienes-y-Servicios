@@ -1,20 +1,16 @@
-async function cargarListas(){
-  const bienes = await fetch("data/bienes.json").then(r => r.json());
-  const servicios = await fetch("data/servicios.json").then(r => r.json());
+// app.js – Funciones adicionales del proyecto
 
-  document.getElementById("lista-lugares").innerHTML =
-    bienes.map(x => `
-      <div class="card">
-        <h3>${x.nombre}</h3>
-        <p>${x.descripcion}</p>
-      </div>`).join("");
+console.log("APP.JS CARGADO CORRECTAMENTE");
 
-  document.getElementById("lista-servicios").innerHTML =
-    servicios.map(x => `
-      <div class="card">
-        <h3>${x.nombre}</h3>
-        <p>${x.descripcion}</p>
-      </div>`).join("");
+// Esta función se deja lista para futuras mejoras:
+// - filtros por categoría
+// - mostrar solo bienes
+// - mostrar solo servicios
+// - sistema de búsqueda
+// - animaciones
+// - estadísticas
+// - paneles laterales
+
+function futuro() {
+    console.log("Funciones futuras listas para activar.");
 }
-
-cargarListas();
