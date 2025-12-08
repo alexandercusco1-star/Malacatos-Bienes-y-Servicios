@@ -1,66 +1,87 @@
-// CARGA DE MAPA E ICONOS
+// ===============================
+//   MAPA LEAFLET
+// ===============================
+
 let map = L.map('map').setView([-4.219167, -79.258333], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-// Cargar JSON
-async function cargarDatos() {
-  const bienes = await fetch("data/bienes.json").then(r => r.json());
-  const servicios = await fetch("data/servicios.json").then(r => r.json());
-  const categorias = await fetch("data/categorias.json").then(r => r.json());
 
-  llenarLeyenda(categorias);
+// ===============================
+//   FUNCIÓN POPUP BONITO
+// ===============================
 
-  colocarMarcadores(bienes);
-  colocarMarcadores(servicios);
-}
+function crearPopup(item) {
+    const primeraImagen = item.imagenes && item.imagenes.length > 0
+        ? `data/${item.imagenes[0]}`
+        : "data/no-image.jpg";
 
-function crearIcono(ruta) {
-  return L.icon({
-    iconUrl: "data/" + ruta,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -28]
-  });
-}
+    return `
+        <div style="
+            width: 180px;
+            font-family: sans-serif;
+        ">
+            <img src="${primeraImagen}" 
+                 style="width: 100%; height: 100px; object-fit: cover; border-radius: 6px;">
 
-function colocarMarcadores(lista){
-  lista.forEach(item => {
-    let icono = crearIcono(item.icono);
+            <h3 style="margin: 6px 0 4px; font-size: 17px; color:#2e7d32;">
+                ${item.nombre}
+            </h3>
 
-    let popup = `
-      <b>${item.nombre}</b><br>
-      <small>${item.descripcion || item.ubicacion}</small><br><br>
-      ${item.imagenes.map(img => `<img src="data/${img}" class="popup-img">`).join("")}
+            <p style="margin: 0; font-size: 13px; color:#444;">
+                ${item.descripcion}
+            </p>
+
+            <p style="margin: 6px 0 0; font-size: 12px; color:#777;">
+                📍 ${item.ubicacion || item.direccion || "Malacatos"}
+            </p>
+        </div>
     `;
-
-    L.marker([item.latitud, item.longitud], {icon: icono})
-      .addTo(map)
-      .bindPopup(popup);
-  });
 }
 
-function llenarLeyenda(cat){
-  let box = document.getElementById("leyenda-items");
-  box.innerHTML = "";
-  
-  Object.keys(cat.bienes).forEach(c => {
-    box.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${cat.bienes[c].icono}" class="leyenda-icon">
-        <span>${c}</span>
-      </div>`;
-  });
 
-  Object.keys(cat.servicios).forEach(c => {
-    box.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${cat.servicios[c].icono}" class="leyenda-icon">
-        <span>${c}</span>
-      </div>`;
-  });
+// ===============================
+//   CARGAR ICONOS PERSONALIZADOS
+// ===============================
+
+function crearIcono(rutaIcono) {
+    return L.icon({
+        iconUrl: `data/${rutaIcono}`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 37],
+        popupAnchor: [0, -35]
+    });
 }
 
-cargarDatos();
+
+// ===============================
+//   AGREGAR PUNTOS AL MAPA
+// ===============================
+
+function agregarMarcadores(lista) {
+    lista.forEach(item => {
+        const icono = crearIcono(item.icono);
+
+        L.marker([item.latitud, item.longitud], { icon: icono })
+            .addTo(map)
+            .bindPopup(crearPopup(item));
+    });
+}
+
+
+// ===============================
+//   CARGA DATOS
+// ===============================
+
+async function cargarTodo() {
+    const bienes = await fetch("data/bienes.json").then(r => r.json());
+    const servicios = await fetch("data/servicios.json").then(r => r.json());
+
+    agregarMarcadores(bienes);
+    agregarMarcadores(servicios);
+}
+
+cargarTodo();
