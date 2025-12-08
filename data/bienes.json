@@ -7,22 +7,18 @@
     "ubicacion": "Centro de Malacatos",
     "latitud": "-4.219167",
     "longitud": "-79.258333",
-    "icono": "icon-casa.png",
-    "imagenes": [
-      "b1.jpg"
-    ]
-  }
+    "icono": "icon-casa.jpg",
+    "imagenes": ["b1.jpg"]
+  },
   {
-    "nombre": "Iglesia",
+    "nombre": "Iglesia de Malacatos",
     "tipo": "bienes",
-    "categoria": "Parque",
-    "descripcion": "Espacio público de Malacatos.",
+    "categoria": "Iglesia",
+    "descripcion": "Punto histórico y religioso de Malacatos.",
     "ubicacion": "Centro de Malacatos",
     "latitud": "-4.219167",
     "longitud": "-79.258334",
-    "icono": "icon-casa.png",
-    "imagenes": [
-      "b2.jpg"
-    ]
+    "icono": "icon-iglesia.jpg",
+    "imagenes": ["b2.jpg"]
   }
 ]
