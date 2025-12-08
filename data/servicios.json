@@ -13,4 +13,18 @@
       "negocio_peluqueria_1.jpg"
     ]
   }
+  {
+    "nombre": "Mecanica juan",
+    "tipo": "mecanica",
+    "categoria": "Mecanica",
+    "descripcion": "mecanica de llantas.",
+    "direccion": "Pío Montúfar y coronel, esquina",
+    "telefono": "+593959007259",
+    "latitud": "-4.218500",
+    "longitud": "-79.255200",
+    "icono": "icon-tijera.png",
+    "imagenes": [
+      "s1.jpg"
+    ]
+  }
 ]
