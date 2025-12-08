@@ -8,7 +8,7 @@
     "telefono": "+593959007258",
     "latitud": "-4.218500",
     "longitud": "-79.255200",
-    "icono": "icon-tijeras.jpg",
+    "icono": "icon-tijeras.jpeg",
     "imagenes": ["s1.jpg"]
   },
   {
@@ -20,7 +20,7 @@
     "telefono": "+593959007259",
     "latitud": "-4.218500",
     "longitud": "-79.255200",
-    "icono": "icon-llave.jpg",
+    "icono": "icon-llave.jpeg",
     "imagenes": ["s2.jpg"]
   }
 ]
