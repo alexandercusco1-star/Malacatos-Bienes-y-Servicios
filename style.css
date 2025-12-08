@@ -203,5 +203,36 @@ a, button { transition: all .12s ease }
   .map-container, #map { height: 300px }
   .logo-personal{ width:26px; top:8px; right:8px }
 }
+/* ======== LEYENDA PEQUEÑA ======== */
+#leyenda {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px 12px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.25);
+    font-size: 13px;
+    max-width: 140px;
+    z-index: 9999;
+}
 
+#leyenda h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.leyenda-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
 /* ===== fin estilo ===== */
