@@ -1,70 +1,72 @@
-<!-- Proyecto Malacatos: Página principal -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Malacatos - Lugares y Servicios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Malacatos - Bienes y Servicios</title>
 
-    <link rel="stylesheet" href="style.css">
+  <!-- Tipografías -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Tu CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-    <!-- Logo personal -->
-    <img src="data/mi-logo.png" class="logo-personal">
+  <!-- Logo personal fijo -->
+  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
 
-    <!-- HEADER -->
-    <header>
-        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
-        <nav>
-            <ul>
-                <li><a href="#mapa">Mapa</a></li>
-                <li><a href="#lugares">Lugares</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- ÁREA INVISIBLE PARA ACTIVAR LEYENDA -->
-    <div id="trigger-area"></div>
-
-    <!-- LEYENDA OCULTA -->
-    <div id="leyenda">
-        <h4>Leyenda</h4>
-        <div id="leyenda-items"></div>
-    </div>
-
-    <!-- SECCIÓN MAPA -->
-    <section id="mapa">
-        <h2>Mapa Interactivo</h2>
-        <div class="map-container">
-            <iframe 
-                width="100%" 
-                height="350" 
-                style="border:0" 
-                loading="lazy" 
-                allowfullscreen 
-                referrerpolicy="no-referrer-when-downgrade" 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31893.00555680359!2d-79.219173259886!3d-4.200578081237746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cd19f926fe7025%3A0xd0c47daa7eaccef2!2sMalacatos!5e0!3m2!1ses!2sec!4v1733360570000!5m2!1ses!2sec">
-            </iframe>
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <div>
+          <div class="brand-title">Malacatos</div>
+          <div class="brand-sub">Lugares Turísticos & Servicios</div>
         </div>
+      </div>
+
+      <nav class="header-nav">
+        <a href="#mapa">Mapa</a>
+        <a href="#lugares">Lugares</a>
+        <a href="#servicios">Servicios</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- trigger area + leyenda (oculta hasta acercar al borde derecho) -->
+  <div id="trigger-area" aria-hidden="true"></div>
+  <div id="leyenda">
+    <h4>Leyenda</h4>
+    <div id="leyenda-items"></div>
+  </div>
+
+  <main>
+    <!-- MAPA: LEAFLET necesita este div -->
+    <section id="mapa">
+      <h2>Mapa Interactivo</h2>
+      <div id="map" class="map-container"></div>
     </section>
 
-    <!-- SECCIÓN LUGARES -->
+    <!-- LISTAS -->
     <section id="lugares">
-        <h2>Lugares Turísticos</h2>
-        <div id="lista-lugares"></div>
+      <h2>Lugares Turísticos</h2>
+      <div id="lista-lugares"></div>
     </section>
 
-    <!-- SECCIÓN SERVICIOS -->
     <section id="servicios">
-        <h2>Servicios</h2>
-        <div id="lista-servicios"></div>
+      <h2>Servicios</h2>
+      <div id="lista-servicios"></div>
     </section>
+  </main>
 
-    <script src="app.js"></script>
-    <script src="main.js"></script>
+  <!-- Scripts (asegúrate de que main.js y app.js sean los que te pasé) -->
+  <script src="main.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
