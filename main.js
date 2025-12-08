@@ -1,108 +1,117 @@
-// ========================= MAPA ============================
-let map = L.map("map").setView([-4.219167, -79.258333], 16);
+// =========================
+// MAPA
+// =========================
+let map = L.map("map").setView([-4.2191, -79.2583], 15);
 
-// Mapa libre sin API
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19
 }).addTo(map);
 
-// ========================= ICONOS ============================
-function getIcon(ruta) {
+// =========================
+// CARGAR ARCHIVOS JSON
+// =========================
+async function cargarJSON(ruta) {
+    const respuesta = await fetch(ruta);
+    return await respuesta.json();
+}
+
+// =========================
+// CARGAR ICONOS DEL JSON
+// =========================
+function crearIcono(ruta) {
     return L.icon({
-        iconUrl: "data/" + ruta,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
+        iconUrl: `data/${ruta}`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
     });
 }
 
-// ========================= POPUP PREMIUM ============================
+// =========================
+// MOSTRAR POPUP
+// =========================
 function crearPopup(item) {
-
-    const primeraImagen = item.imagenes?.length
-        ? `data/${item.imagenes[0]}`
-        : "data/no-image.jpg";
-
-    const esPremium = item.premium === true;
+    let imagenesHTML = "";
+    if (item.imagenes && item.imagenes.length > 0) {
+        item.imagenes.forEach(img => {
+            imagenesHTML += `<img src="data/${img}" style="width:100%;margin-top:8px;border-radius:8px;">`;
+        });
+    }
 
     return `
-        <div style="
-            width: 220px;
-            padding: 10px;
-            border-radius: 10px;
-            border: ${esPremium ? "3px solid gold" : "1px solid #ccc"};
-            background: ${esPremium ? "#fff8dc" : "#ffffff"};
-            box-shadow: ${esPremium ? "0 0 10px gold" : "0 0 6px rgba(0,0,0,0.2)"};
-            font-family: sans-serif;
-        ">
-            <img src="${primeraImagen}"
-                style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px;">
-
-            <h3 style="margin: 8px 0 6px; font-size: 18px;">
-                ${item.nombre}
-            </h3>
-
-            <p style="margin: 0; font-size: 14px;">
-                ${item.descripcion}
-            </p>
-
-            <p style="margin-top: 8px; font-size: 13px; color:#444;">
-                📍 ${item.ubicacion || item.direccion}
-            </p>
-
-            ${item.telefono ? `
-                <p style="margin-top: 6px; font-size: 14px;">
-                    📞 <a href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">
-                        WhatsApp
-                    </a>
-                </p>
-            ` : ""}
-        </div>
+        <b>${item.nombre}</b><br>
+        <small>${item.descripcion || item.direccion}</small><br>
+        <small><b>Tel:</b> ${item.telefono || ""}</small>
+        ${imagenesHTML}
     `;
 }
 
-// ========================= CARGAR DATOS ============================
-Promise.all([
-    fetch("data/bienes.json").then(r => r.json()),
-    fetch("data/servicios.json").then(r => r.json()),
-    fetch("data/categorias.json").then(r => r.json())
-]).then(([bienes, servicios, categorias]) => {
+// =========================
+// MOSTRAR MARCADORES
+// =========================
+async function cargarDatos() {
+    const bienes = await cargarJSON("data/bienes.json");
+    const servicios = await cargarJSON("data/servicios.json");
 
-    // ==== Colocar leyenda ====
-    const lista = document.getElementById("lista-leyenda");
-    lista.innerHTML = "";
+    // ===== BIENES =====
+    bienes.forEach(item => {
+        const icono = crearIcono(item.icono);
 
-    for (const tipo in categorias) {
-        for (const sub in categorias[tipo]) {
-            const icono = categorias[tipo][sub].icono;
-            lista.innerHTML += `
-                <li>
-                    <img src="data/${icono}">
-                    ${sub}
-                </li>
-            `;
-        }
-    }
-
-    // ==== Colocar marcadores ====
-    [...bienes, ...servicios].forEach(item => {
-        const marker = L.marker(
-            [parseFloat(item.latitud), parseFloat(item.longitud)],
-            { icon: getIcon(item.icono) }
-        );
-
-        marker.bindPopup(crearPopup(item));
-        marker.addTo(map);
+        L.marker([item.latitud, item.longitud], { icon: icono })
+            .addTo(map)
+            .bindPopup(crearPopup(item));
     });
-});
 
-// ========================= PANEL LEYENDA ============================
-const panel = document.getElementById("leyenda-panel");
-const boton = document.getElementById("btn-leyenda");
+    // ===== SERVICIOS =====
+    servicios.forEach(item => {
+        const icono = crearIcono(item.icono);
 
-boton.addEventListener("click", () => {
-    if (panel.style.right === "0px") {
-        panel.style.right = "-260px";
-    } else {
-        panel.style.right = "0px";
-    }
-});
+        L.marker([item.latitud, item.longitud], { icon: icono })
+            .addTo(map)
+            .bindPopup(crearPopup(item));
+    });
+
+    cargarLeyenda();
+}
+
+// =========================
+// LEYENDA
+// =========================
+async function cargarLeyenda() {
+    const categorias = await cargarJSON("data/categorias.json");
+    const contenedor = document.getElementById("lista-leyenda");
+
+    contenedor.innerHTML = "";
+
+    Object.keys(categorias.bienes).forEach(cat => {
+        const icono = categorias.bienes[cat].icono;
+        contenedor.innerHTML += `
+            <li class="leyenda-item">
+                <img src="data/${icono}" class="leyenda-icon">
+                <span>${cat}</span>
+            </li>
+        `;
+    });
+
+    Object.keys(categorias.servicios).forEach(cat => {
+        const icono = categorias.servicios[cat].icono;
+        contenedor.innerHTML += `
+            <li class="leyenda-item">
+                <img src="data/${icono}" class="leyenda-icon">
+                <span>${cat}</span>
+            </li>
+        `;
+    });
+}
+
+// =========================
+// BOTÓN PARA MOSTRAR/OCULTAR
+// =========================
+document.getElementById("btn-leyenda").onclick = () => {
+    document.getElementById("leyenda-panel").classList.toggle("visible");
+};
+
+// =========================
+// INICIAR TODO
+// =========================
+cargarDatos();
