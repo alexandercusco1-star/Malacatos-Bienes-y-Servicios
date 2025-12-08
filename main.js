@@ -15,29 +15,60 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // ===============================
 
 function crearPopup(item) {
+    
     const primeraImagen = item.imagenes && item.imagenes.length > 0
         ? `data/${item.imagenes[0]}`
         : "data/no-image.jpg";
 
+    // Estilo dorado para negocios premium
+    const bordePremium = item.premium
+        ? "3px solid gold"
+        : "1px solid #ccc";
+
+    const tituloPremium = item.premium
+        ? "color:#d4a017; font-weight:bold;"
+        : "color:#2e7d32;";
+
+    const fondoPremium = item.premium
+        ? "background: #fff8dc;"
+        : "background: #ffffff;";
+
+    const sombraPremium = item.premium
+        ? "box-shadow: 0 0 10px gold;"
+        : "box-shadow: 0 0 6px rgba(0,0,0,0.2);";
+
     return `
         <div style="
-            width: 180px;
+            width: 220px;
+            padding: 10px;
+            border-radius: 10px;
+            border: ${bordePremium};
+            ${fondoPremium}
+            ${sombraPremium}
             font-family: sans-serif;
         ">
             <img src="${primeraImagen}" 
-                 style="width: 100%; height: 100px; object-fit: cover; border-radius: 6px;">
+                style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px;">
 
-            <h3 style="margin: 6px 0 4px; font-size: 17px; color:#2e7d32;">
+            <h3 style="margin: 8px 0 4px; font-size: 18px; ${tituloPremium}">
                 ${item.nombre}
             </h3>
 
-            <p style="margin: 0; font-size: 13px; color:#444;">
+            <p style="margin: 0; font-size: 14px; color:#444;">
                 ${item.descripcion}
             </p>
 
-            <p style="margin: 6px 0 0; font-size: 12px; color:#777;">
+            <p style="margin-top: 8px; font-size: 13px; color:#666;">
                 📍 ${item.ubicacion || item.direccion || "Malacatos"}
             </p>
+
+            ${item.telefono ? `
+                <p style="margin-top: 6px; font-size: 14px;">
+                    📞 <a href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">
+                        WhatsApp
+                    </a>
+                </p>
+            ` : ""}
         </div>
     `;
 }
