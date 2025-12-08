@@ -1,27 +1,27 @@
 {
   "bienes": {
-    "Parque":       { "icono": "icon-casa.jpg" },
-    "Iglesia":      { "icono": "icon-iglesia.jpg" },
-    "Mirador":      { "icono": "icon-montana.jpg" },
-    "Canchas":      { "icono": "icon-cancha.jpg" },
-    "Terrenos":     { "icono": "icon-terreno.jpg" },
-    "Áreas Verdes": { "icono": "icon-arbol.jpg" }
+    "Parque":       { "icono": "icon-casa.jpeg" },
+    "Iglesia":      { "icono": "icon-iglesia.jpeg" },
+    "Mirador":      { "icono": "icon-montana.jpeg" },
+    "Canchas":      { "icono": "icon-cancha.jpeg" },
+    "Terrenos":     { "icono": "icon-terreno.jpeg" },
+    "Áreas Verdes": { "icono": "icon-arbol.jpeg" }
   },
   "servicios": {
-    "Peluquería":   { "icono": "icon-tijeras.jpg" },
-    "Mecánica":     { "icono": "icon-llave.jpg" },
-    "Motos":        { "icono": "icon-moto.jpg" },
-    "Ferretería":   { "icono": "icon-martillo.jpg" },
-    "Tienda":       { "icono": "icon-carrito.jpg" },
-    "Bazar":        { "icono": "icon-carrito.jpg" },
-    "Papelería":    { "icono": "icon-carrito.jpg" },
-    "Hostal":       { "icono": "icon-cama.jpg" },
-    "Restaurante":  { "icono": "icon-restaurante.jpg" },
-    "Cafetería":    { "icono": "icon-cafe.jpg" },
-    "Panadería":    { "icono": "icon-cafe.jpg" },
-    "Bar":          { "icono": "icon-vaso.jpg" },
-    "Lavado":       { "icono": "icon-auto.jpg" },
-    "Transporte":   { "icono": "icon-taxi.jpg" },
-    "Farmacia":     { "icono": "icon-cruz.jpg" }
+    "Peluquería":   { "icono": "icon-tijeras.jpeg" },
+    "Mecánica":     { "icono": "icon-llave.jpeg" },
+    "Motos":        { "icono": "icon-moto.jpeg" },
+    "Ferretería":   { "icono": "icon-martillo.jpeg" },
+    "Tienda":       { "icono": "icon-carrito.jpeg" },
+    "Bazar":        { "icono": "icon-carrito.jpeg" },
+    "Papelería":    { "icono": "icon-carrito.jpeg" },
+    "Hostal":       { "icono": "icon-cama.jpeg" },
+    "Restaurante":  { "icono": "icon-restaurante.jpeg" },
+    "Cafetería":    { "icono": "icon-cafe.jpeg" },
+    "Panadería":    { "icono": "icon-cafe.jpeg" },
+    "Bar":          { "icono": "icon-vaso.jpeg" },
+    "Lavado":       { "icono": "icon-auto.jpeg" },
+    "Transporte":   { "icono": "icon-taxi.jpeg" },
+    "Farmacia":     { "icono": "icon-cruz.jpeg" }
   }
 }
