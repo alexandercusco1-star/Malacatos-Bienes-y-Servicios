@@ -1,112 +1,122 @@
-// =========================
-// MAIN.JS – CONTROL GENERAL
-// =========================
+// main.js - Leaflet map, markers from data/*.json, icons loaded from data/*.jpg
 
-// Variables globales
-let mapa;
-let marcadores = [];
-let panelAbierto = null;
+let map;
+let openPopup = null;
+let markerLayerGroup;
 
-// Iniciar el mapa y cargar datos
-function iniciarMapa() {
-    cargarJSON("data/categorias.json", categorias => {
-        cargarJSON("data/bienes.json", bienes => {
-            cargarJSON("data/servicios.json", servicios => {
-                inicializarMapa(bienes, servicios, categorias);
-            });
-        });
-    });
+function imgPath(name) {
+  if (!name) return "";
+  return "data/" + encodeURIComponent(name);
 }
 
-// Cargar archivo JSON
-function cargarJSON(url, callback) {
-    fetch(url)
-        .then(r => r.json())
-        .then(callback)
-        .catch(() => console.error("Error cargando: " + url));
+async function init() {
+  // inicializar mapa Leaflet
+  map = L.map('map', { zoomControl: true }).setView([-4.2190, -79.2575], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  markerLayerGroup = L.layerGroup().addTo(map);
+
+  // cargar datos
+  const [categorias, bienes, servicios] = await Promise.all([
+    fetch('data/categorias.json').then(r => r.json()).catch(()=>({})),
+    fetch('data/bienes.json').then(r => r.json()).catch(()=>([])),
+    fetch('data/servicios.json').then(r => r.json()).catch(()=>([]))
+  ]);
+
+  // agregar marcadores
+  addMarkersFromList(bienes, categorias);
+  addMarkersFromList(servicios, categorias);
+
+  // cerrar popup al mover/alejar mapa
+  map.on('movestart', () => {
+    if (openPopup) {
+      map.closePopup(openPopup);
+      openPopup = null;
+    }
+  });
+
+  // cerrar popup al click en mapa (si quieres)
+  map.on('click', () => {
+    if (openPopup) {
+      map.closePopup(openPopup);
+      openPopup = null;
+    }
+  });
 }
 
-// Inicializar Google Maps con íconos personalizados
-function inicializarMapa(bienes, servicios, categorias) {
-
-    // Crear el mapa
-    mapa = new google.maps.Map(document.getElementById("mapa-google"), {
-        center: { lat: -4.2186, lng: -79.2570 },
-        zoom: 15
-    });
-
-    // Crear marcadores de bienes
-    bienes.forEach(b => {
-        crearMarcador(b, categorias[b.tipo].icono);
-    });
-
-    // Crear marcadores de servicios
-    servicios.forEach(s => {
-        crearMarcador(s, categorias[s.tipo].icono);
-    });
+function createIcon(iconFile) {
+  // si no existe iconFile, devolver divIcon con marcador por defecto
+  if (!iconFile) {
+    return L.divIcon({ html: '📍', className: 'emoji-icon', iconSize: [28,28] });
+  }
+  return L.icon({
+    iconUrl: imgPath(iconFile),
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -36]
+  });
 }
 
-// Crear marcador con ícono
-function crearMarcador(item, icono) {
+function addMarkersFromList(list, categorias) {
+  if (!Array.isArray(list)) return;
+  list.forEach(item => {
+    // soporta nombres lat/long con strings
+    const lat = parseFloat(item.lat || item.latitud || item.latitude || item.latitud);
+    const lng = parseFloat(item.lng || item.longitud || item.longitude || item.longitud);
 
-    const marker = new google.maps.Marker({
-        position: {
-            lat: parseFloat(item.latitud),
-            lng: parseFloat(item.longitud)
-        },
-        map: mapa,
-        icon: {
-            url: "data/" + icono,
-            scaledSize: new google.maps.Size(42, 42)
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    // icono desde categorias (por categoría) o desde el propio item.icono
+    let iconFile = null;
+    if (item.icono) iconFile = item.icono;
+    // buscar por categoria dentro de categorias.json si existe estructura
+    try {
+      if (categorias) {
+        // categorias puede tener estructura { "bienes": { "Parque": {"icono": "icon-casa.jpg"} }, "servicios": {...} }
+        const tipoGroup = item.tipo || (item.tipo === undefined ? "servicios" : item.tipo);
+        if (categorias[tipoGroup] && categorias[tipoGroup][item.categoria] && categorias[tipoGroup][item.categoria].icono) {
+          iconFile = categorias[tipoGroup][item.categoria].icono;
         }
-    });
+      }
+    } catch (e) { /* ignore */ }
 
-    // Click → Mostramos panel
-    marker.addListener("click", () => {
-        mostrarPanel(item);
-    });
+    const marker = L.marker([lat, lng], { icon: createIcon(iconFile) }).addTo(markerLayerGroup);
 
-    marcadores.push(marker);
-}
+    // popup con texto + hasta 3 fotos
+    const fotos = Array.isArray(item.imagenes) ? item.imagenes.slice(0,3) : [];
+    const fotosHtml = fotos.map(f => `<img src="${imgPath(f)}" class="popup-img" />`).join('');
+    const direccion = item.direccion || item.ubicacion || "";
 
-// Mostrar panel con fotos
-function mostrarPanel(item) {
-
-    // si otro panel está abierto → lo cerramos
-    if (panelAbierto) {
-        panelAbierto.remove();
-        panelAbierto = null;
-    }
-
-    // Crear panel
-    const panel = document.createElement("div");
-    panel.className = "panel-info";
-
-    let htmlFotos = "";
-    if (item.imagenes && item.imagenes.length > 0) {
-        htmlFotos = item.imagenes.map(img =>
-            `<img src="data/${img}" class="foto-info">`
-        ).join("");
-    }
-
-    panel.innerHTML = `
-        <h3>${item.nombre}</h3>
-        <p>${item.descripcion || ""}</p>
-        <p><strong>Dirección:</strong> ${item.direccion || item.ubicacion || "No especificado"}</p>
-        ${htmlFotos}
+    const html = `
+      <div style="min-width:220px">
+        <h3 style="margin:0 0 6px 0">${item.nombre || ""}</h3>
+        <div style="font-size:13px; margin-bottom:6px">${item.descripcion || ""}</div>
+        ${direccion ? `<div style="font-size:13px"><strong>Dirección:</strong> ${direccion}</div>` : ""}
+        ${item.telefono ? `<div style="font-size:13px"><strong>Tel:</strong> ${item.telefono}</div>` : ""}
+        <div style="display:flex; gap:6px; margin-top:8px">${fotosHtml}</div>
+      </div>
     `;
 
-    document.body.appendChild(panel);
-    panelAbierto = panel;
-
-    // Se cierra automáticamente al mover el mapa
-    mapa.addListener("dragstart", () => {
-        if (panelAbierto) {
-            panelAbierto.remove();
-            panelAbierto = null;
-        }
+    marker.on('click', () => {
+      // cerrar popup abierto
+      if (openPopup) {
+        map.closePopup(openPopup);
+        openPopup = null;
+      }
+      const popup = L.popup({ maxWidth: 360 })
+        .setLatLng([lat, lng])
+        .setContent(html)
+        .openOn(map);
+      openPopup = popup;
+      // centrar un poco y hacer zoom suave
+      map.setView([lat, lng], 15, { animate: true });
     });
+  });
 }
 
-// Iniciar cuando cargue la página
-window.onload = iniciarMapa;
+// iniciar al cargar la página
+document.addEventListener('DOMContentLoaded', init);
