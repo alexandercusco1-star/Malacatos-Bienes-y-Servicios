@@ -12,4 +12,18 @@
       "foto1.jpg"
     ]
   }
+  
+  {
+    "nombre": "Iglesia",
+    "tipo": "bienes",
+    "categoria": "Parque",
+    "descripcion": "Espacio público de Malacatos.",
+    "ubicacion": "Centro de Malacatos",
+    "latitud": "-4.219167",
+    "longitud": "-79.258334",
+    "icono": "icon-casa.png",
+    "imagenes": [
+      "foto2.jpg"
+    ]
+  }
 ]
