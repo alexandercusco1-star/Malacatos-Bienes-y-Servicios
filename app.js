@@ -1,30 +1,42 @@
-// ========================
-// APP.JS – Listas visuales
-// ========================
+// app.js - carga listas desde /data y dibuja tarjetas simples
 
-// Función para crear tarjetas
-function createCard(item) {
-    return `
-        <div class="card">
-            <h3>${item.nombre}</h3>
-            <p>${item.descripcion}</p>
-            <p><strong>Ubicación:</strong> ${item.direccion || item.ubicacion}</p>
-        </div>
-    `;
+async function fetchJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error("Error cargando " + path);
+  return await r.json();
 }
 
-// Cargar lista de lugares (bienes)
-fetch("data/bienes.json")
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("lista-lugares").innerHTML =
-            data.map(createCard).join("");
-    });
+async function cargarListas() {
+  try {
+    const [bienes, servicios] = await Promise.all([
+      fetchJSON("data/bienes.json"),
+      fetchJSON("data/servicios.json")
+    ]);
 
-// Cargar lista de servicios
-fetch("data/servicios.json")
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("lista-servicios").innerHTML =
-            data.map(createCard).join("");
-    });
+    const contB = document.getElementById("lista-lugares");
+    contB.innerHTML = bienes.map(item => {
+      return `
+        <div class="card">
+          <h3>${item.nombre}</h3>
+          <p>${item.descripcion || ""}</p>
+          <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion || ""}</p>
+        </div>`;
+    }).join("");
+
+    const contS = document.getElementById("lista-servicios");
+    contS.innerHTML = servicios.map(item => {
+      return `
+        <div class="card">
+          <h3>${item.nombre}</h3>
+          <p>${item.descripcion || ""}</p>
+          <p><strong>Dirección:</strong> ${item.direccion || item.ubicacion || ""}</p>
+          <p><strong>Tel:</strong> ${item.telefono || ""}</p>
+        </div>`;
+    }).join("");
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", cargarListas);
