@@ -1,0 +1,102 @@
+/* ===== Estilos principales (versión premium + leyenda oculta) ===== */
+
+:root{
+  --verde-primario: #2e7d32;
+  --verde-oscuro: #1b5e20;
+  --fondo: #f6f7f5;
+  --card-bg: #ffffff;
+  --muted: #6b6b6b;
+  --accent: #8fd19e;
+  --radius: 12px;
+  --shadow-sm: 0 2px 6px rgba(16,24,40,0.06);
+  --shadow-md: 0 8px 30px rgba(16,24,40,0.12);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--fondo);
+  color: #121212;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.45;
+  font-size:15px;
+}
+
+/* Header */
+header{
+  background: linear-gradient(180deg, var(--verde-primario), var(--verde-oscuro));
+  color:white;
+  padding:18px 20px;
+  position:relative;
+  box-shadow: var(--shadow-sm);
+}
+.header-inner{ max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:18px; }
+.header-left{ flex:1; display:flex; align-items:center; gap:12px; }
+.brand-title{ font-family: "Playfair Display", serif; font-weight:600; font-size:20px; color:white; }
+.brand-sub{ font-size:12px; opacity:0.9; margin-top:2px }
+.header-nav{ display:flex; gap:14px; align-items:center }
+.header-nav a{ color: rgba(255,255,255,0.95); text-decoration:none; font-weight:600; font-size:13px; padding:6px 10px; border-radius:8px; transition: background .18s, transform .12s; }
+.header-nav a:hover{ background: rgba(255,255,255,0.08); transform:translateY(-2px) }
+
+/* Logo fijo */
+.logo-personal{
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  opacity: 0.98;
+  z-index: 99999;
+  pointer-events: none;
+  border-radius:6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* Main + sections */
+main{ max-width:1100px; margin:18px auto; padding:0 16px 40px 16px; }
+section{ background: var(--card-bg); border-radius: var(--radius); padding:16px; margin-bottom:16px; box-shadow: var(--shadow-sm); transition: box-shadow .18s, transform .12s; }
+section:hover{ box-shadow: var(--shadow-md) }
+section h2{ margin:0 0 12px 0; font-family: "Playfair Display", serif; font-weight:600; color: var(--verde-oscuro); font-size:18px; }
+
+/* Mapa */
+.map-container, #map { width:100%; height:400px; border-radius: 10px; overflow:hidden; box-shadow: 0 6px 20px rgba(8,15,20,0.06); border: 1px solid rgba(20,20,20,0.03); }
+
+/* Cards */
+#lista-lugares, #lista-servicios{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
+.card{ background: linear-gradient(180deg, #ffffff, #fbfffb); border-radius:10px; padding:14px; display:flex; gap:12px; align-items:flex-start; box-shadow: 0 6px 18px rgba(20,30,20,0.04); border: 1px solid rgba(20,20,20,0.03); }
+.card-thumb{ width:92px; height:72px; flex:0 0 92px; border-radius:8px; overflow:hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.card-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.card-body{ flex:1 }
+.card h3{ margin:0 0 6px 0; font-size:15px; color:#12221a }
+.card p{ margin:0; color:var(--muted); font-size:13px }
+
+/* Popup images */
+.popup-img { width:96px; height:64px; object-fit:cover; border-radius:6px; border: 1px solid rgba(0,0,0,0.06); }
+
+/* ===== Leyenda oculta (side-drawer) ===== */
+#trigger-area { position: fixed; top: 0; right: 0; width: 40px; height: 100vh; z-index: 9998; }
+#leyenda {
+  position: fixed;
+  top: 50%;
+  right: -160px;
+  transform: translateY(-50%);
+  width: 150px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px;
+  border-radius: 12px 0 0 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+  transition: right 0.35s cubic-bezier(.2,.8,.2,1);
+  z-index: 9999;
+  font-size: 13px;
+}
+#trigger-area:hover + #leyenda, #leyenda:hover { right: 0; }
+#leyenda h4 { margin: 0 0 8px 0; text-align:center; font-size:14px; color:#1b5e20; }
+.leyenda-item{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.leyenda-icon{ width:20px; height:20px; object-fit:contain; border-radius:4px; }
+
+/* Responsive */
+@media (max-width:720px){
+  .map-container, #map { height:320px; }
+  .logo-personal{ width:26px; top:8px; right:8px }
+}
