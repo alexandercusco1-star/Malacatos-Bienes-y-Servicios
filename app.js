@@ -1,33 +1,30 @@
-// Carga de datos desde /data/
+// ========================
+// APP.JS – Listas visuales
+// ========================
 
-async function cargarJSON(ruta) {
-    const respuesta = await fetch(ruta);
-    return await respuesta.json();
-}
-
-// Crear tarjetas
+// Función para crear tarjetas
 function createCard(item) {
     return `
         <div class="card">
             <h3>${item.nombre}</h3>
             <p>${item.descripcion}</p>
-            <p><strong>Ubicación:</strong> ${item.ubicacion}</p>
+            <p><strong>Ubicación:</strong> ${item.direccion || item.ubicacion}</p>
         </div>
     `;
 }
 
-// Mostrar datos
-async function cargarLugares() {
-    const lugares = await cargarJSON("data/bienes.json");
-    document.getElementById("lista-lugares").innerHTML =
-        lugares.map(createCard).join("");
-}
+// Cargar lista de lugares (bienes)
+fetch("data/bienes.json")
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("lista-lugares").innerHTML =
+            data.map(createCard).join("");
+    });
 
-async function cargarServicios() {
-    const servicios = await cargarJSON("data/servicios.json");
-    document.getElementById("lista-servicios").innerHTML =
-        servicios.map(createCard).join("");
-}
-
-// Exportar
-window.DataApp = { cargarLugares, cargarServicios };
+// Cargar lista de servicios
+fetch("data/servicios.json")
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("lista-servicios").innerHTML =
+            data.map(createCard).join("");
+    });
