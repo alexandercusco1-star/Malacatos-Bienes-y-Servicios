@@ -1,55 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Malacatos - Bienes y Servicios</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malacatos - Mapa y Servicios</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <!-- LOGO -->
-  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
+    <!-- LOGO PERSONAL -->
+    <img src="data/mi-logo.png" class="logo-personal">
 
-  <!-- HEADER -->
-  <header>
-    <h1>Malacatos – Lugares y Servicios</h1>
-  </header>
+    <header>
+        <h1>Malacatos – Lugares & Servicios</h1>
+    </header>
 
-  <!-- LEYENDA (SIDE DRAWER) -->
-  <div id="trigger-area"></div>
-  <div id="leyenda">
-    <h4>Leyenda</h4>
-    <div id="leyenda-items"></div>
-  </div>
+    <!-- MAPA -->
+    <div id="map"></div>
 
-  <main>
+    <!-- PANEL DE LEYENDA (Oculto a la derecha) -->
+    <div id="leyenda-panel">
+        <h3>Leyenda</h3>
+        <ul id="lista-leyenda"></ul>
+    </div>
 
-    <section id="mapa">
-      <h2>Mapa Interactivo</h2>
-      <div id="map"></div>
-    </section>
+    <!-- BOTÓN PARA ABRIR LEYENDA -->
+    <div id="btn-leyenda">☰</div>
 
-    <section id="lugares">
-      <h2>Lugares Turísticos</h2>
-      <div id="lista-lugares"></div>
-    </section>
-
-    <section id="servicios">
-      <h2>Servicios</h2>
-      <div id="lista-servicios"></div>
-    </section>
-
-  </main>
-
-  <script src="main.js"></script>
-  <script src="app.js"></script>
-
+    <script src="app.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
