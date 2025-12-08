@@ -1,6 +1,10 @@
 {
-    "peluqueria": {
-        "nombre": "Peluquerías",
-        "icono": "data/iconos/tijera.png"
-    }
+  "bienes": {
+    "nombre": "Bienes",
+    "icono": "icon-casa.png"
+  },
+  "servicios": {
+    "nombre": "Servicios",
+    "icono": "icon-tijera.png"
+  }
 }
