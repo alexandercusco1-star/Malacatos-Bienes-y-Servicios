@@ -1,53 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Malacatos - Bienes y Servicios</title>
-<!-- Tipografías: Inter para texto + Playfair Display para títulos (elegante) -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Estilos del proyecto -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Malacatos - Bienes y Servicios</title>
 
-  <!-- Leaflet (gratis) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Tipografías premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Leaflet mapas -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <!-- Logo personal (fijo) -->
-  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
+    <!-- Logo personal fijo -->
+    <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
 
-  <header>
-    <h1>Malacatos – Lugares Turísticos y Servicios</h1>
-    <nav>
-      <ul>
-        <li><a href="#mapa">Mapa</a></li>
-        <li><a href="#lugares">Lugares</a></li>
-        <li><a href="#servicios">Servicios</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- ENCABEZADO -->
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <div>
+                    <div class="brand-title">Malacatos</div>
+                    <div class="brand-sub">Lugares Turísticos & Servicios</div>
+                </div>
+            </div>
 
-  <main>
-    <section id="mapa">
-      <h2>Mapa Interactivo</h2>
-      <div id="map" class="map-container"></div>
-    </section>
+            <nav class="header-nav">
+                <a href="#mapa">Mapa</a>
+                <a href="#lugares">Lugares</a>
+                <a href="#servicios">Servicios</a>
+            </nav>
+        </div>
+    </header>
 
-    <section id="lugares">
-      <h2>Lugares</h2>
-      <div id="lista-lugares"></div>
-    </section>
+    <!-- CONTENIDO -->
+    <main>
 
-    <section id="servicios">
-      <h2>Servicios</h2>
-      <div id="lista-servicios"></div>
-    </section>
-  </main>
+        <!-- MAPA -->
+        <section id="mapa">
+            <h2>Mapa de Bienes y Servicios</h2>
+            <div id="map"></div>
+        </section>
 
-  <!-- Código de la app (reemplazar con los archivos que te envío) -->
-  <script src="app.js"></script>
-  <script src="main.js"></script>
+        <!-- LISTA DE LUGARES -->
+        <section id="lugares">
+            <h2>Lugares Turísticos</h2>
+            <div id="lista-lugares"></div>
+        </section>
+
+        <!-- LISTA DE SERVICIOS -->
+        <section id="servicios">
+            <h2>Servicios</h2>
+            <div id="lista-servicios"></div>
+        </section>
+    </main>
+
+    <!-- LEYENDA FLOTANTE (ICONOS) -->
+    <div class="legend" id="leyenda">
+        <h4>Simbología</h4>
+        <!-- Se llena automáticamente con JS -->
+    </div>
+
+    <!-- ARCHIVOS JS -->
+    <script src="main.js"></script>
+    <script src="app.js"></script>
+
 </body>
 </html>
