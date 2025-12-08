@@ -1,83 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malacatos - Bienes y Servicios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Malacatos - Bienes y Servicios</title>
 
-    <!-- Estilos -->
-    <link rel="stylesheet" href="style.css">
+  <!-- Estilos del proyecto -->
+  <link rel="stylesheet" href="style.css">
 
-    <style>
-        /* Arreglo del espacio en blanco */
-        #mapa-google {
-            margin-bottom: 5px !important;
-            padding-bottom: 0px !important;
-        }
-
-        .panel-info {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            z-index: 9999;
-        }
-
-        .panel-info img {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        }
-    </style>
+  <!-- Leaflet (gratis) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-
 <body>
 
-    <!-- Logo -->
-    <header>
-        <img src="data/mi-logo.png" alt="Logo" style="width:120px; display:block; margin:auto;">
-    </header>
+  <!-- Logo personal (fijo) -->
+  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
 
-    <!-- CONTENEDOR DEL MAPA -->
+  <header>
+    <h1>Malacatos – Lugares Turísticos y Servicios</h1>
+    <nav>
+      <ul>
+        <li><a href="#mapa">Mapa</a></li>
+        <li><a href="#lugares">Lugares</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
     <section id="mapa">
-        <h2 style="text-align:center;">Mapa de Bienes y Servicios</h2>
-
-        <!-- MAPA REAL SIN API -->
-        <div id="mapa-google" style="width:100%; height:350px; border-radius:10px;"></div>
+      <h2>Mapa Interactivo</h2>
+      <div id="map" class="map-container"></div>
     </section>
 
-    <!-- LISTA DE LUGARES -->
-    <section>
-        <h2>Lugares</h2>
-        <div id="lista-lugares"></div>
+    <section id="lugares">
+      <h2>Lugares</h2>
+      <div id="lista-lugares"></div>
     </section>
 
-    <!-- LISTA DE SERVICIOS -->
-    <section>
-        <h2>Servicios</h2>
-        <div id="lista-servicios"></div>
+    <section id="servicios">
+      <h2>Servicios</h2>
+      <div id="lista-servicios"></div>
     </section>
+  </main>
 
-    <!-- Scripts -->
-    <script src="main.js"></script>
-    <script src="app.js"></script>
-
-    <!-- MAPA DE GOOGLE (NO REQUIERE PAGO) -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=iniciarMapa"></script>
-
+  <!-- Código de la app (reemplazar con los archivos que te envío) -->
+  <script src="app.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
