@@ -1,42 +1,30 @@
-// app.js - carga listas desde /data y dibuja tarjetas simples
+// app.js — Generar tarjetas de bienes y servicios
 
-async function fetchJSON(path) {
-  const r = await fetch(path);
-  if (!r.ok) throw new Error("Error cargando " + path);
-  return await r.json();
+async function cargarJSON(ruta) {
+    const res = await fetch(`data/${ruta}`);
+    return res.json();
+}
+
+function cardHTML(item) {
+    return `
+        <div class="card">
+            <h3>${item.nombre}</h3>
+            <p>${item.descripcion}</p>
+            <p><strong>Categoría:</strong> ${item.categoria}</p>
+            <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion}</p>
+        </div>
+    `;
 }
 
 async function cargarListas() {
-  try {
-    const [bienes, servicios] = await Promise.all([
-      fetchJSON("data/bienes.json"),
-      fetchJSON("data/servicios.json")
-    ]);
+    const bienes = await cargarJSON("bienes.json");
+    const servicios = await cargarJSON("servicios.json");
 
-    const contB = document.getElementById("lista-lugares");
-    contB.innerHTML = bienes.map(item => {
-      return `
-        <div class="card">
-          <h3>${item.nombre}</h3>
-          <p>${item.descripcion || ""}</p>
-          <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion || ""}</p>
-        </div>`;
-    }).join("");
+    document.getElementById("lista-lugares").innerHTML =
+        bienes.map(cardHTML).join("");
 
-    const contS = document.getElementById("lista-servicios");
-    contS.innerHTML = servicios.map(item => {
-      return `
-        <div class="card">
-          <h3>${item.nombre}</h3>
-          <p>${item.descripcion || ""}</p>
-          <p><strong>Dirección:</strong> ${item.direccion || item.ubicacion || ""}</p>
-          <p><strong>Tel:</strong> ${item.telefono || ""}</p>
-        </div>`;
-    }).join("");
-
-  } catch (e) {
-    console.error(e);
-  }
+    document.getElementById("lista-servicios").innerHTML =
+        servicios.map(cardHTML).join("");
 }
 
 document.addEventListener("DOMContentLoaded", cargarListas);
