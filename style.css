@@ -84,4 +84,8 @@ nav ul li a:hover {
         flex-direction: column;
         gap: 10px;
     }
+    #mapa {
+    margin-bottom: 5px !important;
+    padding-bottom: 0px !important;
+}
 }
