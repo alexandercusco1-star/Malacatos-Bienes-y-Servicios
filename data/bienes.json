@@ -7,7 +7,7 @@
     "ubicacion": "Centro de Malacatos",
     "latitud": "-4.219167",
     "longitud": "-79.258333",
-    "icono": "icon-casa.jpg",
+    "icono": "icon-casa.jpeg",
     "imagenes": ["b1.jpg"]
   },
   {
@@ -18,7 +18,7 @@
     "ubicacion": "Centro de Malacatos",
     "latitud": "-4.219167",
     "longitud": "-79.258334",
-    "icono": "icon-iglesia.jpg",
+    "icono": "icon-iglesia.jpeg",
     "imagenes": ["b2.jpg"]
   }
 ]
