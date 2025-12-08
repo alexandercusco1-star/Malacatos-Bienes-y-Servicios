@@ -1,72 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Malacatos - Bienes y Servicios</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malacatos - Lugares y Servicios</title>
 
-  <!-- Tipografías -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Tu CSS -->
-  <link rel="stylesheet" href="style.css" />
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
+
 <body>
 
-  <!-- Logo personal fijo -->
-  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
+    <img src="data/mi-logo.png" class="logo-personal">
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
-      <div class="header-left">
-        <div>
-          <div class="brand-title">Malacatos</div>
-          <div class="brand-sub">Lugares Turísticos & Servicios</div>
-        </div>
-      </div>
+    <header>
+        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
+        <nav>
+            <ul>
+                <li><a href="#mapa">Mapa</a></li>
+                <li><a href="#lugares">Lugares</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+            </ul>
+        </nav>
+    </header>
 
-      <nav class="header-nav">
-        <a href="#mapa">Mapa</a>
-        <a href="#lugares">Lugares</a>
-        <a href="#servicios">Servicios</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- trigger area + leyenda (oculta hasta acercar al borde derecho) -->
-  <div id="trigger-area" aria-hidden="true"></div>
-  <div id="leyenda">
-    <h4>Leyenda</h4>
-    <div id="leyenda-items"></div>
-  </div>
-
-  <main>
-    <!-- MAPA: LEAFLET necesita este div -->
     <section id="mapa">
-      <h2>Mapa Interactivo</h2>
-      <div id="map" class="map-container"></div>
+        <h2>Mapa Interactivo</h2>
+        <div id="map"></div>
     </section>
 
-    <!-- LISTAS -->
     <section id="lugares">
-      <h2>Lugares Turísticos</h2>
-      <div id="lista-lugares"></div>
+        <h2>Lugares Turísticos</h2>
+        <div id="lista-lugares"></div>
     </section>
 
     <section id="servicios">
-      <h2>Servicios</h2>
-      <div id="lista-servicios"></div>
+        <h2>Servicios</h2>
+        <div id="lista-servicios"></div>
     </section>
-  </main>
 
-  <!-- Scripts (asegúrate de que main.js y app.js sean los que te pasé) -->
-  <script src="main.js"></script>
-  <script src="app.js"></script>
+    <script src="main.js"></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
