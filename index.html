@@ -2,57 +2,40 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Malacatos - Bienes y Servicios</title>
 
-  <!-- Tipografías -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Tu CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Logo personal fijo -->
+  <!-- LOGO -->
   <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
 
   <!-- HEADER -->
   <header>
-    <div class="header-inner">
-      <div class="header-left">
-        <div>
-          <div class="brand-title">Malacatos</div>
-          <div class="brand-sub">Lugares Turísticos & Servicios</div>
-        </div>
-      </div>
-
-      <nav class="header-nav">
-        <a href="#mapa">Mapa</a>
-        <a href="#lugares">Lugares</a>
-        <a href="#servicios">Servicios</a>
-      </nav>
-    </div>
+    <h1>Malacatos – Lugares y Servicios</h1>
   </header>
 
-  <!-- trigger area + leyenda (oculta hasta acercar al borde derecho) -->
-  <div id="trigger-area" aria-hidden="true"></div>
+  <!-- LEYENDA (SIDE DRAWER) -->
+  <div id="trigger-area"></div>
   <div id="leyenda">
     <h4>Leyenda</h4>
     <div id="leyenda-items"></div>
   </div>
 
   <main>
-    <!-- MAPA: LEAFLET necesita este div -->
+
     <section id="mapa">
       <h2>Mapa Interactivo</h2>
-      <div id="map" class="map-container"></div>
+      <div id="map"></div>
     </section>
 
-    <!-- LISTAS -->
     <section id="lugares">
       <h2>Lugares Turísticos</h2>
       <div id="lista-lugares"></div>
@@ -62,9 +45,9 @@
       <h2>Servicios</h2>
       <div id="lista-servicios"></div>
     </section>
+
   </main>
 
-  <!-- Scripts (asegúrate de que main.js y app.js sean los que te pasé) -->
   <script src="main.js"></script>
   <script src="app.js"></script>
 
