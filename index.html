@@ -3,67 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malacatos – Lugares y Servicios</title>
+  <title>Malacatos</title>
 
   <link rel="stylesheet" href="style.css">
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</head>
 
+</head>
 <body>
 
-<header>
-  <img src="data/mi-logo.png" alt="Logo" class="logo">
-  <div class="titulo">
-    <h1>Malacatos</h1>
-    <h2>Lugares turísticos y servicios</h2>
+  <!-- BUSCADOR -->
+  <div id="search-box">
+    <input id="search-input" type="text" placeholder="Buscar lugar, negocio o servicio">
   </div>
-</header>
 
-<div class="top-controls">
-  <input type="text" id="search-input" placeholder="Buscar lugares o servicios…">
+  <!-- FILTROS -->
   <div id="filters"></div>
-</div>
 
-<!-- Barra de Leyendas (pestaña vertical) -->
-<div id="leyenda-bar">Leyendas</div>
+  <!-- MAPA -->
+  <div id="map"></div>
 
-<!-- Drawer lateral de Leyendas -->
-<div id="leyenda-drawer">
-  <h3>Categorías</h3>
-  <div id="leyenda-items"></div>
-</div>
+  <!-- BANNER -->
+  <section id="banner-area" aria-hidden="true"></section>
 
-<!-- Mapa -->
-<div id="map"></div>
+  <!-- LISTAS -->
+  <section id="listas">
+    <h2>Bienes</h2>
+    <div id="lista-lugares" class="lista"></div>
 
-<!-- Banner inferior -->
-<div id="banner-area" aria-hidden="true"></div>
+    <h2>Servicios</h2>
+    <div id="lista-servicios" class="lista"></div>
+  </section>
 
-<!-- Listas -->
-<section class="listas">
-  <h2 class="sec-title">Bienes</h2>
-  <div id="lista-lugares" class="tarjetas"></div>
+  <!-- LEYENDA -->
+  <div id="leyenda-bar">LEYENDA ⬆</div>
+  <div id="leyenda-drawer">
+    <div id="leyenda-items"></div>
+  </div>
 
-  <h2 class="sec-title">Servicios</h2>
-  <div id="lista-servicios" class="tarjetas"></div>
-</section>
+  <!-- BOTTOM PANEL -->
+  <div id="bottom-panel">
+    <button id="bp-close">✕</button>
+    <div id="bp-content"></div>
+  </div>
 
-<!-- Bottom Panel (popup inferior) -->
-<div id="bottom-panel" aria-hidden="true">
-  <button id="bp-close">×</button>
-  <div id="bp-content"></div>
-</div>
-<div id="lightbox">
-  <span id="lb-close">✕</span>
-  <span id="lb-prev">❮</span>
-  <img id="lb-img" src="">
-  <span id="lb-next">❯</span>
-</div>
-<script src="main.js"></script>
+  <!-- LIGHTBOX / GALERÍA -->
+  <div id="lightbox">
+    <span id="lb-close">✕</span>
+    <span id="lb-prev">❮</span>
+    <img id="lb-img" src="">
+    <span id="lb-next">❯</span>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
