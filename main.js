@@ -1,106 +1,58 @@
-// main.js — Mapa + iconos + lectura de JSON
+let mapa = L.map("map").setView([-4.21917, -79.25833], 15);
 
-let mapa;
-let capaBienes;
-let capaServicios;
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19
+}).addTo(mapa);
 
-// Crear mapa
-function iniciarMapa() {
-    mapa = L.map("map").setView([-4.2191, -79.2583], 15);
+async function cargarDatos() {
+    let bienes = await fetch("data/bienes.json").then(r => r.json());
+    let servicios = await fetch("data/servicios.json").then(r => r.json());
+    let categorias = await fetch("data/categorias.json").then(r => r.json());
 
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "© OpenStreetMap"
-    }).addTo(mapa);
+    mostrarEnMapa(bienes, "bienes", categorias);
+    mostrarEnMapa(servicios, "servicios", categorias);
 
-    capaBienes = L.layerGroup().addTo(mapa);
-    capaServicios = L.layerGroup().addTo(mapa);
+    mostrarLista(bienes, "lista-lugares");
+    mostrarLista(servicios, "lista-servicios");
 }
 
-// Cargar JSON desde carpeta data
-async function cargarJSON(ruta) {
-    const res = await fetch(`data/${ruta}`);
-    return res.json();
-}
+function mostrarEnMapa(lista, tipo, categorias) {
+    lista.forEach(item => {
 
-// Generar popups
-function crearPopup(item) {
-    let html = `
-        <h3>${item.nombre}</h3>
-        <p>${item.descripcion || ""}</p>
-        <p><strong>Ubicación:</strong> ${item.ubicacion || item.direccion}</p>
-        <p><strong>Categoría:</strong> ${item.categoria}</p>
-    `;
+        let iconoCategoria = categorias[tipo][item.categoria]?.icono || "icono-default.png";
 
-    if (item.telefono) {
-        html += `<p><strong>Teléfono:</strong> ${item.telefono}</p>`;
-    }
+        let icono = L.icon({
+            iconUrl: "data/" + iconoCategoria,
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -28]
+        });
 
-    if (item.imagenes && item.imagenes.length > 0) {
-        html += `<img src="data/${item.imagenes[0]}" class="popup-img">`;
-    }
+        let marker = L.marker([item.latitud, item.longitud], { icono }).addTo(mapa);
 
-    return html;
-}
-
-// Cargar marcadores
-function agregarMarcador(item, icono, capa) {
-    const customIcon = L.icon({
-        iconUrl: `data/${icono}`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-    });
-
-    const marker = L.marker([item.latitud, item.longitud], { icon: customIcon })
-        .bindPopup(crearPopup(item));
-
-    marker.addTo(capa);
-}
-
-// Cargar leyenda
-function cargarLeyenda(categorias) {
-    const cont = document.getElementById("leyenda");
-    cont.innerHTML = "<h4>Simbología</h4>";
-
-    for (const tipo of Object.keys(categorias)) {
-        const grupo = categorias[tipo];
-
-        for (const sub of Object.keys(grupo)) {
-            const icono = grupo[sub].icono;
-
-            cont.innerHTML += `
-                <div class="leyenda-item">
-                    <img src="data/${icono}" class="leyenda-icon">
-                    <span>${sub}</span>
-                </div>
-            `;
-        }
-    }
-}
-
-// Cargar todo
-async function iniciarTodo() {
-    iniciarMapa();
-
-    const bienes = await cargarJSON("bienes.json");
-    const servicios = await cargarJSON("servicios.json");
-    const categorias = await cargarJSON("categorias.json");
-
-    cargarLeyenda(categorias);
-
-    // Bienes en el mapa
-    bienes.forEach(item => {
-        const icono = categorias.bienes[item.categoria]?.icono || "icono-default.png";
-        agregarMarcador(item, icono, capaBienes);
-    });
-
-    // Servicios en el mapa
-    servicios.forEach(item => {
-        const icono = categorias.servicios[item.categoria]?.icono || "icono-default.png";
-        agregarMarcador(item, icono, capaServicios);
+        marker.bindPopup(`
+            <b>${item.nombre}</b><br>
+            <small>${item.descripcion}</small>
+        `);
     });
 }
 
-// Iniciar
-document.addEventListener("DOMContentLoaded", iniciarTodo);
+function mostrarLista(lista, destino) {
+    let contenedor = document.getElementById(destino);
+    contenedor.innerHTML = "";
+
+    lista.forEach(item => {
+        let tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta";
+
+        tarjeta.innerHTML = `
+            <img src="data/${item.imagenes[0]}" alt="${item.nombre}">
+            <h3>${item.nombre}</h3>
+            <p>${item.descripcion}</p>
+        `;
+
+        contenedor.appendChild(tarjeta);
+    });
+}
+
+cargarDatos();
