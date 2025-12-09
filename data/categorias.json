@@ -13,8 +13,6 @@
     "Motos":        { "icono": "icon-moto.jpeg" },
     "Ferretería":   { "icono": "icon-martillo.jpeg" },
     "Tienda":       { "icono": "icon-carrito.jpeg" },
-    "Bazar":        { "icono": "icon-carrito.jpeg" },
-    "Papelería":    { "icono": "icon-carrito.jpeg" },
     "Hostal":       { "icono": "icon-cama.jpeg" },
     "Restaurante":  { "icono": "icon-restaurante.jpeg" },
     "Cafetería":    { "icono": "icon-cafe.jpeg" },
