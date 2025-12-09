@@ -1,6 +1,6 @@
-// main.js - versión A corregida (mejora buscador inteligente sin tocar nada más)
+document.addEventListener("DOMContentLoaded", () => {
 
-// MAPA + HELPERS (idéntico a tu versión)
+// main.js - mapa, carga data, buscador, filtros, bottom-panel (popup desde abajo), destacados, banner
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
 
@@ -10,13 +10,12 @@ function iconoDe(ruta, size=36){
   return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
 }
 
-// ESTADO GLOBAL (idéntico)
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = '';
 
-// UI refs (idénticos a tu versión)
+// UI refs
 const searchInput = () => document.getElementById('search-input');
 const filtersBox = () => document.getElementById('filters');
 const listaLugares = () => document.getElementById('lista-lugares');
@@ -29,51 +28,6 @@ const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
 const bpClose = () => document.getElementById('bp-close');
 
-
-// -----------------------
-// BÚSQUEDA: normalizar + sinónimos + expansión
-// -----------------------
-function normalizar(text){
-  if(!text) return '';
-  return String(text)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // quita acentos
-    .replace(/[^\w\s]/g, " ")        // quita signos raros
-    .replace(/\s+/g, " ")            // normaliza espacios
-    .trim();
-}
-
-// Sinónimos/pruebas comunes: puedes ampliar
-const SYNONYMS = {
-  "barberia": ["peluqueria","peluquería","barber","corte","cabello"],
-  "peluqueria": ["barberia","barber","corte"],
-  "mecanica": ["taller","auto","vehiculo","carro"],
-  "iglesia": ["templo","capilla","parroquia"],
-  "restaurante": ["comida","almuerzo","cena","comer"],
-  "parque": ["area verde","jardin","zona verde"]
-};
-
-function expandSearchTokens(query){
-  const n = normalizar(query);
-  if(!n) return [];
-  const tokens = new Set(n.split(" "));
-  // si la frase incluye una palabra clave que tenemos en synonyms, agregar sus sinónimos
-  for(const key in SYNONYMS){
-    if(n.includes(key)){
-      SYNONYMS[key].forEach(s => tokens.add(normalizar(s)));
-    }
-    // también si el usuario tipeó un sinónimo, mapear al key original
-    SYNONYMS[key].forEach(s => {
-      if(n.includes(s)) tokens.add(normalizar(key));
-    });
-  }
-  return Array.from(tokens).filter(Boolean);
-}
-
-// -----------------------
-// INICIO: carga JSON y primer render (idéntico salvo la llamada a renderizarTodo mejorada)
-// -----------------------
 async function iniciar(){
   [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
     cargar('data/bienes.json'),
@@ -87,51 +41,27 @@ async function iniciar(){
   pintarLeyenda();
 }
 
-// clear markers (idéntico)
+// clear markers
 function clearMarkers(){
   markers.forEach(m=>map.removeLayer(m));
   markers = [];
 }
 
-// -----------------------
-// RENDER GENERAL (mejorado buscador)
-// -----------------------
+// render everything considering filters & search
 function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
-
-  // tokens para búsqueda inteligente (si hay texto)
-  const tokens = currentSearch ? expandSearchTokens(currentSearch) : [];
-
-  // filtro principal: si hay tokens, comprobar coincidencias parciales en nombre/categoria/descripcion/direccion/telefono
-  const visibles = combined.filter(item=>{
-    // si hay filtro de subcategoría exacta
-    if(currentFilter && item.categoria !== currentFilter) return false;
-
-    if(tokens.length === 0) return true; // no se busca -> visible
-
-    // construimos un string normalizado con los campos que queremos comparar
-    const hay = normalizar(
-      (item.nombre||'') + ' ' +
-      (item.categoria||'') + ' ' +
-      (item.descripcion||'') + ' ' +
-      (item.direccion||'') + ' ' +
-      (item.telefono||'')
-    );
-
-    // para cada token buscamos si está incluido
-    for(const t of tokens){
-      if(hay.includes(t)) return true;
-    }
-    return false;
+  const visibles = combined.filter(i=>{
+    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
+    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
+    if(currentFilter && i.categoria !== currentFilter) return false;
+    return true;
   });
 
-  // render de listas: dejamos como estaban (mostramos todas las tarjetas en las secciones) para no romper la UX
   renderLista(ALL.bienes, 'lista-lugares');
   renderLista(ALL.servicios, 'lista-servicios');
 
-  // añadimos marcadores solo para los visibles (para que mapa represente la búsqueda)
   visibles.forEach(item=>{
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
@@ -150,24 +80,13 @@ function renderizarTodo(){
     markers.push(marker);
   });
 
-  // si la búsqueda produce **exactamente 1** elemento visible, abrir su panel automáticamente
-  if(currentSearch && visibles.length === 1){
-    const sole = visibles[0];
-    // centrar y abrir panel
-    map.setView([parseFloat(sole.latitud), parseFloat(sole.longitud)], sole.destacado ? 16 : 15, { animate:true });
-    mostrarBottomPanel(sole);
-  }
-
-  // si hay al menos un destacado visible, centramos ligeramente en el primero destacado
   const firstDest = visibles.find(v=>v.destacado);
   if(firstDest){
     map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
   }
 }
 
-// -----------------------
-// renderLista: igual que tenías (no cambiar para preservar UI)
-// -----------------------
+// render lists with "Ver" buttons that open bottom panel
 function renderLista(arr, id){
   const cont = document.getElementById(id);
   if(!cont) return;
@@ -186,7 +105,6 @@ function renderLista(arr, id){
     `;
   }).join('');
 
-  // attach Ver buttons (idéntico)
   cont.querySelectorAll('.ver-btn').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       const nombre = e.currentTarget.dataset.n;
@@ -198,13 +116,12 @@ function renderLista(arr, id){
   });
 }
 
-// -----------------------
-// bottom panel & banner (idénticos a tu versión)
-// -----------------------
+// bottom panel: builds HTML and opens it
 function mostrarBottomPanel(item){
   const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
   const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
   const bannerHtml = item.banner ? `<div style="margin-top:10px"><img src="data/${item.banner}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;"></div>` : '';
+
   const destacadoStyle = item.destacado ? `<div style="float:right;color:gold;font-weight:800;margin-left:8px">DESTACADO</div>` : '';
 
   bpContent().innerHTML = `
@@ -242,11 +159,13 @@ function mostrarBottomPanel(item){
   bottomPanel().setAttribute('aria-hidden','false');
 }
 
+// hide bottom panel
 function ocultarBottomPanel(){
   bottomPanel().classList.remove('open');
   bottomPanel().setAttribute('aria-hidden','true');
 }
 
+// banner area
 function mostrarBannerSiTiene(item){
   const area = bannerArea();
   if(!area) return;
@@ -273,9 +192,7 @@ function mostrarBannerSiTiene(item){
   }
 }
 
-// -----------------------
-// filtros (idéntico)
-// -----------------------
+// generate filters
 function generarFiltros(){
   const container = filtersBox();
   container.innerHTML = '';
@@ -303,42 +220,21 @@ function generarFiltros(){
   });
 }
 
-// -----------------------
-// bind controls (idéntico salvo small fix para leyenda top pos)
-// -----------------------
+// bind UI controls
 function bindControls(){
-  // search
   const inp = searchInput();
-  if(inp){
-    inp.addEventListener('input', (e)=> {
-      currentSearch = e.target.value.trim();
-      renderizarTodo();
-    });
-  }
+  inp.addEventListener('input', (e)=> {
+    currentSearch = e.target.value.trim();
+    renderizarTodo();
+  });
 
-  // leyenda bar toggle
-  const lb = leyendaBar();
-  if(lb){
-    lb.addEventListener('click', ()=>{
-      leyendaDrawer().classList.toggle('open');
-      document.body.classList.toggle('leyenda-open');
-      // arreglito: si la leyenda abre, empujar un poco el logo para no chocarlo (solo visual, no altera archivo)
-      const logo = document.querySelector('.logo-personal');
-      if(logo){
-        if(leyendaDrawer().classList.contains('open')){
-          logo.style.right = '300px';
-        } else {
-          logo.style.right = '12px';
-        }
-      }
-    });
-  }
+  leyendaBar().addEventListener('click', ()=>{
+    leyendaDrawer().classList.toggle('open');
+    document.body.classList.toggle('leyenda-open');
+  });
 
-  // close bottom panel
-  const bpCloseEl = bpClose();
-  if(bpCloseEl) bpCloseEl.addEventListener('click', ocultarBottomPanel);
+  bpClose().addEventListener('click', ocultarBottomPanel);
 
-  // close panel when clicking outside (tap area)
   document.addEventListener('click', (e)=>{
     const bp = bottomPanel();
     if(!bp) return;
@@ -349,9 +245,7 @@ function bindControls(){
   });
 }
 
-// -----------------------
-// pintar leyenda (idéntico)
-// -----------------------
+// legend
 function pintarLeyenda(){
   const caja = leyendaItems();
   if(!caja) return;
@@ -364,5 +258,7 @@ function pintarLeyenda(){
   });
 }
 
-// inicio
+// start
 iniciar();
+
+}); // ← cierre final del DOMContentLoaded
