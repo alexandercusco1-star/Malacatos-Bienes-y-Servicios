@@ -1,32 +1,19 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel, destacados, banner
-
-// Inicializar mapa
+// main.js - mapa, carga data, buscador, filtros, bottom-panel (popup), galería de imágenes
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
 
-// Helpers
-async function cargar(ruta) {
-  const r = await fetch(ruta);
-  return await r.json();
-}
-function iconoDe(ruta, size = 36) {
-  return L.icon({
-    iconUrl: `data/${ruta}`,
-    iconSize: [size, size],
-    iconAnchor: [Math.round(size / 2), size],
-    popupAnchor: [0, -size + 6]
-  });
+// helpers
+async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
+function iconoDe(ruta, size=36){
+  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
 }
 
-// Variables globales
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = '';
 
-// UI Refs
+// UI refs
 const searchInput = () => document.getElementById('search-input');
 const filtersBox = () => document.getElementById('filters');
 const listaLugares = () => document.getElementById('lista-lugares');
@@ -39,8 +26,17 @@ const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
 const bpClose = () => document.getElementById('bp-close');
 
-// Inicio
-async function iniciar() {
+// NUEVO: Referencias del Lightbox
+const lightbox = () => document.getElementById('lightbox');
+const lbImg = () => document.getElementById('lb-img');
+const lbClose = () => document.getElementById('lb-close');
+const lbPrev = () => document.getElementById('lb-prev');
+const lbNext = () => document.getElementById('lb-next');
+
+let lbFotos = [];
+let lbIndex = 0;
+
+async function iniciar(){
   [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
     cargar('data/bienes.json'),
     cargar('data/servicios.json'),
@@ -53,264 +49,189 @@ async function iniciar() {
   pintarLeyenda();
 }
 
-// Limpiar marcadores
-function clearMarkers() {
-  markers.forEach(m => map.removeLayer(m));
+// Clear markers
+function clearMarkers(){
+  markers.forEach(m=>map.removeLayer(m));
   markers = [];
 }
 
-// ===============================
-// 🔥 RENDERIZAR TODO (BUSCADOR FIX)
-// ===============================
-function renderizarTodo() {
+// Render all
+function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
-
-  const visibles = combined.filter(i => {
-    const texto = (
-      (i.nombre || '') + ' ' +
-      (i.categoria || '') + ' ' +
-      (i.descripcion || '') + ' ' +
-      (i.direccion || '')
-    ).toLowerCase();
-
-    // 🔥 BÚSQUEDA FUNCIONANDO
-    if (currentSearch && !texto.includes(currentSearch.toLowerCase())) {
-      return false;
-    }
-
-    // FILTRO DE CATEGORIA
-    if (currentFilter && i.categoria !== currentFilter) {
-      return false;
-    }
-
+  const visibles = combined.filter(i=>{
+    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
+    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
+    if(currentFilter && i.categoria !== currentFilter) return false;
     return true;
   });
 
-  // Render listas
   renderLista(ALL.bienes, 'lista-lugares');
   renderLista(ALL.servicios, 'lista-servicios');
 
-  // Agregar marcadores visibles
-  visibles.forEach(item => {
+  visibles.forEach(item=>{
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
-    if (isNaN(lat) || isNaN(lng)) return;
+    if(Number.isNaN(lat) || Number.isNaN(lng)) return;
 
-    let iconFile =
-      item.icono ||
-      (ALL.categorias[item.tipo] &&
-        ALL.categorias[item.tipo][item.categoria] &&
-        ALL.categorias[item.tipo][item.categoria].icono) ||
-      'icon-default.jpeg';
+    let iconFile = item.icono || (ALL.categorias[item.tipo] && ALL.categorias[item.tipo][item.categoria] && ALL.categorias[item.tipo][item.categoria].icono) || 'icon-default.jpeg';
+    const size = item.destacado ? 52 : 36;
+    const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
 
-    const isDest = !!item.destacado;
-    const size = isDest ? 52 : 36;
-
-    const marker = L.marker([lat, lng], {
-      icon: iconoDe(iconFile, size)
-    }).addTo(map);
-
-    marker.on('click', () => {
-      map.setView([lat, lng], 16, { animate: true });
+    marker.on('click', ()=> {
+      map.setView([lat,lng], item.destacado ? 16 : 15, { animate:true });
       mostrarBottomPanel(item);
     });
 
     markers.push(marker);
   });
 
-  // Auto enfocar un destacado
-  const firstDest = visibles.find(v => v.destacado);
-  if (firstDest) {
+  const firstDest = visibles.find(v=>v.destacado);
+  if(firstDest){
     map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
   }
 }
 
-// ===============================
-// RENDER LISTA
-// ===============================
-function renderLista(arr, id) {
+function renderLista(arr, id){
   const cont = document.getElementById(id);
-  if (!cont) return;
-
-  cont.innerHTML = arr.map(it => {
+  if(!cont) return;
+  cont.innerHTML = arr.map(it=>{
     const destacadoClass = it.destacado ? 'destacado' : '';
     const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
     return `
-      <div class="tarjeta ${destacadoClass}" data-nombre="${it.nombre}">
+      <div class="tarjeta ${destacadoClass}">
         ${img}
-        <h3 style="margin:8px 0 6px;color:var(--azul-mediterraneo);">${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
-        <div style="color:var(--muted);font-size:14px">${it.descripcion || it.direccion || ''}</div>
-        <div style="margin-top:8px;">
-          <button class="ver-btn filter-btn" data-n="${it.nombre}">Ver</button>
-        </div>
+        <h3>${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
+        <p>${it.descripcion || it.direccion || ''}</p>
+        <button class="ver-btn" data-n="${it.nombre}">Ver</button>
       </div>
     `;
   }).join('');
 
-  // Eventos "Ver"
-  cont.querySelectorAll('.ver-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
+  cont.querySelectorAll('.ver-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
       const nombre = e.currentTarget.dataset.n;
       const target = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-      if (!target) return;
+      if(!target) return;
       map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16);
-      mostrarBottomPanel(target);
+      mostrarGaleria(target);  // ← AHORA "Ver" abre la GALERÍA
     });
   });
 }
 
-// ===============================
-// PANEL INFERIOR
-// ===============================
-function mostrarBottomPanel(item) {
-  const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
-  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+', '')}" target="_blank">WhatsApp</a>` : '';
-  const bannerHtml = item.banner ? `<div><img src="data/${item.banner}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;"></div>` : '';
+// -----------------------------
+// NUEVO: GALERÍA LIGHTBOX
+// -----------------------------
+function mostrarGaleria(item){
+  lbFotos = item.imagenes?.map(i => `data/${i}`) || [];
+  lbIndex = 0;
 
-  const destacadoStyle = item.destacado ? `<div style="float:right;color:gold;font-weight:800;margin-left:8px">DESTACADO</div>` : '';
+  if(lbFotos.length === 0) return;
+
+  lbImg().src = lbFotos[lbIndex];
+  lightbox().classList.add("open");
+}
+
+function cambiarFoto(dir){
+  lbIndex += dir;
+  if(lbIndex < 0) lbIndex = lbFotos.length - 1;
+  if(lbIndex >= lbFotos.length) lbIndex = 0;
+  lbImg().src = lbFotos[lbIndex];
+}
+
+// close lightbox
+lbClose()?.addEventListener("click", ()=>{
+  lightbox().classList.remove("open");
+});
+
+// botones prev/next
+lbPrev()?.addEventListener("click", ()=> cambiarFoto(-1));
+lbNext()?.addEventListener("click", ()=> cambiarFoto(1));
+
+// ----------------------------------
+// Bottom panel (solo para info)
+// ----------------------------------
+function mostrarBottomPanel(item){
+  const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
+  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
+  const bannerHtml = item.banner ? `<img src="data/${item.banner}" class="bp-banner">` : '';
 
   bpContent().innerHTML = `
     <div class="bp-top">
-      ${img ? `<img src="${img}" alt="${item.nombre}">` : ''}
+      ${img ? `<img src="${img}" class="bp-img">` : ''}
       <div class="bp-info">
-        <div style="display:flex;align-items:center;gap:8px">
-          <h3>${item.nombre}</h3>
-          ${destacadoStyle}
-        </div>
-        <div style="color:var(--muted);margin-top:6px">${item.descripcion || item.direccion || ''}</div>
-        <div style="margin-top:6px;color:#666;font-size:13px">📍 ${item.ubicacion || item.direccion || ''}</div>
+        <h3>${item.nombre}</h3>
+        <p>${item.descripcion || item.direccion || ''}</p>
+        <p>📍 ${item.ubicacion || item.direccion || ''}</p>
         <div class="bp-actions">
           ${telBtn}
           <button class="btn" id="bp-dir-btn">Cómo llegar</button>
         </div>
       </div>
     </div>
-    ${bannerHtml}
-    ${item.promocion ? `<div style="margin-top:10px;color:#444;font-weight:600">${item.promocion}</div>` : ''}
+    ${bannerHtml || ''}
   `;
 
-  mostrarBannerSiTiene(item);
-
-  setTimeout(() => {
-    const dirBtn = document.getElementById('bp-dir-btn');
-    if (dirBtn) {
-      dirBtn.addEventListener('click', () => {
-        map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 17);
-      });
-    }
-  }, 120);
-
   bottomPanel().classList.add('open');
-  bottomPanel().setAttribute('aria-hidden', 'false');
 }
 
-function ocultarBottomPanel() {
+// close bottom panel
+bpClose()?.addEventListener('click', ()=>{
   bottomPanel().classList.remove('open');
-  bottomPanel().setAttribute('aria-hidden', 'true');
-}
+});
 
-// Banners
-function mostrarBannerSiTiene(item) {
-  const area = bannerArea();
-  if (!area) return;
-
-  if (item.banner) {
-    area.setAttribute('aria-hidden', 'false');
-    area.innerHTML = `
-      <div class="banner-card">
-        <img src="data/${item.banner}">
-        <div class="banner-info">
-          <h3>${item.nombre} ${item.destacado ? '⭐' : ''}</h3>
-          <p>${item.promocion || ''}</p>
-          <div class="banner-actions">
-            ${item.telefono ? `<a class="filter-btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : ''}
-            <button id="banner-pos-btn" class="filter-btn">Ver ubicación</button>
-          </div>
-        </div>
-      </div>
-    `;
-    const btn = document.getElementById('banner-pos-btn');
-    if (btn) btn.addEventListener('click', () => map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 16));
-  } else {
-    area.setAttribute('aria-hidden', 'true');
-    area.innerHTML = '';
-  }
-}
-
-// ===============================
-// FILTROS
-// ===============================
-function generarFiltros() {
+// Filtros + buscador + leyenda
+function generarFiltros(){
   const container = filtersBox();
   container.innerHTML = '';
 
-  const categorias = new Set();
-  Object.keys(ALL.categorias.bienes || {}).forEach(k => categorias.add(k));
-  Object.keys(ALL.categorias.servicios || {}).forEach(k => categorias.add(k));
+  const cats = new Set();
+  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
+  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
 
-  // TODOS
   const btnAll = document.createElement('button');
-  btnAll.textContent = 'Todos';
   btnAll.className = 'filter-btn active';
-  btnAll.addEventListener('click', () => {
-    currentFilter = null;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btnAll.classList.add('active');
-    renderizarTodo();
-  });
+  btnAll.textContent = 'Todos';
+  btnAll.addEventListener('click', ()=>{ currentFilter = null; activar(btnAll); renderizarTodo(); });
   container.appendChild(btnAll);
 
-  // CAT
-  categorias.forEach(cat => {
+  cats.forEach(cat=>{
     const b = document.createElement('button');
     b.className = 'filter-btn';
     b.textContent = cat;
-
-    b.addEventListener('click', () => {
+    b.addEventListener('click', ()=> {
       currentFilter = cat;
-      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
+      activar(b);
       renderizarTodo();
     });
-
     container.appendChild(b);
   });
 }
 
-// ===============================
-// CONTROLES
-// ===============================
-function bindControls() {
-  // Buscador
-  const inp = searchInput();
-  inp.addEventListener('input', e => {
+function activar(btn){
+  document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function bindControls(){
+  searchInput().addEventListener('input', (e)=>{
     currentSearch = e.target.value.trim();
     renderizarTodo();
   });
 
-  // Leyenda
-  leyendaBar().addEventListener('click', () => {
-    leyendaDrawer().classList.toggle('open');
-    document.body.classList.toggle('leyenda-open');
+  leyendaBar().addEventListener('click', ()=>{
+    leyendaDrawer().classList.toggle("open");
   });
-
-  // Cerrar panel inferior
-  bpClose().addEventListener('click', ocultarBottomPanel);
 }
 
-// ===============================
-// LEYENDA
-// ===============================
-function pintarLeyenda() {
+function pintarLeyenda(){
   const caja = leyendaItems();
   caja.innerHTML = '';
-
-  Object.keys(ALL.categorias.bienes || {}).forEach(k => {
+  Object.keys(ALL.categorias.bienes || {}).forEach(k=>{
     caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}"> ${k}</div>`;
   });
-  Object.keys(ALL.categorias.servicios || {}).forEach(k => {
+  Object.keys(ALL.categorias.servicios || {}).forEach(k=>{
     caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}"> ${k}</div>`;
   });
 }
