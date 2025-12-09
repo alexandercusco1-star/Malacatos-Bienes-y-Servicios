@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Malacatos - Lugares y Servicios</title>
 
-  <!-- Tipografías (opcional, mejora visual) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -16,15 +13,13 @@
 </head>
 <body>
 
-  <!-- Logo personal (esquina superior derecha) -->
   <img src="data/mi-logo.png" alt="Logo Malacatos" class="logo-personal">
 
-  <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
       <div>
         <div class="brand-title">Malacatos</div>
-        <div class="brand-sub">Lugares Turísticos & Servicios</div>
+        <div class="brand-sub">Lugares Turísticos &amp; Servicios</div>
       </div>
 
       <nav class="header-nav">
@@ -35,12 +30,20 @@
     </div>
   </header>
 
-  <!-- Mapa -->
   <main class="main">
+    <!-- CONTROLES: buscador + filtros -->
+    <div class="controls">
+      <input id="search-input" type="search" placeholder="Buscar por nombre o categoría (ej. 'Peluquería', 'Lauris')" />
+      <div id="filters" class="filters"></div>
+    </div>
+
     <section id="mapa">
       <h2>Mapa Interactivo</h2>
       <div id="map" class="map-container"></div>
     </section>
+
+    <!-- BANNER: aparece aquí para negocios con banner (Opción B) -->
+    <section id="banner-area" class="banner-area" aria-hidden="true"></section>
 
     <section id="lugares">
       <h2>Lugares Turísticos</h2>
@@ -53,18 +56,15 @@
     </section>
   </main>
 
-  <!-- Leyenda: pequeña barra vertical (22px) con texto vertical "Leyendas" -->
+  <!-- Leyenda: pequeña barra vertical y drawer -->
   <div id="leyenda-bar" aria-hidden="false">
     <div class="leyendas-vertical">LEYENDAS</div>
   </div>
-
-  <!-- Leyenda completa (drawer) -->
   <aside id="leyenda-drawer" aria-hidden="true">
     <div class="leyenda-header">Leyendas</div>
     <div id="leyenda-items" class="leyenda-items"></div>
   </aside>
 
-  <!-- Scripts -->
   <script src="main.js"></script>
   <script src="app.js"></script>
 </body>
