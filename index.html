@@ -1,56 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Malacatos – Lugares Turísticos y Servicios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Malacatos - Lugares & Servicios</title>
 
-    <link rel="stylesheet" href="style.css" />
+  <!-- Tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-    <!-- LOGO PERSONAL -->
-    <img src="data/mi-logo.png" class="logo-personal">
+  <!-- logo (mitad de tamaño) -->
+  <img src="data/mi-logo.png" alt="Logo Malacatos" class="logo-personal">
 
-    <!-- HEADER -->
-    <header>
-        <h1>Malacatos</h1>
-        <h2 class="subtitulo">Lugares Turísticos y Servicios</h2>
-    </header>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <div class="brand-title">Malacatos</div>
+        <div class="brand-sub">Lugares Turísticos &amp; Servicios</div>
+      </div>
+      <nav class="header-nav">
+        <a href="#mapa">Mapa</a>
+        <a href="#lugares">Lugares</a>
+        <a href="#servicios">Servicios</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- BUSCADOR -->
-    <section id="buscador-section">
-        <input id="buscador" type="text" placeholder="Buscar lugar, servicio o categoría...">
-    </section>
+  <!-- CONTROLES: buscador + filtros -->
+  <main class="main">
+    <div class="controls">
+      <input id="search-input" type="search" placeholder="Buscar por nombre, categoría o descripción (ej. 'Peluquería', 'Lauris')" autocomplete="off" />
+      <div id="filters" class="filters filtros-contenedor" aria-label="Filtros"></div>
+    </div>
 
-    <!-- CONTENEDOR PRINCIPAL DEL MAPA -->
+    <!-- MAPA -->
     <section id="mapa">
-        <div id="map"></div>
-
-        <!-- LEYENDA -->
-        <div id="leyenda-box">
-            <!-- Aquí se llena desde JS -->
-        </div>
+      <h2>Mapa Interactivo</h2>
+      <div id="map" class="map-container"></div>
     </section>
 
-    <!-- LISTA DE BIENES -->
-    <section id="bienes">
-        <h3>Bienes</h3>
-        <div id="lista-bienes"></div>
+    <!-- BANNER (opción B) - aparecerá cuando un item tenga banner -->
+    <section id="banner-area" class="banner-area" aria-hidden="true"></section>
+
+    <!-- LISTAS -->
+    <section id="lugares">
+      <h2>Lugares Turísticos</h2>
+      <div id="lista-lugares"></div>
     </section>
 
-    <!-- LISTA DE SERVICIOS -->
     <section id="servicios">
-        <h3>Servicios</h3>
-        <div id="lista-servicios"></div>
+      <h2>Servicios</h2>
+      <div id="lista-servicios"></div>
     </section>
+  </main>
 
-    <!-- SCRIPTS -->
-    <script src="main.js"></script>
+  <!-- Leyenda: barra vertical (22px) y drawer -->
+  <div id="leyenda-bar" aria-hidden="false">
+    <div class="leyendas-vertical">LEYENDAS</div>
+  </div>
+  <aside id="leyenda-drawer" aria-hidden="true">
+    <div class="leyenda-header">Leyendas</div>
+    <div id="leyenda-items" class="leyenda-items"></div>
+  </aside>
+
+  <!-- BOTTOM PANEL (popup estilo Google Maps: sube desde abajo) -->
+  <div id="bottom-panel" class="bottom-panel" aria-hidden="true">
+    <div id="bp-close" class="bp-close">✕</div>
+    <div id="bp-content" class="bp-content"></div>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
