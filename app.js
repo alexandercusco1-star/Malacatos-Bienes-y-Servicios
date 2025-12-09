@@ -1,2 +1,1 @@
-// app.js - complementos ligeros
-console.log('app.js cargado - buscador y filtros disponibles.');
+console.log("app.js activo");
