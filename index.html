@@ -1,49 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malacatos - Lugares y Servicios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Malacatos - Lugares y Servicios</title>
 
-    <link rel="stylesheet" href="style.css">
+  <!-- Tipografías (opcional, mejora visual) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-    <img src="data/mi-logo.png" class="logo-personal">
+  <!-- Logo personal (esquina superior derecha) -->
+  <img src="data/mi-logo.png" alt="Logo Malacatos" class="logo-personal">
 
-    <header>
-        <h1>Malacatos – Lugares Turísticos y Servicios</h1>
-        <nav>
-            <ul>
-                <li><a href="#mapa">Mapa</a></li>
-                <li><a href="#lugares">Lugares</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-            </ul>
-        </nav>
-    </header>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <div class="brand-title">Malacatos</div>
+        <div class="brand-sub">Lugares Turísticos & Servicios</div>
+      </div>
 
+      <nav class="header-nav">
+        <a href="#mapa">Mapa</a>
+        <a href="#lugares">Lugares</a>
+        <a href="#servicios">Servicios</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mapa -->
+  <main class="main">
     <section id="mapa">
-        <h2>Mapa Interactivo</h2>
-        <div id="map"></div>
+      <h2>Mapa Interactivo</h2>
+      <div id="map" class="map-container"></div>
     </section>
 
     <section id="lugares">
-        <h2>Lugares Turísticos</h2>
-        <div id="lista-lugares"></div>
+      <h2>Lugares Turísticos</h2>
+      <div id="lista-lugares"></div>
     </section>
 
     <section id="servicios">
-        <h2>Servicios</h2>
-        <div id="lista-servicios"></div>
+      <h2>Servicios</h2>
+      <div id="lista-servicios"></div>
     </section>
+  </main>
 
-    <script src="main.js"></script>
-    <script src="app.js"></script>
+  <!-- Leyenda: pequeña barra vertical (22px) con texto vertical "Leyendas" -->
+  <div id="leyenda-bar" aria-hidden="false">
+    <div class="leyendas-vertical">LEYENDAS</div>
+  </div>
 
+  <!-- Leyenda completa (drawer) -->
+  <aside id="leyenda-drawer" aria-hidden="true">
+    <div class="leyenda-header">Leyendas</div>
+    <div id="leyenda-items" class="leyenda-items"></div>
+  </aside>
+
+  <!-- Scripts -->
+  <script src="main.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
