@@ -1,12 +1,12 @@
 :root{
-  --verde-principal: #2e7d32;      /* Verde esmeralda oscuro (tu verde) */
-  --azul-mediterraneo: #007f8f;   /* Azul mediterráneo */
-  --blanco-hueso: #f3f2ee;        /* Blanco hueso */
+  --verde-principal: #2e7d32;
+  --azul-mediterraneo: #007f8f;
+  --blanco-hueso: #f3f2ee;
   --radius: 12px;
   --shadow: 0 6px 20px rgba(0,0,0,0.08);
-  --text: #1f2d2a;
+  --leyenda-width: 22px;
   --muted: #6b6b6b;
-  --leyenda-width: 22px;          /* la barrita vertical que pediste */
+  --text: #1f2d2a;
 }
 
 *{box-sizing:border-box}
@@ -25,7 +25,6 @@ body{
   color: white;
   padding: 18px 12px;
   box-shadow: var(--shadow);
-  position: relative;
 }
 .header-inner{
   max-width:1100px;
@@ -35,35 +34,15 @@ body{
   align-items:center;
   gap:12px;
 }
-.brand-title{
-  font-weight:600;
-  font-size:20px;
-  letter-spacing:0.4px;
-}
-.brand-sub{
-  font-size:13px;
-  opacity:0.9;
-  margin-top:4px;
-}
+.brand-title{ font-weight:600; font-size:20px; }
+.brand-sub{ font-size:13px; opacity:0.9; margin-top:4px; }
 
-/* Nav */
-.header-nav a{
-  color: rgba(255,255,255,0.95);
-  text-decoration:none;
-  padding:6px 10px;
-  border-radius:8px;
-  font-weight:600;
-}
-.header-nav a:hover{
-  background: rgba(255,255,255,0.08);
-}
-
-/* Logo personal (mitad de tamaño comparado con el original grande) */
+/* Logo personal */
 .logo-personal{
   position: fixed;
   top: 12px;
   right: 12px;
-  width: 44px; /* tamaño reducido / mitad de la versión grande */
+  width: 44px;
   z-index: 99999;
   pointer-events: none;
   border-radius:6px;
@@ -77,32 +56,56 @@ body{
   padding:0 16px 40px;
 }
 
-/* Map */
-.map-container{
-  width:100%;
-  height:460px;
-  border-radius: var(--radius);
-  overflow:hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(0,0,0,0.04);
+/* Controls: buscador + filtros */
+.controls{ display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+#search-input{
+  flex:1;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.08);
+  font-size:15px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04) inset;
 }
+.filters{ display:flex; gap:8px; flex-wrap:wrap; }
+.filter-btn{
+  padding:8px 10px;
+  border-radius:8px;
+  background:white;
+  border:1px solid rgba(0,0,0,0.06);
+  font-weight:600;
+  cursor:pointer;
+}
+.filter-btn.active{ background: var(--azul-mediterraneo); color:white; border-color: var(--azul-mediterraneo); }
 
-/* Sections lists */
-#lista-lugares, #lista-servicios{
-  display:grid;
-  gap:14px;
-  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+/* Map */
+.map-container{ width:100%; height:460px; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,0.04); }
+
+/* Banner area (parte B): aparece debajo del mapa, encima de las listas */
+.banner-area{
   margin-top:12px;
+  transition: all .28s;
 }
-.tarjeta{
+.banner-card{
+  display:flex;
+  gap:12px;
+  align-items:center;
   background: white;
   border-radius:10px;
   padding:12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--azul-mediterraneo);
 }
+.banner-card img{ width:220px; height:120px; object-fit:cover; border-radius:8px; }
+.banner-info h3{ margin:0; color:var(--verde-principal); }
+.banner-info p{ margin:6px 0 0; color:var(--muted); }
+.banner-actions{ margin-top:8px; display:flex; gap:8px; }
+
+/* Sections lists */
+#lista-lugares, #lista-servicios{ display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); margin-top:12px; }
+.tarjeta{ background:white; border-radius:10px; padding:12px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
 .tarjeta img{ width:100%; height:140px; object-fit:cover; border-radius:8px; }
 
-/* Leyenda bar (vertical pequeña, 22px) */
+/* Leyenda bar (vertical) */
 #leyenda-bar{
   position: fixed;
   top: calc(50% - 70px);
@@ -127,11 +130,11 @@ body{
   letter-spacing:2px;
 }
 
-/* Leyenda drawer (oculta por defecto) */
+/* Leyenda drawer */
 #leyenda-drawer{
   position: fixed;
   top: calc(50% - 160px);
-  right: -280px; /* oculto inicialmente */
+  right: -280px;
   width: 260px;
   height: 320px;
   background: rgba(255,255,255,0.98);
@@ -142,22 +145,16 @@ body{
   transition: right .28s cubic-bezier(.2,.8,.2,1);
   overflow:auto;
 }
-#leyenda-drawer.open{ right: 22px; } /* deja 22px del borde */
-
-/* Leyenda content */
+#leyenda-drawer.open{ right: 22px; }
 .leyenda-header{ font-weight:700; color:var(--verde-principal); margin-bottom:8px; text-align:center; }
 .leyenda-items{ display:flex; flex-direction:column; gap:8px; padding-right:6px; }
 .leyenda-item{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
 .leyenda-item img{ width:28px; height:28px; object-fit:cover; border-radius:6px; }
 
-/* Leyenda hover small (soporta touch & mouse) */
-#leyenda-bar:active ~ #leyenda-drawer,
-#leyenda-bar:focus ~ #leyenda-drawer { right:22px; }
-
 /* Responsive */
 @media (max-width:720px){
   .map-container{ height:360px; }
-  #leyenda-drawer{ width:220px; height:300px; top:40%; }
-  #leyenda-bar{ height:120px; top:40%; }
   .logo-personal{ width:40px; top:8px; right:8px; }
+  .banner-card{ flex-direction:column; align-items:flex-start; }
+  .banner-card img{ width:100%; height:160px; }
 }
