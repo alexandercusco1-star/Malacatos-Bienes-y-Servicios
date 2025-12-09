@@ -1,280 +1,250 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel (popup desde abajo), destacados, banner
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
+// =========================
+//   CONFIG
+// =========================
 
-// helpers
-async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
-function iconoDe(ruta, size=36){
-  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
-}
+let map = L.map('map').setView([-4.219167, -79.258333], 15);
 
-let ALL = { bienes: [], servicios: [], categorias: {} };
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
 let markers = [];
 let currentFilter = null;
-let currentSearch = '';
+let currentSearch = "";
 
-// UI refs
-const searchInput = () => document.getElementById('search-input');
-const filtersBox = () => document.getElementById('filters');
-const listaLugares = () => document.getElementById('lista-lugares');
-const listaServicios = () => document.getElementById('lista-servicios');
-const bannerArea = () => document.getElementById('banner-area');
-const leyendaDrawer = () => document.getElementById('leyenda-drawer');
-const leyendaItems = () => document.getElementById('leyenda-items');
-const leyendaBar = () => document.getElementById('leyenda-bar');
-const bottomPanel = () => document.getElementById('bottom-panel');
-const bpContent = () => document.getElementById('bp-content');
-const bpClose = () => document.getElementById('bp-close');
+const ALL = {
+  bienes: [],
+  servicios: [],
+  categorias: {}
+};
 
-async function iniciar(){
-  [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
-    cargar('data/bienes.json'),
-    cargar('data/servicios.json'),
-    cargar('data/categorias.json')
-  ]);
+// =========================
+//   UTILIDADES
+// =========================
 
-  generarFiltros();
-  bindControls();
-  renderizarTodo();
-  pintarLeyenda();
+function iconoDe(filename, size = 36) {
+  return L.icon({
+    iconUrl: "data/" + filename,
+    iconSize: [size, size],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -36]
+  });
 }
 
-// clear markers
+function normalizar(text){
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+// Sinónimos de búsqueda
+const synonyms = {
+  "barberia": ["peluqueria","peluquería","barber","corte","cabello"],
+  "peluqueria": ["barberia","barber","corte"],
+  "mecanica": ["taller","auto","vehiculo","carro"],
+  "iglesia": ["templo","capilla","parroquia"],
+  "restaurante": ["comida","almuerzo","cenar","venta comida"],
+  "parque": ["area verde","jardin","zona verde"]
+};
+
+function expandirBusqueda(txt){
+  const n = normalizar(txt);
+  let palabras = [n];
+  for(const k in synonyms){
+    if(n.includes(k)) palabras = palabras.concat(synonyms[k]);
+  }
+  return palabras;
+}
+
 function clearMarkers(){
-  markers.forEach(m=>map.removeLayer(m));
+  markers.forEach(m => map.removeLayer(m));
   markers = [];
 }
 
-// render everything considering filters & search
+// =========================
+//   CARGA DE ARCHIVOS JSON
+// =========================
+
+async function cargarJSON(path){
+  const res = await fetch(path);
+  return await res.json();
+}
+
+async function iniciar(){
+  ALL.bienes = await cargarJSON("data/bienes.json");
+  ALL.servicios = await cargarJSON("data/servicios.json");
+  ALL.categorias = await cargarJSON("data/categorias.json");
+
+  renderCategorias();
+  renderizarTodo();
+}
+
+iniciar();
+
+// =========================
+//   RENDER CATEGORÍAS ARRIBA
+// =========================
+
+function renderCategorias(){
+  const contCat = document.getElementById("categorias-container");
+  contCat.innerHTML = "";
+
+  const cats = ALL.categorias;
+
+  for(const tipo in cats){
+    for(const subcat in cats[tipo]){
+      const info = cats[tipo][subcat];
+
+      const div = document.createElement("div");
+      div.className = "categoria-tag";
+      div.dataset.categoria = subcat;
+      div.innerHTML = `
+        <img src="data/${info.icono}" class="cat-icon">
+        <span>${subcat}</span>
+      `;
+      div.onclick = ()=>{
+        if(currentFilter === subcat){
+          currentFilter = null;
+          div.classList.remove("active");
+        } else {
+          document.querySelectorAll(".categoria-tag").forEach(t=>t.classList.remove("active"));
+          currentFilter = subcat;
+          div.classList.add("active");
+        }
+        renderizarTodo();
+      };
+      contCat.appendChild(div);
+    }
+  }
+}
+
+// =========================
+//   BUSCADOR
+// =========================
+
+document.getElementById("searchInput").addEventListener("input", e=>{
+  currentSearch = e.target.value.trim();
+  renderizarTodo();
+});
+
+// =========================
+//   RENDER PRINCIPAL
+// =========================
+
 function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
-  const visibles = combined.filter(i=>{
-    // search
-    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
-    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    // filter by category/subcategory
-    if(currentFilter && i.categoria !== currentFilter) return false;
+  const palabras = currentSearch ? expandirBusqueda(currentSearch) : [];
+
+  const visibles = combined.filter(item=>{
+    const texto = normalizar(
+      (item.nombre || '') + ' ' +
+      (item.categoria || '') + ' ' +
+      (item.descripcion || '')
+    );
+
+    // FILTRO POR BUSCADOR
+    if(currentSearch){
+      let ok = false;
+      for(const p of palabras){
+        if(texto.includes(p)){
+          ok = true;
+          break;
+        }
+      }
+      if(!ok) return false;
+    }
+
+    // FILTRO POR CATEGORÍA
+    if(currentFilter && item.categoria !== currentFilter) return false;
+
     return true;
   });
 
-  // render lists (we'll show all items but visually mark destacados; optionally you can show only visibles)
-  renderLista(ALL.bienes, 'lista-lugares');
-  renderLista(ALL.servicios, 'lista-servicios');
+  // Render de listas inferiores
+  renderLista(ALL.bienes, "lista-lugares");
+  renderLista(ALL.servicios, "lista-servicios");
 
-  // add markers for visibles
+  // Colocar marcadores
   visibles.forEach(item=>{
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
     if(Number.isNaN(lat) || Number.isNaN(lng)) return;
 
-    // choose icon (preference item.icono then category icon)
-    let iconFile = item.icono || (ALL.categorias[item.tipo] && ALL.categorias[item.tipo][item.categoria] && ALL.categorias[item.tipo][item.categoria].icono) || 'icon-default.jpeg';
-    const isDest = !!item.destacado;
-    const size = isDest ? 52 : 36;
+    let iconFile = item.icono ||
+      (ALL.categorias[item.tipo] &&
+        ALL.categorias[item.tipo][item.categoria] &&
+        ALL.categorias[item.tipo][item.categoria].icono)
+      || "icon-default.jpeg";
+
+    const size = item.destacado ? 52 : 36;
+
     const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
 
-    marker.on('click', ()=> {
-      // center a little
-      map.setView([lat,lng], isDest ? 16 : 15, { animate:true });
-      // show bottom panel with item data
+    marker.on("click", ()=>{
+      map.setView([lat,lng], 16, {animate:true});
       mostrarBottomPanel(item);
     });
 
     markers.push(marker);
   });
-
-  // auto center to first highlighted if exists and visible
-  const firstDest = visibles.find(v=>v.destacado);
-  if(firstDest){
-    map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
-  }
 }
 
-// render lists with "Ver" buttons that open bottom panel
-function renderLista(arr, id){
+// =========================
+//   TARJETAS ABAJO (bienes y servicios)
+// =========================
+
+function renderLista(lista, id){
   const cont = document.getElementById(id);
-  if(!cont) return;
-  cont.innerHTML = arr.map(it=>{
-    const destacadoClass = it.destacado ? 'destacado' : '';
-    const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
-    return `
-      <div class="tarjeta ${destacadoClass}" data-nombre="${it.nombre}" data-categoria="${it.categoria}" data-tipo="${it.tipo}">
-        ${img}
-        <h3 style="margin:8px 0 6px;color:var(--azul-mediterraneo);">${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
-        <div style="color:var(--muted);font-size:14px">${it.descripcion || it.direccion || ''}</div>
-        <div style="margin-top:8px;">
-          <button class="ver-btn filter-btn" data-n="${it.nombre}">Ver</button>
-        </div>
+  cont.innerHTML = "";
+
+  lista.forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "item-card";
+
+    div.innerHTML = `
+      <img src="data/${item.imagenes[0]}" class="item-img">
+      <div class="item-info">
+        <h4>${item.nombre}</h4>
+        <p>${item.categoria}</p>
+        <button class="ver-btn">Ver</button>
       </div>
     `;
-  }).join('');
 
-  // attach Ver buttons
-  cont.querySelectorAll('.ver-btn').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const nombre = e.currentTarget.dataset.n;
-      const target = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-      if(!target) return;
-      // center map and open bottom panel
-      map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16, { animate:true });
-      mostrarBottomPanel(target);
-    });
+    div.querySelector(".ver-btn").onclick = ()=>{
+      map.setView([item.latitud, item.longitud], 16, {animate:true});
+      mostrarBottomPanel(item);
+    };
+
+    cont.appendChild(div);
   });
 }
 
-// bottom panel: builds HTML and opens it
+// =========================
+//   POPUP INFERIOR (BOTTOM PANEL)
+// =========================
+
 function mostrarBottomPanel(item){
-  // fill content
-  const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
-  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
-  const bannerHtml = item.banner ? `<div style="margin-top:10px"><img src="data/${item.banner}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;"></div>` : '';
+  const panel = document.getElementById("bottom-panel");
+  const contenido = document.getElementById("bottom-content");
 
-  const destacadoStyle = item.destacado ? `<div style="float:right;color:gold;font-weight:800;margin-left:8px">DESTACADO</div>` : '';
-
-  bpContent().innerHTML = `
-    <div class="bp-top">
-      ${img ? `<img src="${img}" alt="${item.nombre}">` : ''}
-      <div class="bp-info">
-        <div style="display:flex;align-items:center;gap:8px">
-          <h3>${item.nombre}</h3>
-          ${destacadoStyle}
-        </div>
-        <div style="color:var(--muted);margin-top:6px">${item.descripcion || item.direccion || ''}</div>
-        <div style="margin-top:6px;color:#666;font-size:13px">📍 ${item.ubicacion || item.direccion || ''}</div>
-        <div class="bp-actions">
-          ${telBtn}
-          <button class="btn" id="bp-dir-btn">Cómo llegar</button>
-        </div>
-      </div>
+  contenido.innerHTML = `
+    <h2>${item.nombre}</h2>
+    <p><b>Categoría:</b> ${item.categoria}</p>
+    <p>${item.descripcion || ''}</p>
+    ${item.telefono ? `<p><b>Teléfono:</b> ${item.telefono}</p>` : ""}
+    ${item.direccion ? `<p><b>Dirección:</b> ${item.direccion}</p>` : ""}
+    <div class="popup-imgs">
+      ${item.imagenes.map(img=>`<img src="data/${img}" class="popup-img">`).join("")}
     </div>
-    ${bannerHtml}
-    ${item.promocion ? `<div style="margin-top:10px;color:#444;font-weight:600">${item.promocion}</div>` : ''}
   `;
 
-  // show banner area if the item has banner (Opción B also kept)
-  mostrarBannerSiTiene(item);
-
-  // hook up "Cómo llegar" button
-  setTimeout(()=>{
-    const dirBtn = document.getElementById('bp-dir-btn');
-    if(dirBtn){
-      dirBtn.addEventListener('click', ()=> {
-        map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 17);
-      });
-    }
-  }, 120);
-
-  // open panel
-  bottomPanel().classList.add('open');
-  bottomPanel().setAttribute('aria-hidden','false');
+  panel.classList.add("show");
 }
 
-// hide bottom panel
-function ocultarBottomPanel(){
-  bottomPanel().classList.remove('open');
-  bottomPanel().setAttribute('aria-hidden','true');
-}
-
-// banner area (debajo del mapa)
-function mostrarBannerSiTiene(item){
-  const area = bannerArea();
-  if(!area) return;
-  if(item.banner){
-    area.setAttribute('aria-hidden','false');
-    area.innerHTML = `
-      <div class="banner-card">
-        <img src="data/${item.banner}" alt="${item.nombre} banner">
-        <div class="banner-info">
-          <h3>${item.nombre} ${item.destacado ? '⭐' : ''}</h3>
-          <p>${item.promocion || ''}</p>
-          <div class="banner-actions">
-            ${item.telefono ? `<a class="filter-btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : ''}
-            <button id="banner-pos-btn" class="filter-btn">Ver ubicación</button>
-          </div>
-        </div>
-      </div>
-    `;
-    const btn = document.getElementById('banner-pos-btn');
-    if(btn) btn.addEventListener('click', ()=> map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 16));
-  } else {
-    area.setAttribute('aria-hidden','true');
-    area.innerHTML = '';
-  }
-}
-
-// generate filters from categories JSON
-function generarFiltros(){
-  const container = filtersBox();
-  container.innerHTML = '';
-  const cats = new Set();
-  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
-  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
-
-  // "Todos" button
-  const btnAll = document.createElement('button');
-  btnAll.className = 'filter-btn active';
-  btnAll.textContent = 'Todos';
-  btnAll.addEventListener('click', ()=>{ currentFilter = null; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btnAll.classList.add('active'); renderizarTodo(); });
-  container.appendChild(btnAll);
-
-  cats.forEach(cat=>{
-    const b = document.createElement('button');
-    b.className = 'filter-btn';
-    b.textContent = cat;
-    b.addEventListener('click', ()=> {
-      document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      currentFilter = cat;
-      renderizarTodo();
-    });
-    container.appendChild(b);
-  });
-}
-
-// bind controls: search, leyenda bar, bottom panel close
-function bindControls(){
-  // search
-  const inp = searchInput();
-  inp.addEventListener('input', (e)=> {
-    currentSearch = e.target.value.trim();
-    renderizarTodo();
-  });
-
-  // leyenda bar toggle
-  leyendaBar().addEventListener('click', ()=>{
-    leyendaDrawer().classList.toggle('open');
-    document.body.classList.toggle('leyenda-open');
-  });
-
-  // close bottom panel
-  bpClose().addEventListener('click', ocultarBottomPanel);
-  // close panel when clicking outside (tap area)
-  document.addEventListener('click', (e)=>{
-    const bp = bottomPanel();
-    if(!bp) return;
-    if(bp.contains(e.target)) return;
-    // do not close if clicking controls or legend bar/drawer
-    const ls = ['filters','search-input','leyenda-bar','leyenda-drawer'];
-    if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
-    // close
-    ocultarBottomPanel();
-  });
-}
-
-// paint legend from categories
-function pintarLeyenda(){
-  const caja = leyendaItems();
-  if(!caja) return;
-  caja.innerHTML = '';
-  Object.keys(ALL.categorias.bienes || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}" alt="${k}">${k}</div>`;
-  });
-  Object.keys(ALL.categorias.servicios || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}" alt="${k}">${k}</div>`;
-  });
-}
-
-// start
-iniciar();
+document.getElementById("bottom-close").onclick = ()=>{
+  document.getElementById("bottom-panel").classList.remove("show");
+};
