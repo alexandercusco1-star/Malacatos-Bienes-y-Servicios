@@ -1,15 +1,19 @@
 [
-  {
-    "nombre": "Barbería Lauris",
-    "tipo": "servicios",
-    "categoria": "Peluquería",
-    "descripcion": "Cortes, maquillaje y diseño de uñas.",
-    "direccion": "Pío Montúfar y Lauro Coronel, esquina",
-    "telefono": "+593959007258",
-    "latitud": -4.218500,
-    "longitud": -79.255200,
-    "icono": "icon-tijeras.jpeg",
-    "imagenes": ["s1.jpg"]
+    {
+  "nombre": "Barbería Lauris",
+  "tipo": "servicios",
+  "categoria": "Peluquería",
+  "descripcion": "Cortes, maquillaje y diseño de uñas.",
+  "direccion": "Pío Montúfar y Lauro Coronel, esquina",
+  "telefono": "+593959007258",
+  "latitud": "-4.218500",
+  "longitud": "-79.255200",
+  "icono": "icon-tijeras.jpeg",
+  "imagenes": ["s1.jpg"],
+  
+  "destacado": true,  
+  "banner": "banner-lauris.jpg",  
+  "promocion": "15% de descuento en cortes para nuevos clientes. Atención profesional."
   },
   {
     "nombre": "Mecánica Juan",
