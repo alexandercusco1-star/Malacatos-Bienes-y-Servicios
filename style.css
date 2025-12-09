@@ -1,7 +1,7 @@
 :root{
-  --verde-principal: #2e7d32;
-  --azul-mediterraneo: #007f8f;
-  --blanco-hueso: #f3f2ee;
+  --verde-principal: #2e7d32;      /* verde esmeralda oscuro */
+  --azul-mediterraneo: #007f8f;   /* azul mediterráneo */
+  --blanco-hueso: #f3f2ee;        /* blanco hueso */
   --radius: 12px;
   --shadow: 0 6px 20px rgba(0,0,0,0.08);
   --leyenda-width: 22px;
@@ -9,6 +9,7 @@
   --text: #1f2d2a;
 }
 
+/* RESET & base */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -19,11 +20,13 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
+/* HEADER */
 .site-header{
   background: linear-gradient(90deg, var(--verde-principal), var(--azul-mediterraneo));
   color: white;
   padding: 18px 12px;
   box-shadow: var(--shadow);
+  position: relative;
 }
 .header-inner{
   max-width:1100px;
@@ -33,26 +36,29 @@ body{
   align-items:center;
   gap:12px;
 }
-.brand-title{ font-weight:600; font-size:20px; }
-.brand-sub{ font-size:13px; opacity:0.9; margin-top:4px; }
+.brand-title{ font-weight:700; font-size:20px; letter-spacing:0.2px; }
+.brand-sub{ font-size:13px; opacity:0.95; margin-top:4px; }
 
+/* logo */
 .logo-personal{
   position: fixed;
   top: 12px;
   right: 12px;
-  width: 44px;
+  width: 44px; /* mitad del grande */
   z-index: 99999;
   pointer-events: none;
   border-radius:6px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
+/* layout principal */
 .main{
   max-width:1100px;
   margin:18px auto;
   padding:0 16px 40px;
 }
 
+/* controles: buscador + filtros */
 .controls{ display:flex; gap:12px; align-items:center; margin-bottom:12px; }
 #search-input{
   flex:1;
@@ -62,7 +68,7 @@ body{
   font-size:15px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.04) inset;
 }
-.filters{ display:flex; gap:8px; flex-wrap:wrap; }
+.filters{ display:flex; gap:8px; flex-wrap:nowrap; overflow:hidden; }
 .filter-btn{
   padding:8px 10px;
   border-radius:8px;
@@ -70,11 +76,18 @@ body{
   border:1px solid rgba(0,0,0,0.06);
   font-weight:600;
   cursor:pointer;
+  white-space:nowrap;
 }
 .filter-btn.active{ background: var(--azul-mediterraneo); color:white; border-color: var(--azul-mediterraneo); }
 
+/* make filtros horizontally scrollable on small screens */
+.filtros-contenedor{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; }
+.filtros-contenedor::-webkit-scrollbar{ display:none; }
+
+/* MAP */
 .map-container{ width:100%; height:460px; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,0.04); }
 
+/* banner (opción B, debajo del mapa) */
 .banner-area{ margin-top:12px; transition: all .28s; }
 .banner-card{
   display:flex;
@@ -89,12 +102,23 @@ body{
 .banner-card img{ width:220px; height:120px; object-fit:cover; border-radius:8px; }
 .banner-info h3{ margin:0; color:var(--verde-principal); }
 .banner-info p{ margin:6px 0 0; color:var(--muted); }
-.banner-actions{ margin-top:8px; display:flex; gap:8px; }
 
-#lista-lugares, #lista-servicios{ display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); margin-top:12px; }
-.tarjeta{ background:white; border-radius:10px; padding:12px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+/* listas */
+#lista-lugares, #lista-servicios{
+  display:grid;
+  gap:14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  margin-top:12px;
+}
+.tarjeta{
+  background:white;
+  border-radius:10px;
+  padding:12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
 .tarjeta img{ width:100%; height:140px; object-fit:cover; border-radius:8px; }
 
+/* leyenda bar (vertical) */
 #leyenda-bar{
   position: fixed;
   top: calc(50% - 70px);
@@ -110,15 +134,9 @@ body{
   cursor: pointer;
   box-shadow: -4px 0 12px rgba(0,0,0,0.12);
 }
-.leyendas-vertical{
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  color: white;
-  font-weight:700;
-  font-size:12px;
-  letter-spacing:2px;
-}
+.leyendas-vertical{ writing-mode: vertical-rl; transform: rotate(180deg); color: white; font-weight:700; font-size:12px; letter-spacing:2px; }
 
+/* leyenda drawer */
 #leyenda-drawer{
   position: fixed;
   top: calc(50% - 160px);
@@ -139,9 +157,60 @@ body{
 .leyenda-item{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
 .leyenda-item img{ width:28px; height:28px; object-fit:cover; border-radius:6px; }
 
+/* BOTTOM PANEL (popup estilo Google Maps) */
+.bottom-panel{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(110%);
+  transition: transform .32s cubic-bezier(.22,.9,.2,1);
+  z-index: 100000;
+  pointer-events: none;
+}
+.bottom-panel.open{ transform: translateY(0%); pointer-events: auto; }
+.bp-close{
+  position:absolute; right:14px; top:8px; font-size:18px; cursor:pointer; z-index:100001;
+  background: white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.12);
+}
+.bp-content{
+  margin:0 auto;
+  width:100%;
+  max-width:1100px;
+  background:white;
+  border-radius:12px 12px 0 0;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+  padding:18px;
+}
+
+/* contenido del panel */
+.bp-top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+.bp-top img{ width:160px; height:110px; object-fit:cover; border-radius:8px; }
+.bp-info h3{ margin:0; color:var(--verde-principal); }
+.bp-info p{ margin:6px 0 0; color:var(--muted); font-size:14px; }
+.bp-actions{ margin-top:10px; display:flex; gap:8px; }
+.bp-actions .btn{
+  padding:8px 10px; border-radius:8px; background:var(--azul-mediterraneo); color:white; border:none; cursor:pointer; font-weight:700;
+}
+
+/* destacado en lista */
+.tarjeta.destacado{ border: 2px solid gold; box-shadow: 0 10px 30px rgba(212,160,23,0.12); }
+
+/* responsive */
 @media (max-width:720px){
   .map-container{ height:360px; }
   .logo-personal{ width:40px; top:8px; right:8px; }
   .banner-card{ flex-direction:column; align-items:flex-start; }
   .banner-card img{ width:100%; height:160px; }
+  .bp-top{ flex-direction: column; }
+  .bp-top img{ width:100%; height:180px; }
+  .bp-content{ padding:12px; }
+  .bp-close{ right:8px; top:6px; }
 }
+
+/* pequeño ajuste cuando se abre leyenda - deja espacio a la derecha */
+body.leyenda-open { padding-right: 280px; transition: padding-right .28s; }
