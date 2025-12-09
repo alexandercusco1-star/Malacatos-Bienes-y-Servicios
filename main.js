@@ -1,19 +1,32 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel (popup desde abajo), destacados, banner
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
+// main.js - mapa, carga data, buscador, filtros, bottom-panel, destacados, banner
 
-// helpers
-async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
-function iconoDe(ruta, size=36){
-  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
+// Inicializar mapa
+const map = L.map('map').setView([-4.219167, -79.258333], 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(map);
+
+// Helpers
+async function cargar(ruta) {
+  const r = await fetch(ruta);
+  return await r.json();
+}
+function iconoDe(ruta, size = 36) {
+  return L.icon({
+    iconUrl: `data/${ruta}`,
+    iconSize: [size, size],
+    iconAnchor: [Math.round(size / 2), size],
+    popupAnchor: [0, -size + 6]
+  });
 }
 
+// Variables globales
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = '';
 
-// UI refs
+// UI Refs
 const searchInput = () => document.getElementById('search-input');
 const filtersBox = () => document.getElementById('filters');
 const listaLugares = () => document.getElementById('lista-lugares');
@@ -26,7 +39,8 @@ const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
 const bpClose = () => document.getElementById('bp-close');
 
-async function iniciar(){
+// Inicio
+async function iniciar() {
   [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
     cargar('data/bienes.json'),
     cargar('data/servicios.json'),
@@ -39,68 +53,92 @@ async function iniciar(){
   pintarLeyenda();
 }
 
-// clear markers
-function clearMarkers(){
-  markers.forEach(m=>map.removeLayer(m));
+// Limpiar marcadores
+function clearMarkers() {
+  markers.forEach(m => map.removeLayer(m));
   markers = [];
 }
 
-// render everything considering filters & search
-function renderizarTodo(){
+// ===============================
+// 🔥 RENDERIZAR TODO (BUSCADOR FIX)
+// ===============================
+function renderizarTodo() {
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
-  const visibles = combined.filter(i=>{
-    // search
-    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
-    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    // filter by category/subcategory
-    if(currentFilter && i.categoria !== currentFilter) return false;
+
+  const visibles = combined.filter(i => {
+    const texto = (
+      (i.nombre || '') + ' ' +
+      (i.categoria || '') + ' ' +
+      (i.descripcion || '') + ' ' +
+      (i.direccion || '')
+    ).toLowerCase();
+
+    // 🔥 BÚSQUEDA FUNCIONANDO
+    if (currentSearch && !texto.includes(currentSearch.toLowerCase())) {
+      return false;
+    }
+
+    // FILTRO DE CATEGORIA
+    if (currentFilter && i.categoria !== currentFilter) {
+      return false;
+    }
+
     return true;
   });
 
-  // render lists (we'll show all items but visually mark destacados; optionally you can show only visibles)
+  // Render listas
   renderLista(ALL.bienes, 'lista-lugares');
   renderLista(ALL.servicios, 'lista-servicios');
 
-  // add markers for visibles
-  visibles.forEach(item=>{
+  // Agregar marcadores visibles
+  visibles.forEach(item => {
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
-    if(Number.isNaN(lat) || Number.isNaN(lng)) return;
+    if (isNaN(lat) || isNaN(lng)) return;
 
-    // choose icon (preference item.icono then category icon)
-    let iconFile = item.icono || (ALL.categorias[item.tipo] && ALL.categorias[item.tipo][item.categoria] && ALL.categorias[item.tipo][item.categoria].icono) || 'icon-default.jpeg';
+    let iconFile =
+      item.icono ||
+      (ALL.categorias[item.tipo] &&
+        ALL.categorias[item.tipo][item.categoria] &&
+        ALL.categorias[item.tipo][item.categoria].icono) ||
+      'icon-default.jpeg';
+
     const isDest = !!item.destacado;
     const size = isDest ? 52 : 36;
-    const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
 
-    marker.on('click', ()=> {
-      // center a little
-      map.setView([lat,lng], isDest ? 16 : 15, { animate:true });
-      // show bottom panel with item data
+    const marker = L.marker([lat, lng], {
+      icon: iconoDe(iconFile, size)
+    }).addTo(map);
+
+    marker.on('click', () => {
+      map.setView([lat, lng], 16, { animate: true });
       mostrarBottomPanel(item);
     });
 
     markers.push(marker);
   });
 
-  // auto center to first highlighted if exists and visible
-  const firstDest = visibles.find(v=>v.destacado);
-  if(firstDest){
+  // Auto enfocar un destacado
+  const firstDest = visibles.find(v => v.destacado);
+  if (firstDest) {
     map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
   }
 }
 
-// render lists with "Ver" buttons that open bottom panel
-function renderLista(arr, id){
+// ===============================
+// RENDER LISTA
+// ===============================
+function renderLista(arr, id) {
   const cont = document.getElementById(id);
-  if(!cont) return;
-  cont.innerHTML = arr.map(it=>{
+  if (!cont) return;
+
+  cont.innerHTML = arr.map(it => {
     const destacadoClass = it.destacado ? 'destacado' : '';
     const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
     return `
-      <div class="tarjeta ${destacadoClass}" data-nombre="${it.nombre}" data-categoria="${it.categoria}" data-tipo="${it.tipo}">
+      <div class="tarjeta ${destacadoClass}" data-nombre="${it.nombre}">
         ${img}
         <h3 style="margin:8px 0 6px;color:var(--azul-mediterraneo);">${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
         <div style="color:var(--muted);font-size:14px">${it.descripcion || it.direccion || ''}</div>
@@ -111,25 +149,25 @@ function renderLista(arr, id){
     `;
   }).join('');
 
-  // attach Ver buttons
-  cont.querySelectorAll('.ver-btn').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
+  // Eventos "Ver"
+  cont.querySelectorAll('.ver-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
       const nombre = e.currentTarget.dataset.n;
       const target = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-      if(!target) return;
-      // center map and open bottom panel
-      map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16, { animate:true });
+      if (!target) return;
+      map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16);
       mostrarBottomPanel(target);
     });
   });
 }
 
-// bottom panel: builds HTML and opens it
-function mostrarBottomPanel(item){
-  // fill content
+// ===============================
+// PANEL INFERIOR
+// ===============================
+function mostrarBottomPanel(item) {
   const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
-  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
-  const bannerHtml = item.banner ? `<div style="margin-top:10px"><img src="data/${item.banner}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;"></div>` : '';
+  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+', '')}" target="_blank">WhatsApp</a>` : '';
+  const bannerHtml = item.banner ? `<div><img src="data/${item.banner}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;"></div>` : '';
 
   const destacadoStyle = item.destacado ? `<div style="float:right;color:gold;font-weight:800;margin-left:8px">DESTACADO</div>` : '';
 
@@ -153,39 +191,36 @@ function mostrarBottomPanel(item){
     ${item.promocion ? `<div style="margin-top:10px;color:#444;font-weight:600">${item.promocion}</div>` : ''}
   `;
 
-  // show banner area if the item has banner (Opción B also kept)
   mostrarBannerSiTiene(item);
 
-  // hook up "Cómo llegar" button
-  setTimeout(()=>{
+  setTimeout(() => {
     const dirBtn = document.getElementById('bp-dir-btn');
-    if(dirBtn){
-      dirBtn.addEventListener('click', ()=> {
+    if (dirBtn) {
+      dirBtn.addEventListener('click', () => {
         map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 17);
       });
     }
   }, 120);
 
-  // open panel
   bottomPanel().classList.add('open');
-  bottomPanel().setAttribute('aria-hidden','false');
+  bottomPanel().setAttribute('aria-hidden', 'false');
 }
 
-// hide bottom panel
-function ocultarBottomPanel(){
+function ocultarBottomPanel() {
   bottomPanel().classList.remove('open');
-  bottomPanel().setAttribute('aria-hidden','true');
+  bottomPanel().setAttribute('aria-hidden', 'true');
 }
 
-// banner area (debajo del mapa)
-function mostrarBannerSiTiene(item){
+// Banners
+function mostrarBannerSiTiene(item) {
   const area = bannerArea();
-  if(!area) return;
-  if(item.banner){
-    area.setAttribute('aria-hidden','false');
+  if (!area) return;
+
+  if (item.banner) {
+    area.setAttribute('aria-hidden', 'false');
     area.innerHTML = `
       <div class="banner-card">
-        <img src="data/${item.banner}" alt="${item.nombre} banner">
+        <img src="data/${item.banner}">
         <div class="banner-info">
           <h3>${item.nombre} ${item.destacado ? '⭐' : ''}</h3>
           <p>${item.promocion || ''}</p>
@@ -197,84 +232,88 @@ function mostrarBannerSiTiene(item){
       </div>
     `;
     const btn = document.getElementById('banner-pos-btn');
-    if(btn) btn.addEventListener('click', ()=> map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 16));
+    if (btn) btn.addEventListener('click', () => map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 16));
   } else {
-    area.setAttribute('aria-hidden','true');
+    area.setAttribute('aria-hidden', 'true');
     area.innerHTML = '';
   }
 }
 
-// generate filters from categories JSON
-function generarFiltros(){
+// ===============================
+// FILTROS
+// ===============================
+function generarFiltros() {
   const container = filtersBox();
   container.innerHTML = '';
-  const cats = new Set();
-  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
-  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
 
-  // "Todos" button
+  const categorias = new Set();
+  Object.keys(ALL.categorias.bienes || {}).forEach(k => categorias.add(k));
+  Object.keys(ALL.categorias.servicios || {}).forEach(k => categorias.add(k));
+
+  // TODOS
   const btnAll = document.createElement('button');
-  btnAll.className = 'filter-btn active';
   btnAll.textContent = 'Todos';
-  btnAll.addEventListener('click', ()=>{ currentFilter = null; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btnAll.classList.add('active'); renderizarTodo(); });
+  btnAll.className = 'filter-btn active';
+  btnAll.addEventListener('click', () => {
+    currentFilter = null;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btnAll.classList.add('active');
+    renderizarTodo();
+  });
   container.appendChild(btnAll);
 
-  cats.forEach(cat=>{
+  // CAT
+  categorias.forEach(cat => {
     const b = document.createElement('button');
     b.className = 'filter-btn';
     b.textContent = cat;
-    b.addEventListener('click', ()=> {
-      document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
+
+    b.addEventListener('click', () => {
       currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
       renderizarTodo();
     });
+
     container.appendChild(b);
   });
 }
 
-// bind controls: search, leyenda bar, bottom panel close
-function bindControls(){
-  // search
+// ===============================
+// CONTROLES
+// ===============================
+function bindControls() {
+  // Buscador
   const inp = searchInput();
-  inp.addEventListener('input', (e)=> {
+  inp.addEventListener('input', e => {
     currentSearch = e.target.value.trim();
     renderizarTodo();
   });
 
-  // leyenda bar toggle
-  leyendaBar().addEventListener('click', ()=>{
+  // Leyenda
+  leyendaBar().addEventListener('click', () => {
     leyendaDrawer().classList.toggle('open');
     document.body.classList.toggle('leyenda-open');
   });
 
-  // close bottom panel
+  // Cerrar panel inferior
   bpClose().addEventListener('click', ocultarBottomPanel);
-  // close panel when clicking outside (tap area)
-  document.addEventListener('click', (e)=>{
-    const bp = bottomPanel();
-    if(!bp) return;
-    if(bp.contains(e.target)) return;
-    // do not close if clicking controls or legend bar/drawer
-    const ls = ['filters','search-input','leyenda-bar','leyenda-drawer'];
-    if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
-    // close
-    ocultarBottomPanel();
-  });
 }
 
-// paint legend from categories
-function pintarLeyenda(){
+// ===============================
+// LEYENDA
+// ===============================
+function pintarLeyenda() {
   const caja = leyendaItems();
-  if(!caja) return;
   caja.innerHTML = '';
+
   Object.keys(ALL.categorias.bienes || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}" alt="${k}">${k}</div>`;
+    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}"> ${k}</div>`;
   });
   Object.keys(ALL.categorias.servicios || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}" alt="${k}">${k}</div>`;
+    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}"> ${k}</div>`;
   });
 }
 
-// start
+// Start
 iniciar();
