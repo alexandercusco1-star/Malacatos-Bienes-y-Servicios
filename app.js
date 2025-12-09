@@ -1,2 +1,2 @@
-// app.js - complementos (ligero, no rompe nada)
-console.log("app.js cargado - funcionalidades adicionales listas");
+// app.js - complementos ligeros
+console.log('app.js cargado - buscador y filtros disponibles.');
