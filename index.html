@@ -3,34 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malacatos - Bienes y Servicios</title>
+    <title>Malacatos</title>
 
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
+    <header class="header">
+        <div class="header-title">
+            <h1>Malacatos</h1>
+            <p>Lugares turísticos y servicios</p>
+        </div>
+        <div class="header-logo">
+            <img src="data/clg.png" alt="logo">
+        </div>
+    </header>
 
-<header>
-    <h1>Malacatos</h1>
-    <p>Lugares turísticos y servicios</p>
-</header>
+    <!-- BUSCADOR -->
+    <div class="busqueda-contenedor">
+        <input type="text" id="buscador" placeholder="Buscar lugar, servicio o categoría...">
+    </div>
 
-<input id="buscador" type="text" placeholder="Buscar lugar, servicio o categoría...">
+    <!-- CATEGORÍAS -->
+    <div id="categorias-container" class="categorias-container"></div>
 
-<div id="categorias"></div>
+    <!-- MAPA -->
+    <div id="map" class="mapa"></div>
 
-<div id="map"></div>
+    <!-- LEYENDA -->
+    <div id="leyenda" class="leyenda">
+        <h3>Leyenda</h3>
+        <div id="leyenda-items"></div>
+    </div>
 
-<!-- LEYENDA A LA DERECHA -->
-<div id="leyenda" class="leyenda"></div>
+    <!-- DESTACADOS -->
+    <section class="destacados">
+        <h2>Destacados</h2>
 
-<h2>Destacados</h2>
+        <h3><a href="ver-todos.html?tipo=bienes">Bienes</a></h3>
+        <div id="destacados-bienes" class="cards"></div>
 
-<a href="ver-todos.html" class="btn-ver">Ver todos</a>
+        <h3><a href="ver-todos.html?tipo=servicios">Servicios</a></h3>
+        <div id="destacados-servicios" class="cards"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="app.js"></script>
+        <div class="ver-todos-contenedor">
+            <a class="btn-ver-todos" href="ver-todos.html">Ver todos</a>
+        </div>
+    </section>
 
+    <script src="main.js"></script>
 </body>
 </html>
