@@ -8,7 +8,8 @@
     "latitud": -4.219167,
     "longitud": -79.258333,
     "icono": "icon-casa.jpeg",
-    "imagenes": ["b1.jpg"]
+    "imagenes": ["b1.jpg"],
+    "destacado": true
   },
   {
     "nombre": "Iglesia de Malacatos",
