@@ -1,58 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malacatos</title>
-
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malacatos – Lugares y Servicios</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data/mi-logo.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 <body>
-    <header class="header">
-        <div class="header-title">
-            <h1>Malacatos</h1>
-            <p>Lugares turísticos y servicios</p>
-        </div>
-        <div class="header-logo">
-            <img src="data/clg.png" alt="logo">
-        </div>
-    </header>
 
-    <!-- BUSCADOR -->
-    <div class="busqueda-contenedor">
-        <input type="text" id="buscador" placeholder="Buscar lugar, servicio o categoría...">
-    </div>
+<header>
+    <img src="data/mi-logo.png" id="logo">
+    <h1>Malacatos</h1>
+    <h2>Lugares turísticos y servicios</h2>
+</header>
 
-    <!-- CATEGORÍAS -->
-    <div id="categorias-container" class="categorias-container"></div>
+<!-- BUSCADOR -->
+<div class="search-box">
+    <input id="search-input" type="text" placeholder="Buscar lugar o servicio...">
+</div>
 
-    <!-- MAPA -->
-    <div id="map" class="mapa"></div>
+<!-- FILTROS / CATEGORÍAS (esto faltaba) -->
+<div id="filters"></div>
 
-    <!-- LEYENDA -->
-    <div id="leyenda" class="leyenda">
-        <h3>Leyenda</h3>
-        <div id="leyenda-items"></div>
-    </div>
+<!-- MAPA (ESTE ES EL ÚNICO MAPA) -->
+<div id="map"></div>
 
-    <!-- DESTACADOS -->
-    <section class="destacados">
-        <h2>Destacados</h2>
+<!-- LEYENDA -->
+<div id="leyenda-bar">LEYENDAS</div>
+<div id="leyenda-drawer">
+    <div id="leyenda-items"></div>
+</div>
 
-        <h3><a href="ver-todos.html?tipo=bienes">Bienes</a></h3>
-        <div id="destacados-bienes" class="cards"></div>
+<!-- DESTACADOS -->
+<section id="destacados-box">
+    <h3 class="subtitulo">Destacados</h3>
+    <div id="destacados"></div>
+    <button id="btn-ver-todos" class="btn-ver-todos">Ver todos</button>
+</section>
 
-        <h3><a href="ver-todos.html?tipo=servicios">Servicios</a></h3>
-        <div id="destacados-servicios" class="cards"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="main.js"></script>
 
-        <div class="ver-todos-contenedor">
-            <a class="btn-ver-todos" href="ver-todos.html">Ver todos</a>
-        </div>
-    </section>
-
-    <script src="main.js"></script>
 </body>
 </html>
