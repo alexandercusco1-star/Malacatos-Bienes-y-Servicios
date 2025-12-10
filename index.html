@@ -1,57 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malacatos – Lugares y Servicios</title>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malacatos – Lugares y Servicios</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data/mi-logo.png">
 </head>
 
 <body>
 
-<header id="top-header">
-    <img id="logo" src="logo.png" alt="Logo">
-    <div class="title-box">
-        <h1>Malacatos</h1>
-        <h2>Lugares turísticos y servicios</h2>
-    </div>
+<header>
+    <img src="data/mi-logo.png" id="logo">
+    <h1>Malacatos</h1>
+    <h2>Lugares turísticos y servicios</h2>
 </header>
 
-<div id="controls">
-    <input type="text" id="search-input" placeholder="Buscar...">
-    <div id="filters"></div>
+<!-- BUSCADOR -->
+<div class="search-box">
+    <input id="search-input" type="text" placeholder="Buscar lugar o servicio...">
 </div>
 
-<!-- Leyenda lateral -->
-<div id="leyenda-bar">Leyendas</div>
-<div id="leyenda-drawer">
-    <h3>LEYENDAS</h3>
-    <div id="leyenda-items"></div>
-</div>
+<!-- FILTROS -->
+<div id="filters"></div>
 
 <!-- MAPA -->
 <div id="map"></div>
 
-<!-- Banner destacado debajo del mapa -->
-<div id="banner-area" aria-hidden="true"></div>
-
-<!-- Sección bienes/servicios destacados -->
-<section id="destacados">
-    <h2>Destacados</h2>
-    <div id="lista-destacados"></div>
-    <button id="btn-ver-todos" class="ver-todos-btn">Ver todos</button>
-</section>
-
-<!-- PANEL DESDE ABAJO -->
-<div id="bottom-panel" aria-hidden="true">
-    <div id="bp-close">×</div>
-    <div id="bp-content"></div>
+<!-- LEYENDA -->
+<div id="leyenda-bar">LEYENDAS</div>
+<div id="leyenda-drawer">
+    <div id="leyenda-items"></div>
 </div>
 
+<!-- DESTACADOS / LISTAS -->
+<section id="destacados-box">
+    <h3 class="subtitulo">Destacados</h3>
+    <div id="destacados"></div>
+    <button id="btn-ver-todos" class="btn-ver-todos">Ver todos</button>
+</section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="main.js"></script>
 
 </body>
