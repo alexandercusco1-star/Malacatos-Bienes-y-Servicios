@@ -5,11 +5,11 @@
   --muted: #666;
 }
 
-/* RESET */
 * { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
 
 body {
   background: var(--hueso);
+  overflow-x:hidden;
 }
 
 /* HEADER */
@@ -18,12 +18,14 @@ header {
   padding:15px 0 5px;
   background: var(--verde-mediterraneo);
   color:white;
+  position:relative;
 }
 
 #logo {
-  width:80px;
-  float:right;
-  margin:-10px 10px 0 0;
+  width:70px;
+  position:absolute;
+  right:10px;
+  top:10px;
   border-radius:50%;
 }
 
@@ -52,42 +54,51 @@ header {
   border-radius:14px;
   border:none;
   background:#ddd;
+  white-space:nowrap;
 }
 .filter-btn.active {
   background:var(--azul-mediterraneo);
   color:white;
 }
 
-/* MAPA */
+/* MAPA — AQUÍ estaba el problema */
 #map {
   width:100%;
   height:350px;
+  position:relative;
+  z-index:1;
+  margin-top:10px;
 }
 
 /* LEYENDA */
 #leyenda-bar{
-  position:absolute;
-  right:0;
+  position:fixed;
+  right:-20px;
   top:200px;
   background:var(--azul-mediterraneo);
-  padding:5px 10px;
+  padding:4px 10px;
   color:white;
   transform:rotate(-90deg);
   border-radius:6px 6px 0 0;
+  z-index:9999;
 }
+
 #leyenda-drawer{
-  position:absolute;
+  position:fixed;
   right:-200px;
-  top:235px;
+  top:240px;
   width:180px;
   background:white;
   border:1px solid #ccc;
   padding:10px;
   transition:0.3s;
+  z-index:9999;
 }
+
 #leyenda-drawer.open{
   right:0;
 }
+
 .leyenda-item{
   display:flex;
   align-items:center;
