@@ -1,97 +1,203 @@
-// map
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+// ===============================
+//   CARGA DE DATOS
+// ===============================
 
-// data
 let bienes = [];
 let servicios = [];
-let categorias = {};
-let searchValue = '';
 
-// load
-async function load(){
-  bienes = await (await fetch("data/bienes.json")).json();
-  servicios = await (await fetch("data/servicios.json")).json();
-  categorias = await (await fetch("data/categorias.json")).json();
+// Cargar bienes
+fetch("./data/bienes.json")
+  .then((res) => res.json())
+  .then((data) => {
+    bienes = data;
+    inicializar();
+  });
 
-  drawLegend();
-  drawDestacados();
-  loadMarkers();
-  setupEvents();
+// Cargar servicios
+fetch("./data/servicios.json")
+  .then((res) => res.json())
+  .then((data) => {
+    servicios = data;
+    inicializar();
+  });
+
+// ===============================
+//   VARIABLES GLOBALES MAPA
+// ===============================
+
+let mapa;
+let marcadores = [];
+
+// ===============================
+//   INICIALIZAR TODO
+// ===============================
+
+function inicializar() {
+  if (bienes.length === 0 || servicios.length === 0) return;
+
+  inicializarMapa();
+  generarSubcategorias();
+  mostrarDestacados();
+  prepararBuscador();
 }
 
-function icono(ruta){
-  return L.icon({
-    iconUrl: "data/" + ruta,
-    iconSize:[38,38]
+// ===============================
+//   INICIALIZAR MAPA
+// ===============================
+
+function inicializarMapa() {
+  if (mapa) return;
+
+  mapa = L.map("map").setView([-4.2189, -79.2580], 16);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+  }).addTo(mapa);
+
+  cargarMarcadores();
+}
+
+// ===============================
+//   CARGAR MARCADORES
+// ===============================
+
+function cargarMarcadores(lista = [...bienes, ...servicios]) {
+  marcadores.forEach((m) => mapa.removeLayer(m));
+  marcadores = [];
+
+  lista.forEach((item) => {
+    const icono = L.icon({
+      iconUrl: `./data/iconos/${item.icono}`,
+      iconSize: [38, 38],
+      iconAnchor: [19, 38],
+    });
+
+    const marcador = L.marker([item.latitud, item.longitud], { icon: icono })
+      .addTo(mapa)
+      .bindPopup(`<b>${item.nombre}</b><br>${item.descripcion}`);
+
+    marcadores.push(marcador);
   });
 }
 
-function loadMarkers(){
-  [...bienes, ...servicios].forEach(item=>{
-    if(item.destacado === true){
-      L.marker([item.latitud, item.longitud],{
-        icon:icono(item.icono)
-      }).addTo(map).bindPopup(item.nombre);
-    }
+// ===============================
+//   SUBCATEGORÍAS (ARRIBA)
+// ===============================
+
+function generarSubcategorias() {
+  const contenedor = document.getElementById("filters");
+  if (!contenedor) return;
+
+  contenedor.innerHTML = "";
+
+  const categoriasBienes = bienes.map((b) => b.categoria);
+  const categoriasServicios = servicios.map((s) => s.categoria);
+
+  const todas = [...categoriasBienes, ...categoriasServicios];
+
+  const unicas = [...new Set(todas)];
+
+  unicas.forEach((cat) => {
+    const btn = document.createElement("button");
+    btn.classList.add("filter-btn");
+    btn.textContent = cat;
+
+    btn.addEventListener("click", () => {
+      filtrarPorCategoria(cat);
+    });
+
+    contenedor.appendChild(btn);
   });
 }
 
-function drawLegend(){
-  const box = document.getElementById("leyenda-items");
-  box.innerHTML = "";
-  Object.keys(categorias.bienes).forEach(k=>{
-    box.innerHTML += `<div class="leyenda-item"><img src="data/${categorias.bienes[k].icono}">${k}</div>`;
+// ===============================
+//   FILTRAR POR CATEGORÍA
+// ===============================
+
+function filtrarPorCategoria(cat) {
+  const texto = cat.toLowerCase();
+
+  const filtrados = [...bienes, ...servicios].filter((item) =>
+    item.categoria.toLowerCase().includes(texto)
+  );
+
+  cargarMarcadores(filtrados);
+}
+
+// ===============================
+//   DESTACADOS (PÁGINA PRINCIPAL)
+// ===============================
+
+function mostrarDestacados() {
+  const contenedorBienes = document.getElementById("dest-bienes");
+  const contenedorServicios = document.getElementById("dest-servicios");
+
+  if (!contenedorBienes || !contenedorServicios) return;
+
+  contenedorBienes.innerHTML = "";
+  contenedorServicios.innerHTML = "";
+
+  const bDest = bienes.filter((b) => b.destacado === true);
+  const sDest = servicios.filter((s) => s.destacado === true);
+
+  // Solo los destacados
+  bDest.forEach((b) => {
+    contenedorBienes.innerHTML += generarCard(b);
   });
-  Object.keys(categorias.servicios).forEach(k=>{
-    box.innerHTML += `<div class="leyenda-item"><img src="data/${categorias.servicios[k].icono}">${k}</div>`;
+
+  sDest.forEach((s) => {
+    contenedorServicios.innerHTML += generarCard(s);
   });
 }
 
-function drawDestacados(){
-  const cont = document.getElementById("destacados");
-  cont.innerHTML = "";
+// ===============================
+//   GENERAR TARJETA
+// ===============================
 
-  const d1 = bienes.find(x=>x.destacado===true);
-  const d2 = servicios.find(x=>x.destacado===true);
-
-  if(d1){
-    cont.innerHTML += cardHtml(d1);
-  }
-  if(d2){
-    cont.innerHTML += cardHtml(d2);
-  }
-}
-
-function cardHtml(item){
+function generarCard(item) {
   return `
-  <div class="card">
-    <img src="data/${item.imagenes[0]}">
-    <h3>${item.nombre}</h3>
-    <p>${item.descripcion || item.direccion}</p>
-  </div>`;
+    <div class="card">
+        <img src="./data/imagenes/${item.imagenes[0]}" alt="${item.nombre}">
+        <h3>${item.nombre}</h3>
+        <p>${item.descripcion}</p>
+    </div>
+  `;
 }
 
-function setupEvents(){
-  document.getElementById("btn-ver-todos").addEventListener("click",()=>{
-    window.location.href="ver-todos.html";
-  });
+// ===============================
+//   BUSCADOR
+// ===============================
 
-  document.getElementById("leyenda-bar").addEventListener("click",()=>{
-    document.getElementById("leyenda-drawer").classList.toggle("open");
-  });
+function prepararBuscador() {
+  const input = document.getElementById("search-input");
+  const btn = document.getElementById("search-btn");
 
-  document.getElementById("search-input").addEventListener("input",(e)=>{
-    searchValue = e.target.value.toLowerCase();
-    searchPlace();
+  if (!input || !btn) return;
+
+  btn.addEventListener("click", buscarLugares);
+  input.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") buscarLugares();
   });
 }
 
-function searchPlace(){
-  const all = [...bienes, ...servicios];
-  const found = all.find(x=>x.nombre.toLowerCase().includes(searchValue));
-  if(!found) return;
-  map.setView([found.latitud, found.longitud], 17);
+function buscarLugares() {
+  const texto = document.getElementById("search-input").value.toLowerCase();
+
+  const filtrados = [...bienes, ...servicios].filter(
+    (item) =>
+      item.nombre.toLowerCase().includes(texto) ||
+      item.categoria.toLowerCase().includes(texto) ||
+      (item.descripcion && item.descripcion.toLowerCase().includes(texto))
+  );
+
+  cargarMarcadores(filtrados);
 }
 
-load();
+// ===============================
+//   BOTÓN "VER TODOS"
+// ===============================
+
+function verTodos(tipo) {
+  const url = `todos.html?tipo=${tipo}`;
+  window.open(url, "_blank");
+}
