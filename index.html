@@ -1,69 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malacatos – Lugares y Servicios</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-    <!-- LOGO -->
-    <img src="data/mi-logo.png" class="logo-personal">
-
-    <!-- ENCABEZADO -->
-    <header>
+<header id="top-header">
+    <img id="logo" src="logo.png" alt="Logo">
+    <div class="title-box">
         <h1>Malacatos</h1>
-        <h2 class="subtitulo">Lugares Turísticos y Servicios</h2>
-    </header>
-
-    <!-- BUSCADOR -->
-    <div id="search-box">
-        <input type="text" id="search-input" placeholder="Buscar lugares o servicios...">
+        <h2>Lugares turísticos y servicios</h2>
     </div>
+</header>
 
-    <!-- FILTROS -->
+<div id="controls">
+    <input type="text" id="search-input" placeholder="Buscar...">
     <div id="filters"></div>
+</div>
 
-    <!-- MAPA -->
-    <section id="map-section">
-        <div id="map"></div>
+<!-- Leyenda lateral -->
+<div id="leyenda-bar">Leyendas</div>
+<div id="leyenda-drawer">
+    <h3>LEYENDAS</h3>
+    <div id="leyenda-items"></div>
+</div>
 
-        <!-- LEYENDA DESPLEGABLE -->
-        <div id="leyenda-bar">LEYENDA</div>
-        <div id="leyenda-drawer">
-            <div id="leyenda-items"></div>
-        </div>
-    </section>
+<!-- MAPA -->
+<div id="map"></div>
 
-    <!-- DESTACADOS -->
-    <section id="destacados">
-        <h2>Destacados</h2>
-        <div id="destacados-contenedor"></div>
-        <button id="ver-todos" class="filter-btn">Ver todos</button>
-    </section>
+<!-- Banner destacado debajo del mapa -->
+<div id="banner-area" aria-hidden="true"></div>
 
-    <!-- RESULTADOS COMPLETOS -->
-    <section id="resultados" style="display:none;">
-        <h2>Todos los Bienes y Servicios</h2>
-        <div id="lista-lugares"></div>
-        <div id="lista-servicios"></div>
-    </section>
+<!-- Sección bienes/servicios destacados -->
+<section id="destacados">
+    <h2>Destacados</h2>
+    <div id="lista-destacados"></div>
+    <button id="btn-ver-todos" class="ver-todos-btn">Ver todos</button>
+</section>
 
-    <!-- PANEL DESDE ABAJO -->
-    <div id="bottom-panel" aria-hidden="true">
-        <button id="bp-close">X</button>
-        <div id="bp-content"></div>
-    </div>
+<!-- PANEL DESDE ABAJO -->
+<div id="bottom-panel" aria-hidden="true">
+    <div id="bp-close">×</div>
+    <div id="bp-content"></div>
+</div>
 
-    <!-- BANNER (si es que algún negocio tiene) -->
-    <div id="banner-area" aria-hidden="true"></div>
-
-    <!-- JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="app.js"></script>
-    <script src="main.js"></script>
+<script src="main.js"></script>
 
 </body>
 </html>
