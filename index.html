@@ -1,67 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Malacatos – Lugares y Servicios</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malacatos - Bienes y Servicios</title>
 
-  <!-- estilos -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Leaflet (mapa) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
+
 <body>
 
-  <header id="top-header">
-    <img id="logo" src="data/mi-logo.png" alt="logo">
-    <div class="title">
-      <h1>Malacatos</h1>
-      <p class="subtitle">Lugares turísticos y servicios</p>
-    </div>
-  </header>
+<header>
+    <h1>Malacatos</h1>
+    <p>Lugares turísticos y servicios</p>
+</header>
 
-  <!-- controles -->
-  <div id="controls">
-    <input id="search-input" type="search" placeholder="Buscar lugar, servicio o categoría..." />
-    <div id="filters" aria-label="Filtros"></div>
-  </div>
+<input id="buscador" type="text" placeholder="Buscar lugar, servicio o categoría...">
 
-  <!-- mapa -->
-  <main id="main-area">
-    <div id="map"></div>
+<div id="categorias"></div>
 
-    <!-- leyenda lateral -->
-    <div id="leyenda-bar">LEYENDA</div>
-    <aside id="leyenda-drawer" aria-hidden="true">
-      <div id="leyenda-items"></div>
-    </aside>
-  </main>
+<div id="map"></div>
 
-  <!-- destacados -->
-  <section id="destacados-box">
-    <h2>Destacados</h2>
+<!-- LEYENDA A LA DERECHA -->
+<div id="leyenda" class="leyenda"></div>
 
-    <div id="destacados-grid">
-      <div id="dest-bienes" class="dest-column">
-        <h3>Bienes</h3>
-      </div>
-      <div id="dest-servicios" class="dest-column">
-        <h3>Servicios</h3>
-      </div>
-    </div>
+<h2>Destacados</h2>
 
-    <button id="btn-ver-todos" class="btn-ver-todos">Ver todos</button>
-  </section>
+<a href="ver-todos.html" class="btn-ver">Ver todos</a>
 
-  <!-- panel inferior (popup) -->
-  <div id="bottom-panel" aria-hidden="true">
-    <button id="bp-close" class="bp-close">×</button>
-    <div id="bp-content"></div>
-  </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
 
-  <!-- scripts -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="main.js"></script>
 </body>
 </html>
