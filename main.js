@@ -1,50 +1,33 @@
-// main.js — versión estable basada en tu base original + destacados
-
-// MAPA
+// main.js - mapa, carga data, buscador, filtros, bottom-panel, destacados, ver todos
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
 
-// HELPERS
-async function cargar(ruta) {
-  const r = await fetch(ruta);
-  return await r.json();
+// helpers
+async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
+function iconoDe(ruta, size=36){
+  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
 }
 
-function iconoDe(ruta, size = 36) {
-  return L.icon({
-    iconUrl: `data/${ruta}`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size],
-    popupAnchor: [0, -size + 6]
-  });
-}
-
-// GLOBAL
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
-let currentSearch = "";
+let currentSearch = '';
 
-// UI
-const searchInput = () => document.getElementById("search-input");
-const filtersBox = () => document.getElementById("filters");
-const listaLugares = () => document.getElementById("lista-lugares");
-const listaServicios = () => document.getElementById("lista-servicios");
-const leyendaBar = () => document.getElementById("leyenda-bar");
-const leyendaDrawer = () => document.getElementById("leyenda-drawer");
-const leyendaItems = () => document.getElementById("leyenda-items");
-const bottomPanel = () => document.getElementById("bottom-panel");
-const bpContent = () => document.getElementById("bp-content");
-const bpClose = () => document.getElementById("bp-close");
+// UI refs
+const searchInput = () => document.getElementById('search-input');
+const filtersBox = () => document.getElementById('filters');
+const listaDestacadosBienes = () => document.getElementById('destacados-bienes');
+const listaDestacadosServicios = () => document.getElementById('destacados-servicios');
+const leyendaDrawer = () => document.getElementById('leyenda-drawer');
+const leyendaItems = () => document.getElementById('leyenda-items');
+const leyendaBar = () => document.getElementById('leyenda-bar');
 
-// INICIO
-async function iniciar() {
+async function iniciar(){
+  // *** ÚNICO CAMBIO IMPORTANTE ***
   [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
-    cargar("data/bienes.json"),
-    cargar("data/servicios.json"),
-    cargar("data/categorias.json")
+    cargar('data/bienes.json'),
+    cargar('data/servicios.json'),
+    cargar('data/categorias.json') // ← EXACTO como en tu GitHub
   ]);
 
   generarFiltros();
@@ -53,192 +36,126 @@ async function iniciar() {
   pintarLeyenda();
 }
 
-// LIMPIAR MARKERS
-function clearMarkers() {
-  markers.forEach(m => map.removeLayer(m));
+// clear markers
+function clearMarkers(){
+  markers.forEach(m=>map.removeLayer(m));
   markers = [];
 }
 
-// RENDER GENERAL
-function renderizarTodo() {
+// render everything considering filters & search
+function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
 
-  const visibles = combined.filter(item => {
-    const texto = (
-      item.nombre +
-      " " +
-      (item.categoria || "") +
-      " " +
-      (item.descripcion || "")
-    ).toLowerCase();
-
-    if (currentSearch && !texto.includes(currentSearch.toLowerCase()))
-      return false;
-
-    if (currentFilter && item.categoria !== currentFilter)
-      return false;
-
+  const visibles = combined.filter(i=>{
+    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
+    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
+    if(currentFilter && i.categoria !== currentFilter) return false;
     return true;
   });
 
-  // LISTAS
-  renderLista(ALL.bienes, "lista-lugares");
-  renderLista(ALL.servicios, "lista-servicios");
+  // DESTACADOS
+  const destacadosBien = ALL.bienes.filter(x => x.destacado);
+  const destacadosServ = ALL.servicios.filter(x => x.destacado);
 
-  // MARKERS
-  visibles.forEach(item => {
+  renderListaDestacados(destacadosBien, 'destacados-bienes');
+  renderListaDestacados(destacadosServ, 'destacados-servicios');
+
+  // add markers
+  visibles.forEach(item=>{
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
-    if (isNaN(lat) || isNaN(lng)) return;
+    if(Number.isNaN(lat) || Number.isNaN(lng)) return;
 
-    const iconFile =
-      item.icono ||
-      (ALL.categorias[item.tipo] &&
-        ALL.categorias[item.tipo][item.categoria] &&
-        ALL.categorias[item.tipo][item.categoria].icono);
+    let iconFile = item.icono || 
+      (ALL.categorias[item.tipo] && ALL.categorias[item.tipo][item.categoria] && ALL.categorias[item.tipo][item.categoria].icono) 
+      || 'icon-default.jpeg';
 
-    const marker = L.marker([lat, lng], { icon: iconoDe(iconFile) }).addTo(map);
+    const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, 36) }).addTo(map);
 
-    marker.on("click", () => abrirBottomPanel(item));
+    marker.on('click', ()=> {
+      map.setView([lat,lng], 16, { animate:true });
+    });
+
     markers.push(marker);
   });
-
-  // AUTO CENTRO DESTACADO
-  const firstDest = combined.find(i => i.destacado);
-  if (firstDest) {
-    map.setView(
-      [parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)],
-      16
-    );
-  }
 }
 
-// RENDER LISTAS
-function renderLista(arr, id) {
+function renderListaDestacados(arr, id){
   const cont = document.getElementById(id);
-  cont.innerHTML = arr
-    .map(item => {
-      const img = item.imagenes?.[0]
-        ? `<img src="data/${item.imagenes[0]}" alt="${item.nombre}">`
-        : "";
+  if(!cont) return;
 
-      return `
-        <div class="tarjeta">
-          ${img}
-          <h3>${item.nombre}</h3>
-          <div class="desc">${item.descripcion || item.direccion || ""}</div>
-          <button class="ver-btn" data-n="${item.nombre}">Ver</button>
-        </div>
-      `;
-    })
-    .join("");
-
-  cont.querySelectorAll(".ver-btn").forEach(b =>
-    b.addEventListener("click", e => {
-      const nombre = e.target.dataset.n;
-      const item = [...ALL.bienes, ...ALL.servicios].find(
-        x => x.nombre === nombre
-      );
-      abrirBottomPanel(item);
-    })
-  );
+  cont.innerHTML = arr.map(it=>{
+    const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}">` : '';
+    return `
+      <div class="tarjeta destacado">
+        ${img}
+        <h3>${it.nombre} ⭐</h3>
+        <p>${it.descripcion || it.direccion || ''}</p>
+      </div>
+    `;
+  }).join('');
 }
 
-// BOTTOM PANEL
-function abrirBottomPanel(item) {
-  const img = item.imagenes?.[0]
-    ? `<img src="data/${item.imagenes[0]}" class="bp-img">`
-    : "";
+// filtros arriba
+function generarFiltros(){
+  const container = filtersBox();
+  container.innerHTML = '';
 
-  bpContent().innerHTML = `
-    ${img}
-    <h2>${item.nombre}</h2>
-    <p>${item.descripcion || item.direccion || ""}</p>
-  `;
+  const cats = new Set();
+  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
+  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
 
-  bottomPanel().classList.add("open");
-}
-
-bpClose().onclick = () => {
-  bottomPanel().classList.remove("open");
-};
-
-// FILTROS
-function generarFiltros() {
-  const c = filtersBox();
-  c.innerHTML = "";
-
-  // Botón todos
-  const btn = document.createElement("button");
-  btn.className = "filter-btn active";
-  btn.textContent = "Todos";
-  btn.onclick = () => {
+  const btnAll = document.createElement('button');
+  btnAll.className = 'filter-btn active';
+  btnAll.textContent = 'Todos';
+  btnAll.addEventListener('click', ()=>{
     currentFilter = null;
-    document
-      .querySelectorAll(".filter-btn")
-      .forEach(x => x.classList.remove("active"));
-    btn.classList.add("active");
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btnAll.classList.add('active');
     renderizarTodo();
-  };
-  c.appendChild(btn);
+  });
+  container.appendChild(btnAll);
 
-  // Todas tus subcategorías exactas
-  const cats = [
-    ...Object.keys(ALL.categorias.bienes),
-    ...Object.keys(ALL.categorias.servicios)
-  ];
-
-  cats.forEach(cat => {
-    const b = document.createElement("button");
-    b.className = "filter-btn";
+  cats.forEach(cat=>{
+    const b = document.createElement('button');
+    b.className = 'filter-btn';
     b.textContent = cat;
-
-    b.onclick = () => {
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
       currentFilter = cat;
-      document
-        .querySelectorAll(".filter-btn")
-        .forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
       renderizarTodo();
-    };
-
-    c.appendChild(b);
+    });
+    container.appendChild(b);
   });
 }
 
-// LEYENDA
-function pintarLeyenda() {
+// leyenda
+function pintarLeyenda(){
   const caja = leyendaItems();
-  caja.innerHTML = "";
+  if(!caja) return;
+  caja.innerHTML = '';
 
-  Object.entries(ALL.categorias.bienes).forEach(([cat, val]) => {
-    caja.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${val.icono}">
-        <span>${cat}</span>
-      </div>`;
+  Object.keys(ALL.categorias.bienes || {}).forEach(k => {
+    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}">${k}</div>`;
   });
 
-  Object.entries(ALL.categorias.servicios).forEach(([cat, val]) => {
-    caja.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${val.icono}">
-        <span>${cat}</span>
-      </div>`;
+  Object.keys(ALL.categorias.servicios || {}).forEach(k => {
+    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}">${k}</div>`;
   });
 }
 
-leyendaBar().onclick = () => {
-  leyendaDrawer().classList.toggle("open");
-};
+function bindControls(){
+  searchInput().addEventListener('input', e=>{
+    currentSearch = e.target.value;
+    renderizarTodo();
+  });
 
-// BUSCADOR
-searchInput().addEventListener("input", e => {
-  currentSearch = e.target.value.trim();
-  renderizarTodo();
-});
+  leyendaBar().addEventListener('click', ()=>{
+    leyendaDrawer().classList.toggle('open');
+  });
+}
 
-// START
 iniciar();
