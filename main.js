@@ -1,161 +1,177 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel, destacados, ver todos
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
+/* =============================
+   CARGA DEL MAPA
+============================= */
 
-// helpers
-async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
-function iconoDe(ruta, size=36){
-  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
+const map = L.map('map').setView([-4.2006, -79.2075], 15);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+}).addTo(map);
+
+
+/* =============================
+   LEYENDA (ICONOS)
+============================= */
+
+function toggleLeyenda() {
+    const c = document.getElementById("leyenda-contenido");
+    c.style.display = c.style.display === "block" ? "none" : "block";
 }
 
-let ALL = { bienes: [], servicios: [], categorias: {} };
-let markers = [];
-let currentFilter = null;
-let currentSearch = '';
+async function cargarLeyenda() {
+    const resp = await fetch("data/categorias.json");
+    const categorias = await resp.json();
 
-// UI refs
-const searchInput = () => document.getElementById('search-input');
-const filtersBox = () => document.getElementById('filters');
-const listaDestacadosBienes = () => document.getElementById('destacados-bienes');
-const listaDestacadosServicios = () => document.getElementById('destacados-servicios');
-const leyendaDrawer = () => document.getElementById('leyenda-drawer');
-const leyendaItems = () => document.getElementById('leyenda-items');
-const leyendaBar = () => document.getElementById('leyenda-bar');
+    const cont = document.getElementById("leyenda-contenido");
+    cont.innerHTML = "";
 
-async function iniciar(){
-  // *** ÚNICO CAMBIO IMPORTANTE ***
-  [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
-    cargar('data/bienes.json'),
-    cargar('data/servicios.json'),
-    cargar('data/categorias.json') // ← EXACTO como en tu GitHub
-  ]);
+    Object.entries(categorias).forEach(([nombre, info]) => {
+        const div = document.createElement("div");
+        div.className = "leyenda-item";
 
-  generarFiltros();
-  bindControls();
-  renderizarTodo();
-  pintarLeyenda();
+        div.innerHTML = `
+            <img src="data/${info.icono}" />
+            <span>${nombre}</span>
+        `;
+        cont.appendChild(div);
+    });
 }
 
-// clear markers
-function clearMarkers(){
-  markers.forEach(m=>map.removeLayer(m));
-  markers = [];
+
+/* =============================
+   CARGA DE CATEGORÍAS
+============================= */
+
+async function cargarCategorias() {
+    const resp = await fetch("data/categorias.json");
+    const data = await resp.json();
+
+    const cont = document.getElementById("categorias-list");
+    cont.innerHTML = "";
+
+    Object.entries(data).forEach(([nombre, info]) => {
+        const div = document.createElement("div");
+        div.className = "categoria-item";
+
+        div.innerHTML = `
+            <img src="data/${info.icono}" />
+            <p>${nombre}</p>
+        `;
+
+        cont.appendChild(div);
+    });
 }
 
-// render everything considering filters & search
-function renderizarTodo(){
-  clearMarkers();
 
-  const combined = [...ALL.bienes, ...ALL.servicios];
+/* =============================
+   CARGA DE SUBCATEGORÍAS
+============================= */
 
-  const visibles = combined.filter(i=>{
-    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
-    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    if(currentFilter && i.categoria !== currentFilter) return false;
-    return true;
-  });
+async function cargarSubcategorias() {
+    const resp = await fetch("data/subcategorias.json");
+    const data = await resp.json();
 
-  // DESTACADOS
-  const destacadosBien = ALL.bienes.filter(x => x.destacado);
-  const destacadosServ = ALL.servicios.filter(x => x.destacado);
+    const cont = document.getElementById("subcategorias-list");
+    cont.innerHTML = "";
 
-  renderListaDestacados(destacadosBien, 'destacados-bienes');
-  renderListaDestacados(destacadosServ, 'destacados-servicios');
+    Object.entries(data).forEach(([nombre, info]) => {
+        const div = document.createElement("div");
+        div.className = "subcategoria-item";
 
-  // add markers
-  visibles.forEach(item=>{
-    const lat = parseFloat(item.latitud);
-    const lng = parseFloat(item.longitud);
-    if(Number.isNaN(lat) || Number.isNaN(lng)) return;
+        div.innerHTML = `
+            <img src="data/${info.icono}" />
+            <p>${nombre}</p>
+        `;
 
-    let iconFile = item.icono || 
-      (ALL.categorias[item.tipo] && ALL.categorias[item.tipo][item.categoria] && ALL.categorias[item.tipo][item.categoria].icono) 
-      || 'icon-default.jpeg';
+        cont.appendChild(div);
+    });
+}
 
-    const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, 36) }).addTo(map);
 
-    marker.on('click', ()=> {
-      map.setView([lat,lng], 16, { animate:true });
+/* =============================
+   CARGA DE BIENES Y SERVICIOS
+============================= */
+
+async function cargarDestacados() {
+    const bienesResp = await fetch("data/bienes.json");
+    const serviciosResp = await fetch("data/servicios.json");
+
+    const bienes = await bienesResp.json();
+    const servicios = await serviciosResp.json();
+
+    const bienesDest = document.getElementById("bienes-destacados");
+    const servDest = document.getElementById("servicios-destacados");
+
+    bienesDest.innerHTML = "";
+    servDest.innerHTML = "";
+
+    // BIENES
+    Object.values(bienes)
+        .filter(item => item.destacado === true)
+        .forEach(item => {
+            bienesDest.innerHTML += `
+                <div class="card">
+                    <img src="${item.foto}" />
+                    <p>${item.nombre}</p>
+                </div>
+            `;
+        });
+
+    // SERVICIOS
+    Object.values(servicios)
+        .filter(item => item.destacado === true)
+        .forEach(item => {
+            servDest.innerHTML += `
+                <div class="card">
+                    <img src="${item.foto}" />
+                    <p>${item.nombre}</p>
+                </div>
+            `;
+        });
+}
+
+
+async function cargarListas() {
+    const bienesResp = await fetch("data/bienes.json");
+    const serviciosResp = await fetch("data/servicios.json");
+
+    const bienes = await bienesResp.json();
+    const servicios = await serviciosResp.json();
+
+    const bienesList = document.getElementById("bienes-list");
+    const servList = document.getElementById("servicios-list");
+
+    bienesList.innerHTML = "";
+    servList.innerHTML = "";
+
+    // BIENES
+    Object.values(bienes).forEach(item => {
+        bienesList.innerHTML += `
+            <div class="card">
+                <img src="${item.foto}" />
+                <p>${item.nombre}</p>
+            </div>
+        `;
     });
 
-    markers.push(marker);
-  });
-}
-
-function renderListaDestacados(arr, id){
-  const cont = document.getElementById(id);
-  if(!cont) return;
-
-  cont.innerHTML = arr.map(it=>{
-    const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}">` : '';
-    return `
-      <div class="tarjeta destacado">
-        ${img}
-        <h3>${it.nombre} ⭐</h3>
-        <p>${it.descripcion || it.direccion || ''}</p>
-      </div>
-    `;
-  }).join('');
-}
-
-// filtros arriba
-function generarFiltros(){
-  const container = filtersBox();
-  container.innerHTML = '';
-
-  const cats = new Set();
-  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
-  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
-
-  const btnAll = document.createElement('button');
-  btnAll.className = 'filter-btn active';
-  btnAll.textContent = 'Todos';
-  btnAll.addEventListener('click', ()=>{
-    currentFilter = null;
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btnAll.classList.add('active');
-    renderizarTodo();
-  });
-  container.appendChild(btnAll);
-
-  cats.forEach(cat=>{
-    const b = document.createElement('button');
-    b.className = 'filter-btn';
-    b.textContent = cat;
-    b.addEventListener('click', ()=>{
-      document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      currentFilter = cat;
-      renderizarTodo();
+    // SERVICIOS
+    Object.values(servicios).forEach(item => {
+        servList.innerHTML += `
+            <div class="card">
+                <img src="${item.foto}" />
+                <p>${item.nombre}</p>
+            </div>
+        `;
     });
-    container.appendChild(b);
-  });
 }
 
-// leyenda
-function pintarLeyenda(){
-  const caja = leyendaItems();
-  if(!caja) return;
-  caja.innerHTML = '';
 
-  Object.keys(ALL.categorias.bienes || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}">${k}</div>`;
-  });
+/* =============================
+   INICIALIZAR TODO
+============================= */
 
-  Object.keys(ALL.categorias.servicios || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}">${k}</div>`;
-  });
-}
-
-function bindControls(){
-  searchInput().addEventListener('input', e=>{
-    currentSearch = e.target.value;
-    renderizarTodo();
-  });
-
-  leyendaBar().addEventListener('click', ()=>{
-    leyendaDrawer().classList.toggle('open');
-  });
-}
-
-iniciar();
+cargarLeyenda();
+cargarCategorias();
+cargarSubcategorias();
+cargarDestacados();
+cargarListas();
