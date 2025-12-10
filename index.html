@@ -1,77 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Malacatos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malacatos – Lugares y Servicios</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <img src="data/logo.png" alt="Logo" class="logo" />
-    <input type="text" id="buscador" placeholder="Buscar..." />
-  </header>
-
-
-  <!-- CATEGORÍAS -->
-  <section id="categorias-container">
-    <h2>Categorías</h2>
-    <div id="categorias-list"></div>
-  </section>
-
-  <!-- SUBCATEGORÍAS -->
-  <section id="subcategorias-container">
-    <h2>Subcategorías</h2>
-    <div id="subcategorias-list"></div>
-  </section>
-
-
-  <!-- MAPA -->
-  <div id="map"></div>
-
-  <!-- LEYENDA -->
-  <div id="leyenda">
-    <h3 onclick="toggleLeyenda()">Leyenda</h3>
-    <div id="leyenda-contenido"></div>
+<header>
+  <img src="data/mi-logo.png" alt="Logo" class="logo">
+  <div class="titulo">
+    <h1>Malacatos</h1>
+    <h2>Lugares turísticos y servicios</h2>
   </div>
+</header>
 
+<div class="top-controls">
+  <input type="text" id="search-input" placeholder="Buscar lugares o servicios…">
+  <div id="filters"></div>
+</div>
 
-  <!-- SECCIÓN DESTACADOS -->
-  <section>
-    <h2>Bienes Destacados</h2>
-    <div id="bienes-destacados" class="grid"></div>
+<!-- Barra de Leyendas (pestaña vertical) -->
+<div id="leyenda-bar">Leyendas</div>
 
-    <h2>Servicios Destacados</h2>
-    <div id="servicios-destacados" class="grid"></div>
-  </section>
+<!-- Drawer lateral de Leyendas -->
+<div id="leyenda-drawer">
+  <h3>Categorías</h3>
+  <div id="leyenda-items"></div>
+</div>
 
+<!-- Mapa -->
+<div id="map"></div>
 
-  <!-- SECCIÓN GENERAL -->
-  <section>
-    <h2>Bienes</h2>
-    <div id="bienes-list" class="grid"></div>
+<!-- Banner inferior -->
+<div id="banner-area" aria-hidden="true"></div>
 
-    <a class="ver-mas" href="ver-todos.html?tipo=bienes">Ver más</a>
+<!-- Listas -->
+<section class="listas">
+  <h2 class="sec-title">Bienes</h2>
+  <div id="lista-lugares" class="tarjetas"></div>
 
-    <h2>Servicios</h2>
-    <div id="servicios-list" class="grid"></div>
+  <h2 class="sec-title">Servicios</h2>
+  <div id="lista-servicios" class="tarjetas"></div>
+</section>
 
-    <a class="ver-mas" href="ver-todos.html?tipo=servicios">Ver más</a>
-  </section>
+<!-- Bottom Panel (popup inferior) -->
+<div id="bottom-panel" aria-hidden="true">
+  <button id="bp-close">×</button>
+  <div id="bp-content"></div>
+</div>
 
-
-  <!-- JS -->
-  <script src="main.js"></script>
-
+<script src="main.js"></script>
 </body>
 </html>
