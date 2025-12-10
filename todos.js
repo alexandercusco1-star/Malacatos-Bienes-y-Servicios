@@ -1,24 +1,26 @@
 async function cargar(r){ const x = await fetch(r); return await x.json(); }
 
-async function iniciarTodos(){
-    const bienes = await cargar("data/bienes.json");
-    const servicios = await cargar("data/servicios.json");
+let bienes = [];
+let servicios = [];
 
-    render("todos-bienes", bienes);
-    render("todos-servicios", servicios);
+async function iniciar(){
+  bienes = await cargar('data/bienes.json');
+  servicios = await cargar('data/servicios.json');
+
+  const cont = document.getElementById('todos-lista');
+
+  const combine = [...bienes, ...servicios].filter(i=>!i.destacado);
+
+  cont.innerHTML = combine.map(it=>{
+    const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : '';
+    return `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : ''}
+        <h3>${it.nombre}</h3>
+        <p>${it.descripcion || it.direccion || ''}</p>
+      </div>
+    `;
+  }).join('');
 }
 
-function render(id, arr){
-    const box = document.getElementById(id);
-    box.innerHTML = arr.map(it => {
-        const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : '';
-        return `
-        <div class="tarjeta">
-            ${img ? `<img src="${img}">` : ''}
-            <h3>${it.nombre}</h3>
-            <p style="color:var(--muted); font-size:14px">${it.descripcion || it.direccion || ''}</p>
-        </div>`;
-    }).join("");
-}
-
-iniciarTodos();
+iniciar();
