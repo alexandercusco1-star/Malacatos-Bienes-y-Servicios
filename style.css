@@ -1,164 +1,134 @@
 :root {
-    --verde: #2ecc71;
-    --hueso: #f7f3e9;
-    --azul-mediterraneo: #1e6fa8;
-    --muted: #777;
+  --verde-mediterraneo: #2ecc71;
+  --azul-mediterraneo: #3498db;
+  --hueso: #f2f2e9;
+  --muted: #666;
 }
 
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
+
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: var(--hueso);
+  background: var(--hueso);
 }
 
 /* HEADER */
-#top-header {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background: white;
-    border-bottom: 2px solid var(--azul-mediterraneo);
+header {
+  text-align:center;
+  padding:15px 0 5px;
+  background: var(--verde-mediterraneo);
+  color:white;
 }
 
 #logo {
-    width: 55px;
-    height: auto;
-    margin-right: 10px;
+  width:80px;
+  float:right;
+  margin:-10px 10px 0 0;
+  border-radius:50%;
 }
 
-.title-box h1 {
-    margin: 0;
-    color: var(--azul-mediterraneo);
-    font-size: 24px;
+/* SEARCH */
+.search-box {
+  padding:10px;
+  background:var(--hueso);
 }
-.title-box h2 {
-    margin: 0;
-    font-size: 14px;
-    color: var(--muted);
-}
-
-/* CONTROLES */
-#controls {
-    padding: 10px;
-    background: white;
+#search-input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
 
-#search-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--azul-mediterraneo);
-    border-radius: 6px;
-    margin-bottom: 10px;
-}
-
+/* FILTERS */
 #filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+  padding:10px;
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+  background:white;
 }
-
-.filter-btn {
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: var(--azul-mediterraneo);
-    color: white;
-    border: none;
+.filter-btn{
+  padding:6px 12px;
+  border-radius:14px;
+  border:none;
+  background:#ddd;
 }
-
 .filter-btn.active {
-    background: var(--verde);
+  background:var(--azul-mediterraneo);
+  color:white;
 }
 
 /* MAPA */
 #map {
-    width: 100%;
-    height: 340px;
+  width:100%;
+  height:350px;
 }
 
 /* LEYENDA */
-#leyenda-bar {
-    position: fixed;
-    top: 150px;
-    right: 0;
-    background: var(--azul-mediterraneo);
-    color: white;
-    padding: 10px 6px;
-    writing-mode: vertical-rl;
-    cursor: pointer;
-    border-radius: 8px 0 0 8px;
-    z-index: 999;
+#leyenda-bar{
+  position:absolute;
+  right:0;
+  top:200px;
+  background:var(--azul-mediterraneo);
+  padding:5px 10px;
+  color:white;
+  transform:rotate(-90deg);
+  border-radius:6px 6px 0 0;
 }
-
-#leyenda-drawer {
-    position: fixed;
-    top: 0;
-    right: -260px;
-    width: 240px;
-    height: 100%;
-    background: white;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-    transition: 0.3s;
-    padding: 12px;
-    z-index: 999;
+#leyenda-drawer{
+  position:absolute;
+  right:-200px;
+  top:235px;
+  width:180px;
+  background:white;
+  border:1px solid #ccc;
+  padding:10px;
+  transition:0.3s;
 }
-
-#leyenda-drawer.open {
-    right: 0;
+#leyenda-drawer.open{
+  right:0;
 }
-
-#leyenda-items img {
-    width: 26px;
-    margin-right: 6px;
+.leyenda-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:6px 0;
+}
+.leyenda-item img{
+  width:22px;
 }
 
 /* DESTACADOS */
-#destacados {
-    padding: 15px;
+#destacados-box{
+  margin-top:20px;
+  padding:10px;
 }
 
-#lista-destacados {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(165px,1fr));
-    gap: 10px;
+.subtitulo{
+  font-size:22px;
+  color:var(--azul-mediterraneo);
+  margin-bottom:10px;
 }
 
-.tarjeta img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 6px;
+.card{
+  background:white;
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:12px;
 }
-
-.ver-todos-btn {
-    margin-top: 15px;
-    width: 100%;
-    padding: 10px;
-    background: var(--azul-mediterraneo);
-    color: white;
-    border-radius: 8px;
-    border: none;
+.card img{
+  width:100%;
+  border-radius:10px;
+  height:150px;
+  object-fit:cover;
 }
-
-/* PANEL */
-#bottom-panel {
-    position: fixed;
-    left: 0;
-    bottom: -100%;
-    width: 100%;
-    background: white;
-    height: 70%;
-    transition: 0.4s;
-    padding: 10px;
-    z-index: 999;
-}
-
-#bottom-panel.open {
-    bottom: 0;
-}
-
-#bp-close {
-    font-size: 26px;
-    text-align: right;
-    cursor: pointer;
-    padding-right: 10px;
+.btn-ver-todos{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  background:var(--verde-mediterraneo);
+  border:none;
+  color:white;
+  font-size:18px;
+  border-radius:8px;
 }
