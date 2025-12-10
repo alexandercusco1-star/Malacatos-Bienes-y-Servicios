@@ -1,48 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Malacatos – Lugares y Servicios</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="data/mi-logo.png">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malacatos</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 
 <body>
 
-<header>
-    <img src="data/mi-logo.png" id="logo">
-    <h1>Malacatos</h1>
-    <h2>Lugares turísticos y servicios</h2>
-</header>
+  <!-- HEADER -->
+  <header>
+    <img src="data/logo.png" alt="Logo" class="logo" />
+    <input type="text" id="buscador" placeholder="Buscar..." />
+  </header>
 
-<!-- BUSCADOR -->
-<div class="search-box">
-    <input id="search-input" type="text" placeholder="Buscar lugar o servicio...">
-</div>
 
-<!-- FILTROS / CATEGORÍAS (esto faltaba) -->
-<div id="filters"></div>
+  <!-- CATEGORÍAS -->
+  <section id="categorias-container">
+    <h2>Categorías</h2>
+    <div id="categorias-list"></div>
+  </section>
 
-<!-- MAPA (ESTE ES EL ÚNICO MAPA) -->
-<div id="map"></div>
+  <!-- SUBCATEGORÍAS -->
+  <section id="subcategorias-container">
+    <h2>Subcategorías</h2>
+    <div id="subcategorias-list"></div>
+  </section>
 
-<!-- LEYENDA -->
-<div id="leyenda-bar">LEYENDAS</div>
-<div id="leyenda-drawer">
-    <div id="leyenda-items"></div>
-</div>
 
-<!-- DESTACADOS -->
-<section id="destacados-box">
-    <h3 class="subtitulo">Destacados</h3>
-    <div id="destacados"></div>
-    <button id="btn-ver-todos" class="btn-ver-todos">Ver todos</button>
-</section>
+  <!-- MAPA -->
+  <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="main.js"></script>
+  <!-- LEYENDA -->
+  <div id="leyenda">
+    <h3 onclick="toggleLeyenda()">Leyenda</h3>
+    <div id="leyenda-contenido"></div>
+  </div>
+
+
+  <!-- SECCIÓN DESTACADOS -->
+  <section>
+    <h2>Bienes Destacados</h2>
+    <div id="bienes-destacados" class="grid"></div>
+
+    <h2>Servicios Destacados</h2>
+    <div id="servicios-destacados" class="grid"></div>
+  </section>
+
+
+  <!-- SECCIÓN GENERAL -->
+  <section>
+    <h2>Bienes</h2>
+    <div id="bienes-list" class="grid"></div>
+
+    <a class="ver-mas" href="ver-todos.html?tipo=bienes">Ver más</a>
+
+    <h2>Servicios</h2>
+    <div id="servicios-list" class="grid"></div>
+
+    <a class="ver-mas" href="ver-todos.html?tipo=servicios">Ver más</a>
+  </section>
+
+
+  <!-- JS -->
+  <script src="main.js"></script>
 
 </body>
 </html>
