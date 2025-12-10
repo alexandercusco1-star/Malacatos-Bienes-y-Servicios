@@ -1,259 +1,224 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel y galería completa
-
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
-
-// helpers
-async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
-function iconoDe(ruta, size=36){
-  return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
-}
-
-let ALL = { bienes: [], servicios: [], categorias: {} };
+// ===========================================================
+//  CARGAR DATOS
+// ===========================================================
+let data = [];
+let map;
 let markers = [];
-let currentFilter = null;
-let currentSearch = '';
-let currentGallery = [];
-let galleryIndex = 0;
 
-// UI refs
-const searchInput = () => document.getElementById('search-input');
-const filtersBox = () => document.getElementById('filters');
-const listaLugares = () => document.getElementById('lista-lugares');
-const listaServicios = () => document.getElementById('lista-servicios');
-const bannerArea = () => document.getElementById('banner-area');
-const leyendaDrawer = () => document.getElementById('leyenda-drawer');
-const leyendaItems = () => document.getElementById('leyenda-items');
-const leyendaBar = () => document.getElementById('leyenda-bar');
-const bottomPanel = () => document.getElementById('bottom-panel');
-const bpContent = () => document.getElementById('bp-content');
-const bpClose = () => document.getElementById('bp-close');
+// ===========================================================
+//  INICIALIZAR MAPA
+// ===========================================================
+function initMap() {
+    map = L.map('map').setView([-4.2149, -79.1703], 14);
 
-// Lightbox
-const lightbox = () => document.getElementById('lightbox');
-const lbImg = () => document.getElementById('lb-img');
-const lbPrev = () => document.getElementById('lb-prev');
-const lbNext = () => document.getElementById('lb-next');
-const lbClose = () => document.getElementById('lb-close');
-
-async function iniciar(){
-  [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
-    cargar('data/bienes.json'),
-    cargar('data/servicios.json'),
-    cargar('data/categorias.json')
-  ]);
-
-  generarFiltros();
-  bindControls();
-  renderizarTodo();
-  pintarLeyenda();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
 }
 
-// clear markers
-function clearMarkers(){
-  markers.forEach(m=>map.removeLayer(m));
-  markers = [];
-}
+// ===========================================================
+//  CREAR MARCADORES
+// ===========================================================
+function renderMarkers(list) {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
 
-// render everything considering filters & search
-function renderizarTodo(){
-  clearMarkers();
+    list.forEach(item => {
+        const icon = L.icon({
+            iconUrl: item.icono,
+            iconSize: [35, 35],
+            iconAnchor: [17, 34],
+            popupAnchor: [0, -28]
+        });
 
-  const combined = [...ALL.bienes, ...ALL.servicios];
-  const visibles = combined.filter(i=>{
-    // search
-    const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
-    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    // filter by category
-    if(currentFilter && i.categoria !== currentFilter) return false;
-    return true;
-  });
+        const marker = L.marker(item.coordenadas, { icon }).addTo(map);
 
-  // render lists
-  renderLista(ALL.bienes, 'lista-lugares');
-  renderLista(ALL.servicios, 'lista-servicios');
+        marker.on("click", () => {
+            openBottomPanel(item);
+        });
 
-  // markers
-  visibles.forEach(item=>{
-    const lat = parseFloat(item.latitud);
-    const lng = parseFloat(item.longitud);
-    if(Number.isNaN(lat) || Number.isNaN(lng)) return;
-
-    let iconFile = item.icono || (ALL.categorias[item.tipo]?.[item.categoria]?.icono) || 'icon-default.jpeg';
-    const size = item.destacado ? 52 : 36;
-
-    const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
-    marker.on('click', ()=> {
-      map.setView([lat,lng], item.destacado ? 16 : 15);
-      mostrarBottomPanel(item);
+        markers.push(marker);
     });
-
-    markers.push(marker);
-  });
-
-  // auto center to highlighted
-  const firstDest = visibles.find(v=>v.destacado);
-  if(firstDest){
-    map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
-  }
 }
 
-// render cards
-function renderLista(arr, id){
-  const cont = document.getElementById(id);
-  if(!cont) return;
+// ===========================================================
+//  CARGAR PANEL INFERIOR
+// ===========================================================
+function openBottomPanel(item) {
+    const panel = document.getElementById("bottom-panel");
+    const content = document.getElementById("bp-content");
 
-  cont.innerHTML = arr.map(it=>{
-    const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
-    return `
-      <div class="tarjeta" data-nombre="${it.nombre}">
-        ${img}
-        <h3>${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
-        <p style="color:#666;font-size:14px">${it.descripcion || it.direccion || ''}</p>
-        <button class="ver-btn" data-n="${it.nombre}">Ver</button>
-      </div>
+    let fotosHTML = item.fotos
+        .map(f => `<img src="${f}" alt="foto">`)
+        .join("");
+
+    content.innerHTML = `
+        <h2>${item.nombre}</h2>
+        <p>${item.descripcion}</p>
+        ${fotosHTML}
     `;
-  }).join('');
 
-  cont.querySelectorAll('.ver-btn').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const nombre = e.currentTarget.dataset.n;
-      const target = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-      if(!target) return;
-      map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16);
-      mostrarGaleria(target);  // abrir galería al pulsar "Ver"
+    panel.classList.add("open");
+}
+
+document.getElementById("bp-close").onclick = () => {
+    document.getElementById("bottom-panel").classList.remove("open");
+};
+
+// ===========================================================
+//  BUSCADOR
+// ===========================================================
+function activarBuscador() {
+    const input = document.getElementById("search-input");
+
+    input.addEventListener("input", () => {
+        const text = input.value.toLowerCase();
+
+        const filtrados = data.filter(item =>
+            item.nombre.toLowerCase().includes(text) ||
+            item.categoria.toLowerCase().includes(text)
+        );
+
+        renderMarkers(filtrados);
+        renderListaCompleta(filtrados);
     });
-  });
 }
 
-// bottom panel
-function mostrarBottomPanel(item){
-  const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
-  const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
-  const bannerHtml = item.banner ? `<img src="data/${item.banner}" class="bp-banner">` : '';
+// ===========================================================
+//  FILTROS POR CATEGORÍA
+// ===========================================================
+function renderFiltros() {
+    const cont = document.getElementById("filters");
+    const categorias = [...new Set(data.map(i => i.categoria))];
 
-  bpContent().innerHTML = `
-    <div class="bp-top">
-      ${img ? `<img src="${img}" class="bp-img">` : ''}
-      <div class="bp-info">
-        <h3>${item.nombre}</h3>
-        <p>${item.descripcion || item.direccion || ''}</p>
-        <p>📍 ${item.ubicacion || item.direccion || ''}</p>
-        <div class="bp-actions">
-          ${telBtn}
-          <button class="btn" id="bp-dir-btn">Cómo llegar</button>
-        </div>
-      </div>
-    </div>
-    ${bannerHtml || ''}
-  `;
+    cont.innerHTML = "";
 
-  setTimeout(()=>{
-    const dirBtn = document.getElementById('bp-dir-btn');
-    if(dirBtn){
-      dirBtn.addEventListener('click', ()=> {
-        map.setView([parseFloat(item.latitud), parseFloat(item.longitud)], 17);
-      });
-    }
-  }, 50);
+    categorias.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.innerText = cat;
 
-  bottomPanel().classList.add('open');
-}
+        btn.onclick = () => {
+            document
+                .querySelectorAll(".filter-btn")
+                .forEach(b => b.classList.remove("active"));
 
-// hide bottom panel
-function ocultarBottomPanel(){
-  bottomPanel().classList.remove('open');
-}
+            btn.classList.add("active");
 
-// filtros
-function generarFiltros(){
-  const container = filtersBox();
-  container.innerHTML = '';
+            const filtrados = data.filter(i => i.categoria === cat);
 
-  const cats = new Set();
-  Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
-  Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
+            renderMarkers(filtrados);
+            renderListaCompleta(filtrados);
+        };
 
-  const btnAll = document.createElement('button');
-  btnAll.className = 'filter-btn active';
-  btnAll.textContent = 'Todos';
-  btnAll.addEventListener('click', ()=>{ currentFilter = null; activar(btnAll); renderizarTodo(); });
-  container.appendChild(btnAll);
-
-  cats.forEach(cat=>{
-    const b = document.createElement('button');
-    b.className = 'filter-btn';
-    b.textContent = cat;
-    b.addEventListener('click', ()=> {
-      currentFilter = cat;
-      activar(b);
-      renderizarTodo();
+        cont.appendChild(btn);
     });
-    container.appendChild(b);
-  });
 }
 
-function activar(btn){
-  document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
+// ===========================================================
+//  DESTACADOS
+// ===========================================================
+function renderDestacados() {
+    const cont = document.getElementById("destacados-contenedor");
+    cont.innerHTML = "";
+
+    const destacados = data.filter(i => i.destacado === true);
+
+    destacados.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "tarjeta";
+
+        const foto = item.fotos && item.fotos.length > 0 ? item.fotos[0] : "";
+
+        card.innerHTML = `
+            <img src="${foto}">
+            <h3>${item.nombre}</h3>
+        `;
+
+        card.onclick = () => openBottomPanel(item);
+
+        cont.appendChild(card);
+    });
 }
 
-// bind controls
-function bindControls(){
-  searchInput().addEventListener('input', (e)=>{
-    currentSearch = e.target.value.trim();
-    renderizarTodo();
-  });
+// ===========================================================
+//  LISTA COMPLETA (para ver todos)
+// ===========================================================
+function renderListaCompleta(list) {
+    const contBienes = document.getElementById("lista-lugares");
+    const contServicios = document.getElementById("lista-servicios");
 
-  leyendaBar().addEventListener('click', ()=>{
-    leyendaDrawer().classList.toggle("open");
-  });
+    contBienes.innerHTML = "<h3>Bienes</h3>";
+    contServicios.innerHTML = "<h3>Servicios</h3>";
 
-  bpClose().addEventListener('click', ocultarBottomPanel);
+    list.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "tarjeta";
 
-  document.addEventListener('click', (e)=>{
-    const bp = bottomPanel();
-    if(!bp) return;
-    if(bp.contains(e.target)) return;
-    const ls = ['filters','search-input','top-bar','leyenda-bar','leyenda-drawer'];
-    if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
-    ocultarBottomPanel();
-  });
+        const foto = item.fotos && item.fotos.length > 0 ? item.fotos[0] : "";
+
+        div.innerHTML = `
+            <img src="${foto}">
+            <h3>${item.nombre}</h3>
+        `;
+
+        div.onclick = () => openBottomPanel(item);
+
+        if (item.categoria === "Bien") contBienes.appendChild(div);
+        else contServicios.appendChild(div);
+    });
 }
 
-// pintar leyenda
-function pintarLeyenda(){
-  const caja = leyendaItems();
-  caja.innerHTML = '';
-  Object.keys(ALL.categorias.bienes || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.bienes[k].icono}" alt="${k}">${k}</div>`;
-  });
-  Object.keys(ALL.categorias.servicios || {}).forEach(k => {
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${ALL.categorias.servicios[k].icono}" alt="${k}">${k}</div>`;
-  });
+// ===========================================================
+//  BOTÓN VER TODOS
+// ===========================================================
+document.getElementById("ver-todos").onclick = () => {
+    document.getElementById("resultados").style.display = "block";
+
+    // mostrar todo
+    renderListaCompleta(data);
+};
+
+// ===========================================================
+//  LEYENDA
+// ===========================================================
+function renderLeyenda() {
+    const cont = document.getElementById("leyenda-items");
+    cont.innerHTML = "";
+
+    const categorias = [...new Set(data.map(i => i.categoria))];
+
+    categorias.forEach(cat => {
+        const item = document.createElement("div");
+        item.className = "leyenda-item";
+
+        const icono = data.find(i => i.categoria === cat).icono;
+
+        item.innerHTML = `
+            <img src="${icono}">
+            <span>${cat}</span>
+        `;
+        cont.appendChild(item);
+    });
 }
 
-// LIGHTBOX: abrir galería de imágenes
-function mostrarGaleria(item){
-  const fotos = item.imagenes || [];
-  if(fotos.length === 0) return;
-  currentGallery = fotos;
-  galleryIndex = 0;
-  lbImg().src = 'data/' + currentGallery[galleryIndex];
-  lightbox().classList.add('open');
+// abrir/cerrar
+document.getElementById("leyenda-bar").onclick = () => {
+    document.getElementById("leyenda-drawer").classList.toggle("open");
+};
+
+// ===========================================================
+//  INICIALIZAR TODO
+// ===========================================================
+async function init() {
+    const res = await fetch("data/data.json");
+    data = await res.json();
+
+    initMap();
+    renderMarkers(data);
+    renderFiltros();
+    renderDestacados();
+    renderLeyenda();
+    activarBuscador();
 }
-
-function cambiarImg(dir){
-  galleryIndex += dir;
-  if(galleryIndex < 0) galleryIndex = currentGallery.length - 1;
-  if(galleryIndex >= currentGallery.length) galleryIndex = 0;
-  lbImg().src = 'data/' + currentGallery[galleryIndex];
-}
-
-// hooks lightbox
-lbClose().addEventListener('click', ()=> lightbox().classList.remove('open'));
-lbPrev().addEventListener('click', ()=> cambiarImg(-1));
-lbNext().addEventListener('click', ()=> cambiarImg(1));
-
-// start
-iniciar();
+init();
