@@ -8,10 +8,12 @@
     "latitud": -4.219167,
     "longitud": -79.258333,
     "icono": "icon-casa.jpeg",
-    "imagenes": ["b1.3.jpg"],
-    "imagenes": ["b1.2.jpg"],
-    "imagenes": ["b1.1.jpg"],
-    "imagenes": ["b1.jpg"],
+    "imagenes": [
+      "b1.jpg",
+      "b1.1.jpg",
+      "b1.2.jpg",
+      "b1.3.jpg"
+    ],
     "destacado": true
   },
   {
@@ -23,6 +25,8 @@
     "latitud": -4.219117,
     "longitud": -79.258284,
     "icono": "icon-iglesia.jpeg",
-    "imagenes": ["b2.jpg"]
+    "imagenes": [
+      "b2.jpg"
+    ]
   }
 ]
