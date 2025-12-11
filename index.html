@@ -19,6 +19,11 @@
       <h1>Malacatos</h1>
       <h2 class="subtitulo">Lugares turísticos y servicios</h2>
     </div>
+
+    <!-- EDITOR CONTROL (arriba, junto al buscador area)-- >
+    <div id="editor-controls" class="editor-controls">
+      <button id="btn-toggle-edit" class="btn small">Entrar en modo edición</button>
+    </div>
   </header>
 
   <!-- Buscador y filtros -->
@@ -66,6 +71,67 @@
     <span id="lb-prev">❮</span>
     <img id="lb-img" src="">
     <span id="lb-next">❯</span>
+  </div>
+
+  <!-- Editor panel (hidden until mode edit ON) -->
+  <div id="editor-panel" class="editor-panel" aria-hidden="true">
+    <div class="editor-header">
+      <h3>Editor - Negocio</h3>
+      <button id="editor-close" class="btn small">Cerrar</button>
+    </div>
+
+    <div class="editor-body">
+      <label>Tipo</label>
+      <select id="editor-tipo">
+        <option value="bienes">Bien</option>
+        <option value="servicios">Servicio</option>
+      </select>
+
+      <label>Nombre</label>
+      <input id="editor-nombre" type="text">
+
+      <label>Categoría</label>
+      <input id="editor-categoria" type="text">
+
+      <label>Descripción</label>
+      <textarea id="editor-descripcion" rows="3"></textarea>
+
+      <label>Dirección (texto)</label>
+      <input id="editor-direccion" type="text">
+
+      <label>Teléfono</label>
+      <input id="editor-telefono" type="text">
+
+      <label>Icono (archivo en data/)</label>
+      <input id="editor-icono" type="text" placeholder="ej: icon-tijeras.jpeg">
+
+      <label>Banner (archivo en data/)</label>
+      <input id="editor-banner" type="text" placeholder="ej: banner-lauris.jpg">
+
+      <label>Imágenes (archivos separados por coma, en data/)</label>
+      <input id="editor-imagenes" type="text" placeholder="ej: s1.jpg,s1.1.jpg">
+
+      <label>Latitud</label>
+      <input id="editor-latitud" type="number" step="0.000001">
+
+      <label>Longitud</label>
+      <input id="editor-longitud" type="number" step="0.000001">
+
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button id="editor-set-coord" class="btn">Marcar en mapa</button>
+        <button id="editor-save" class="btn">Guardar cambios</button>
+        <button id="editor-new" class="btn">Nuevo negocio</button>
+        <button id="editor-delete" class="btn danger">Eliminar</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button id="btn-download-json" class="btn">Descargar JSON actualizado</button>
+      </div>
+
+      <div style="margin-top:8px;color:#666;font-size:13px">
+        Consejo: usa "Marcar en mapa" y luego haz click en el mapa para elegir coordenadas.
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
