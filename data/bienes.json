@@ -5,7 +5,7 @@
     "categoria": "Parque",
     "descripcion": "Espacio público principal del centro de Malacatos.",
     "ubicacion": "Centro de Malacatos",
-    "latitud": -4.218858700,
+    "latitud": -4.219358700,
     "longitud": -79.258833,
     "icono": "icon-casa.jpeg",
     "imagenes": [
@@ -23,7 +23,7 @@
     "descripcion": "Punto histórico y religioso de Malacatos.",
     "ubicacion": "Centro de Malacatos",
     "latitud": -4.219117,
-    "longitud": -79.257684,
+    "longitud": -79.259484,
     "icono": "icon-iglesia.jpeg",
     "imagenes": [
       "b2_iglesia.jpg",
