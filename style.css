@@ -39,6 +39,7 @@ body {
   padding: 12px 12px 8px 74px; /* deja espacio para el logo */
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 .titulo-box h1 {
   margin: 0;
@@ -160,6 +161,7 @@ body {
   .header { padding-left: 68px; }
   .logo-personal { width: 44px; height:44px; }
 }
+
 /* Modal para ver imágenes */
 #modal {
   position: fixed;
@@ -206,4 +208,31 @@ body {
   border: none;
   border-radius: 8px;
   font-size: 16px;
+}
+
+/* ====== EDITOR UI ====== */
+.editor-controls { margin-left: 12px; }
+.btn { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; background: var(--azul-mediterraneo); color: white; }
+.btn.small { padding: 6px 8px; font-size:14px; background: rgba(255,255,255,0.12); color: white; border:1px solid rgba(255,255,255,0.08); }
+.btn.danger { background: #e74c3c; color: white; }
+.editor-panel {
+  position: fixed;
+  top: 72px;
+  right: 12px;
+  width: 320px;
+  max-height: calc(100% - 120px);
+  background: white;
+  border: 1px solid var(--gris-claro);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  padding: 12px;
+  border-radius: 10px;
+  z-index: 10001;
+  overflow-y: auto;
+  display: none;
+}
+.editor-panel[aria-hidden="false"] { display:block; }
+.editor-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.editor-body label { display:block; margin-top:8px; font-weight:600; color:#333; }
+.editor-body input, .editor-body textarea, .editor-body select {
+  width:100%; padding:8px; margin-top:6px; border:1px solid var(--gris-claro); border-radius:6px;
 }
