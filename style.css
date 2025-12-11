@@ -160,3 +160,50 @@ body {
   .header { padding-left: 68px; }
   .logo-personal { width: 44px; height:44px; }
 }
+/* Modal para ver imágenes */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 10000;
+}
+
+#modal.open {
+  display: flex;
+}
+
+#modal-content {
+  background: white;
+  max-width: 600px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.modal-fotos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+#modal-close {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #2b7a78;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
