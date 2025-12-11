@@ -19,8 +19,7 @@ let galleryIndex = 0;
 // UI refs
 const searchInput = () => document.getElementById('search-input');
 const filtersBox = () => document.getElementById('filters');
-const listaLugares = () => document.getElementById('lista-lugares');
-const listaServicios = () => document.getElementById('lista-servicios');
+const destacadosCont = () => document.getElementById('destacados-contenedor');
 const bannerArea = () => document.getElementById('banner-area');
 const leyendaDrawer = () => document.getElementById('leyenda-drawer');
 const leyendaItems = () => document.getElementById('leyenda-items');
@@ -60,18 +59,17 @@ function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
+
   const visibles = combined.filter(i=>{
-    // search
     const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
-    if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    // filter by category
-    if(currentFilter && i.categoria !== currentFilter) return false;
+    if (currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
+    if (currentFilter && i.categoria !== currentFilter) return false;
     return true;
   });
 
-  // render lists
-  renderLista(ALL.bienes, 'lista-lugares');
-  renderLista(ALL.servicios, 'lista-servicios');
+  // Render destacados
+  const dest = combined.filter(x=>x.destacado === true);
+  renderDestacados(dest);
 
   // markers
   visibles.forEach(item=>{
@@ -91,37 +89,33 @@ function renderizarTodo(){
     markers.push(marker);
   });
 
-  // auto center to highlighted
-  const firstDest = visibles.find(v=>v.destacado);
+  const firstDest = dest[0];
   if(firstDest){
     map.setView([parseFloat(firstDest.latitud), parseFloat(firstDest.longitud)], 16);
   }
 }
 
-// render cards
-function renderLista(arr, id){
-  const cont = document.getElementById(id);
-  if(!cont) return;
-
-  cont.innerHTML = arr.map(it=>{
+// render destacados
+function renderDestacados(arr){
+  destacadosCont().innerHTML = arr.map(it=>{
     const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
     return `
       <div class="tarjeta" data-nombre="${it.nombre}">
         ${img}
-        <h3>${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
-        <p style="color:#666;font-size:14px">${it.descripcion || it.direccion || ''}</p>
+        <h3>${it.nombre} ⭐</h3>
+        <p>${it.descripcion || it.direccion || ''}</p>
         <button class="ver-btn" data-n="${it.nombre}">Ver</button>
       </div>
     `;
   }).join('');
 
-  cont.querySelectorAll('.ver-btn').forEach(btn=>{
+  destacadosCont().querySelectorAll('.ver-btn').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       const nombre = e.currentTarget.dataset.n;
       const target = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
       if(!target) return;
       map.setView([parseFloat(target.latitud), parseFloat(target.longitud)], 16);
-      mostrarGaleria(target);  // abrir galería al pulsar "Ver"
+      mostrarGaleria(target);
     });
   });
 }
@@ -233,7 +227,7 @@ function pintarLeyenda(){
   });
 }
 
-// LIGHTBOX: abrir galería de imágenes
+// Galería
 function mostrarGaleria(item){
   const fotos = item.imagenes || [];
   if(fotos.length === 0) return;
@@ -250,7 +244,6 @@ function cambiarImg(dir){
   lbImg().src = 'data/' + currentGallery[galleryIndex];
 }
 
-// hooks lightbox
 lbClose().addEventListener('click', ()=> lightbox().classList.remove('open'));
 lbPrev().addEventListener('click', ()=> cambiarImg(-1));
 lbNext().addEventListener('click', ()=> cambiarImg(1));
