@@ -1,19 +1,27 @@
-// ver-todos.js - muestra todos los elementos que NO estén marcado destacado:true
-async function fetchJson(url){ const r = await fetch(url,{cache:'no-store'}); return await r.json(); }
+console.log("ver-todos.js activo");
 
-async function initTodos(){
-  const bienes = await fetchJson('data/bienes.json');
-  const servicios = await fetchJson('data/servicios.json');
+async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
 
-  const all = [...bienes, ...servicios];
-  // mostrar los que NO son destacados (si quieres incluir los destacados también, quita el filter)
-  const noDest = all.filter(i => !i.destacado);
+async function iniciar(){
+  const bienes = await cargar('data/bienes.json');
+  const servicios = await cargar('data/servicios.json');
 
-  const cont = document.getElementById('todos-lista');
-  cont.innerHTML = noDest.map(it=>{
-    const img = it.imagenes && it.imagenes.length ? `<img src="data/${it.imagenes[0]}" style="width:100%;height:160px;object-fit:cover;border-radius:8px">` : '';
-    return `<div class="card">${img}<h3>${it.nombre}</h3><p style="color:var(--muted)">${it.descripcion || it.direccion || ''}</p></div>`;
+  render("lista-bienes", bienes);
+  render("lista-servicios", servicios);
+}
+
+function render(id, arr){
+  const cont = document.getElementById(id);
+  cont.innerHTML = arr.map(it=>{
+    const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
+    return `
+      <div class="tarjeta">
+        ${img}
+        <h3>${it.nombre}${it.destacado ? ' ⭐' : ''}</h3>
+        <p>${it.descripcion || it.direccion || ''}</p>
+      </div>
+    `;
   }).join('');
 }
 
-initTodos();
+iniciar();
