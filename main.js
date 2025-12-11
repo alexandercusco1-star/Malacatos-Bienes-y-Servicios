@@ -1,5 +1,4 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel, galería y MODE EDITOR completo (guardar => download JSON)
-
+// main.js - mapa + editor completo + upload JSON + reset desde servidor
 // -----------------------------
 // MAPA
 // -----------------------------
@@ -41,6 +40,10 @@ const bpClose = () => document.getElementById('bp-close');
 
 // Editor DOM
 const btnToggleEdit = document.getElementById('btn-toggle-edit');
+const btnUploadJson = document.getElementById('btn-upload-json');
+const btnResetServer = document.getElementById('btn-reset-server');
+const fileInput = document.getElementById('file-input');
+
 const editorPanel = document.getElementById('editor-panel');
 const editorClose = document.getElementById('editor-close');
 const editorTipo = document.getElementById('editor-tipo');
@@ -71,33 +74,32 @@ const lbClose = () => document.getElementById('lb-close');
 // INICIO
 // -----------------------------
 async function iniciar(){
-  // Cargar JSON originales
-  const [bienes, servicios, categorias] = await Promise.all([
-    cargar('data/bienes.json'),
-    cargar('data/servicios.json'),
-    cargar('data/categorias.json')
-  ]).catch(err=>{
-    console.error('Error al cargar JSON:', err);
-    return [[],[],{}];
-  });
+  // Cargar JSON originales y luego preferir localStorage si existe
+  try {
+    const [bienes, servicios, categorias] = await Promise.all([
+      cargar('data/bienes.json'),
+      cargar('data/servicios.json'),
+      cargar('data/categorias.json')
+    ]);
+    ALL.bienes = bienes;
+    ALL.servicios = servicios;
+    ALL.categorias = categorias;
+  } catch(e){
+    console.error('No se pudieron cargar JSON desde data/:', e);
+    ALL = { bienes: [], servicios: [], categorias: {} };
+  }
 
   // Si hay edición previa en localStorage, preferirla
   const local = localStorage.getItem('malacatos_data_v1');
   if(local){
     try{
       const parsed = JSON.parse(local);
-      ALL.bienes = parsed.bienes || bienes;
-      ALL.servicios = parsed.servicios || servicios;
-      ALL.categorias = parsed.categorias || categorias;
+      ALL.bienes = parsed.bienes || ALL.bienes;
+      ALL.servicios = parsed.servicios || ALL.servicios;
+      ALL.categorias = parsed.categorias || ALL.categorias;
     }catch(e){
-      ALL.bienes = bienes;
-      ALL.servicios = servicios;
-      ALL.categorias = categorias;
+      console.warn('localStorage inválido, usando archivos del repositorio.');
     }
-  } else {
-    ALL.bienes = bienes;
-    ALL.servicios = servicios;
-    ALL.categorias = categorias;
   }
 
   generarFiltros();
@@ -349,7 +351,6 @@ function bindControls(){
         arr[idx] = {...arr[idx], ...obj};
         alert('Guardado: cambios aplicados al negocio.');
       } else {
-        // fallback: reemplazar por nombre
         const f = arr.find(x=>x.nombre === editingItem.nombre);
         if(f) Object.assign(f, obj);
       }
@@ -361,7 +362,9 @@ function bindControls(){
 
     // persistir en localStorage
     persistLocal();
+    generarFiltros();
     renderizarTodo();
+    pintarLeyenda();
   });
 
   // nuevo (limpia editor para crear)
@@ -414,6 +417,98 @@ function bindControls(){
     URL.revokeObjectURL(urlS);
 
     alert('Descargados bienes.json y servicios.json. Súbelos a tu repositorio para que los cambios sean permanentes.');
+  });
+
+  // subida de JSON desde celular
+  btnUploadJson.addEventListener('click', ()=> {
+    fileInput.value = null;
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', (ev)=> {
+    const files = Array.from(ev.target.files || []);
+    if(files.length === 0) return;
+    // procesar archivos seleccionados uno por uno
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        try {
+          const data = JSON.parse(e.target.result);
+          // Si el JSON es un array, intentar detectar si es bienes o servicios
+          if(Array.isArray(data)) {
+            // heuristic: check first element 'tipo' or name of file
+            const lower = file.name.toLowerCase();
+            if(lower.includes('bien')) {
+              ALL.bienes = data;
+              alert('bienes.json cargado desde el celular.');
+            } else if(lower.includes('servicio')) {
+              ALL.servicios = data;
+              alert('servicios.json cargado desde el celular.');
+            } else {
+              // fallback: check data[0].tipo
+              const t0 = data[0]?.tipo;
+              if(t0 === 'bienes' || t0 === 'bien') {
+                ALL.bienes = data;
+                alert('bienes (detectado) cargado.');
+              } else if(t0 === 'servicios' || t0 === 'servicio') {
+                ALL.servicios = data;
+                alert('servicios (detectado) cargado.');
+              } else {
+                // unknown: ask user which to replace
+                const choice = prompt('No se detectó tipo. Escribe "bienes" o "servicios" para indicar dónde cargar este archivo:','bienes');
+                if(choice === 'bienes') {
+                  ALL.bienes = data;
+                  alert('bienes.json cargado.');
+                } else {
+                  ALL.servicios = data;
+                  alert('servicios.json cargado.');
+                }
+              }
+            }
+          } else if(typeof data === 'object' && (data.bienes || data.servicios || data.categorias)) {
+            // Si es un objeto con llaves
+            if(data.bienes) ALL.bienes = data.bienes;
+            if(data.servicios) ALL.servicios = data.servicios;
+            if(data.categorias) ALL.categorias = data.categorias;
+            alert('JSON compuesto cargado (bienes/servicios/categorias).');
+          } else {
+            alert('Archivo JSON no válido o estructura desconocida.');
+          }
+
+          // persistir y re-render
+          persistLocal();
+          generarFiltros();
+          pintarLeyenda();
+          renderizarTodo();
+
+        } catch(err) {
+          alert('Error al leer JSON: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+  });
+
+  // reset desde servidor (lee los archivos en data/ y reemplaza localStorage)
+  btnResetServer.addEventListener('click', async ()=> {
+    if(!confirm('¿Restablecer desde los archivos originales en data/? Esto eliminará los cambios locales guardados.')) return;
+    try {
+      const [bienes, servicios, categorias] = await Promise.all([
+        cargar('data/bienes.json'),
+        cargar('data/servicios.json'),
+        cargar('data/categorias.json')
+      ]);
+      ALL.bienes = bienes;
+      ALL.servicios = servicios;
+      ALL.categorias = categorias;
+      localStorage.removeItem('malacatos_data_v1');
+      generarFiltros();
+      pintarLeyenda();
+      renderizarTodo();
+      alert('Restaurado desde data/ y localStorage eliminado.');
+    } catch(e){
+      alert('Error al reiniciar desde servidor: ' + e.message);
+    }
   });
 
 }
