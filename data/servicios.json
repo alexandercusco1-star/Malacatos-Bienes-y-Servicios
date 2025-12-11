@@ -9,7 +9,12 @@
     "latitud": -4.218500,
     "longitud": -79.255200,
     "icono": "icon-tijeras.jpeg",
-    "imagenes": ["s1.1jpg","s1.2.jpg","s1.3.jpg","s1.jpg"],
+    "imagenes": [
+      "s1.jpg",
+      "s1.1.jpg",
+      "s1.2.jpg",
+      "s1.3.jpg"
+    ],
     "destacado": true,
     "banner": "banner-lauris.jpg",
     "promocion": "15% de descuento en cortes para nuevos clientes."
@@ -25,6 +30,8 @@
     "latitud": -4.218450,
     "longitud": -79.255150,
     "icono": "icon-llave.jpeg",
-    "imagenes": ["s2.jpg"]
+    "imagenes": [
+      "s2.jpg"
+    ]
   }
 ]
