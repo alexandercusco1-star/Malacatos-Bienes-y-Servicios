@@ -1,9 +1,14 @@
-// main.js - mapa, carga data, buscador, filtros, bottom-panel y galería completa
+// main.js - mapa, carga data, buscador, filtros, bottom-panel, galería y MODE EDITOR completo (guardar => download JSON)
 
+// -----------------------------
+// MAPA
+// -----------------------------
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
 
-// helpers
+// -----------------------------
+// HELPERS Y ESTADO
+// -----------------------------
 async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
 function iconoDe(ruta, size=36){
   return L.icon({ iconUrl:`data/${ruta}`, iconSize:[size,size], iconAnchor:[Math.round(size/2),size], popupAnchor:[0,-size+6] });
@@ -15,6 +20,12 @@ let currentFilter = null;
 let currentSearch = '';
 let currentGallery = [];
 let galleryIndex = 0;
+
+// Editor state
+let editorOn = false;
+let editingItem = null; // referencia al objeto en ALL (no copia)
+let editingTipo = null; // 'bienes' o 'servicios'
+let tempMarker = null; // marcador temporal para marcar coordenadas en edición
 
 // UI refs
 const searchInput = () => document.getElementById('search-input');
@@ -28,6 +39,27 @@ const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
 const bpClose = () => document.getElementById('bp-close');
 
+// Editor DOM
+const btnToggleEdit = document.getElementById('btn-toggle-edit');
+const editorPanel = document.getElementById('editor-panel');
+const editorClose = document.getElementById('editor-close');
+const editorTipo = document.getElementById('editor-tipo');
+const editorNombre = document.getElementById('editor-nombre');
+const editorCategoria = document.getElementById('editor-categoria');
+const editorDescripcion = document.getElementById('editor-descripcion');
+const editorDireccion = document.getElementById('editor-direccion');
+const editorTelefono = document.getElementById('editor-telefono');
+const editorIcono = document.getElementById('editor-icono');
+const editorBanner = document.getElementById('editor-banner');
+const editorImagenes = document.getElementById('editor-imagenes');
+const editorLat = document.getElementById('editor-latitud');
+const editorLng = document.getElementById('editor-longitud');
+const editorSetCoord = document.getElementById('editor-set-coord');
+const editorSave = document.getElementById('editor-save');
+const editorNew = document.getElementById('editor-new');
+const editorDelete = document.getElementById('editor-delete');
+const btnDownloadJSON = document.getElementById('btn-download-json');
+
 // Lightbox
 const lightbox = () => document.getElementById('lightbox');
 const lbImg = () => document.getElementById('lb-img');
@@ -35,12 +67,38 @@ const lbPrev = () => document.getElementById('lb-prev');
 const lbNext = () => document.getElementById('lb-next');
 const lbClose = () => document.getElementById('lb-close');
 
+// -----------------------------
+// INICIO
+// -----------------------------
 async function iniciar(){
-  [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
+  // Cargar JSON originales
+  const [bienes, servicios, categorias] = await Promise.all([
     cargar('data/bienes.json'),
     cargar('data/servicios.json'),
     cargar('data/categorias.json')
-  ]);
+  ]).catch(err=>{
+    console.error('Error al cargar JSON:', err);
+    return [[],[],{}];
+  });
+
+  // Si hay edición previa en localStorage, preferirla
+  const local = localStorage.getItem('malacatos_data_v1');
+  if(local){
+    try{
+      const parsed = JSON.parse(local);
+      ALL.bienes = parsed.bienes || bienes;
+      ALL.servicios = parsed.servicios || servicios;
+      ALL.categorias = parsed.categorias || categorias;
+    }catch(e){
+      ALL.bienes = bienes;
+      ALL.servicios = servicios;
+      ALL.categorias = categorias;
+    }
+  } else {
+    ALL.bienes = bienes;
+    ALL.servicios = servicios;
+    ALL.categorias = categorias;
+  }
 
   generarFiltros();
   bindControls();
@@ -48,18 +106,18 @@ async function iniciar(){
   pintarLeyenda();
 }
 
-// clear markers
+// -----------------------------
+// RENDERS
+// -----------------------------
 function clearMarkers(){
   markers.forEach(m=>map.removeLayer(m));
   markers = [];
 }
 
-// render everything considering filters & search
 function renderizarTodo(){
   clearMarkers();
 
   const combined = [...ALL.bienes, ...ALL.servicios];
-
   const visibles = combined.filter(i=>{
     const text = (i.nombre + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
     if (currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
@@ -84,6 +142,10 @@ function renderizarTodo(){
     marker.on('click', ()=> {
       map.setView([lat,lng], item.destacado ? 16 : 15);
       mostrarBottomPanel(item);
+      // if editor on, open editor for this item
+      if(editorOn){
+        abrirEditorPara(item);
+      }
     });
 
     markers.push(marker);
@@ -95,7 +157,7 @@ function renderizarTodo(){
   }
 }
 
-// render destacados
+// destacados
 function renderDestacados(arr){
   destacadosCont().innerHTML = arr.map(it=>{
     const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
@@ -159,7 +221,9 @@ function ocultarBottomPanel(){
   bottomPanel().classList.remove('open');
 }
 
-// filtros
+// -----------------------------
+// FILTROS
+// -----------------------------
 function generarFiltros(){
   const container = filtersBox();
   container.innerHTML = '';
@@ -192,7 +256,9 @@ function activar(btn){
   btn.classList.add('active');
 }
 
-// bind controls
+// -----------------------------
+// CONTROLES - BIND
+// -----------------------------
 function bindControls(){
   searchInput().addEventListener('input', (e)=>{
     currentSearch = e.target.value.trim();
@@ -213,9 +279,179 @@ function bindControls(){
     if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
     ocultarBottomPanel();
   });
+
+  // Editor toggle
+  btnToggleEdit.addEventListener('click', ()=> {
+    editorOn = !editorOn;
+    btnToggleEdit.innerText = editorOn ? 'Salir de edición' : 'Entrar en modo edición';
+    editorPanel.setAttribute('aria-hidden', editorOn ? 'false' : 'true');
+    if(!editorOn) {
+      // cerrar edición
+      editingItem = null;
+      if(tempMarker){ map.removeLayer(tempMarker); tempMarker = null; }
+      renderizarTodo();
+    }
+  });
+
+  editorClose.addEventListener('click', ()=> {
+    editorOn = false;
+    btnToggleEdit.innerText = 'Entrar en modo edición';
+    editorPanel.setAttribute('aria-hidden','true');
+    editingItem = null;
+    if(tempMarker){ map.removeLayer(tempMarker); tempMarker = null; }
+    renderizarTodo();
+  });
+
+  // marcar coordenadas: el usuario hace click en el mapa para establecer lat/lng
+  editorSetCoord.addEventListener('click', ()=> {
+    alert('Ahora, haz click en el mapa donde quieras fijar la ubicación (un solo click).');
+    const handler = function(e){
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+      editorLat.value = lat;
+      editorLng.value = lng;
+      if(tempMarker) map.removeLayer(tempMarker);
+      tempMarker = L.marker([lat,lng], {draggable:true}).addTo(map);
+      // permitir arrastrar y actualizar inputs
+      tempMarker.on('dragend', (ev)=>{
+        const p = ev.target.getLatLng();
+        editorLat.value = p.lat;
+        editorLng.value = p.lng;
+      });
+      map.off('click', handler); // una sola vez
+    };
+    map.on('click', handler);
+  });
+
+  // guardar cambios (edición o nuevo)
+  editorSave.addEventListener('click', ()=> {
+    const tipo = editorTipo.value;
+    const obj = {
+      nombre: editorNombre.value || 'Sin nombre',
+      tipo: tipo,
+      categoria: editorCategoria.value || '',
+      descripcion: editorDescripcion.value || '',
+      direccion: editorDireccion.value || '',
+      telefono: editorTelefono.value || '',
+      icono: editorIcono.value || '',
+      banner: editorBanner.value || '',
+      imagenes: (editorImagenes.value || '').split(',').map(s=>s.trim()).filter(Boolean),
+      latitud: Number(editorLat.value) || 0,
+      longitud: Number(editorLng.value) || 0,
+      destacado: editingItem ? (editingItem.destacado === true) : false
+    };
+
+    if(editingItem){
+      // actualizar en el array correcto (mutar)
+      const arr = ALL[tipo];
+      const idx = arr.findIndex(x=>x.nombre === editingItem.nombre && x.latitud == editingItem.latitud && x.longitud == editingItem.longitud);
+      if(idx >= 0){
+        arr[idx] = {...arr[idx], ...obj};
+        alert('Guardado: cambios aplicados al negocio.');
+      } else {
+        // fallback: reemplazar por nombre
+        const f = arr.find(x=>x.nombre === editingItem.nombre);
+        if(f) Object.assign(f, obj);
+      }
+    } else {
+      // nuevo
+      ALL[tipo].push(obj);
+      alert('Guardado: nuevo negocio creado.');
+    }
+
+    // persistir en localStorage
+    persistLocal();
+    renderizarTodo();
+  });
+
+  // nuevo (limpia editor para crear)
+  editorNew.addEventListener('click', ()=> {
+    editingItem = null;
+    editorTipo.value = 'servicios';
+    editorNombre.value = '';
+    editorCategoria.value = '';
+    editorDescripcion.value = '';
+    editorDireccion.value = '';
+    editorTelefono.value = '';
+    editorIcono.value = '';
+    editorBanner.value = '';
+    editorImagenes.value = '';
+    editorLat.value = '';
+    editorLng.value = '';
+    alert('Editor listo para crear nuevo negocio. Usa "Marcar en mapa" para establecer coordenadas.');
+  });
+
+  // eliminar
+  editorDelete.addEventListener('click', ()=> {
+    if(!editingItem) { alert('Seleccione primero un negocio (haz click en su marcador o en su tarjeta)'); return; }
+    if(!confirm('¿Eliminar este negocio? Esta acción no es reversible (hasta que descargues el JSON).')) return;
+    const tipo = editingItem.tipo;
+    const arr = ALL[tipo];
+    const idx = arr.findIndex(x=>x.nombre === editingItem.nombre && x.latitud == editingItem.latitud && x.longitud == editingItem.longitud);
+    if(idx >= 0) arr.splice(idx,1);
+    persistLocal();
+    editingItem = null;
+    renderizarTodo();
+    alert('Negocio eliminado (cambios guardados localmente).');
+  });
+
+  // descargar JSON actualizado
+  btnDownloadJSON.addEventListener('click', ()=> {
+    // descargar bienes.json y servicios.json por separado
+    const aB = document.createElement('a');
+    const aS = document.createElement('a');
+
+    const blobB = new Blob([JSON.stringify(ALL.bienes, null, 2)], {type:'application/json'});
+    const urlB = URL.createObjectURL(blobB);
+    aB.href = urlB; aB.download = 'bienes.json';
+    document.body.appendChild(aB); aB.click(); aB.remove();
+    URL.revokeObjectURL(urlB);
+
+    const blobS = new Blob([JSON.stringify(ALL.servicios, null, 2)], {type:'application/json'});
+    const urlS = URL.createObjectURL(blobS);
+    aS.href = urlS; aS.download = 'servicios.json';
+    document.body.appendChild(aS); aS.click(); aS.remove();
+    URL.revokeObjectURL(urlS);
+
+    alert('Descargados bienes.json y servicios.json. Súbelos a tu repositorio para que los cambios sean permanentes.');
+  });
+
 }
 
-// pintar leyenda
+// -----------------------------
+// EDITOR HELPERS
+// -----------------------------
+function abrirEditorPara(item){
+  if(!editorOn) return;
+  editingItem = item;
+  editingTipo = item.tipo || 'servicios';
+  editorPanel.setAttribute('aria-hidden','false');
+
+  editorTipo.value = editingTipo;
+  editorNombre.value = item.nombre || '';
+  editorCategoria.value = item.categoria || '';
+  editorDescripcion.value = item.descripcion || '';
+  editorDireccion.value = item.direccion || item.ubicacion || '';
+  editorTelefono.value = item.telefono || '';
+  editorIcono.value = item.icono || '';
+  editorBanner.value = item.banner || '';
+  editorImagenes.value = (item.imagenes || []).join(',');
+  editorLat.value = item.latitud || '';
+  editorLng.value = item.longitud || '';
+}
+
+function persistLocal(){
+  const payload = {
+    bienes: ALL.bienes,
+    servicios: ALL.servicios,
+    categorias: ALL.categorias
+  };
+  localStorage.setItem('malacatos_data_v1', JSON.stringify(payload));
+}
+
+// -----------------------------
+// PINTAR LEYENDA
+// -----------------------------
 function pintarLeyenda(){
   const caja = leyendaItems();
   caja.innerHTML = '';
@@ -227,7 +463,9 @@ function pintarLeyenda(){
   });
 }
 
-// Galería
+// -----------------------------
+// GALERIA (lightbox)
+// -----------------------------
 function mostrarGaleria(item){
   const fotos = item.imagenes || [];
   if(fotos.length === 0) return;
@@ -238,15 +476,17 @@ function mostrarGaleria(item){
 }
 
 function cambiarImg(dir){
+  if(!currentGallery || currentGallery.length===0) return;
   galleryIndex += dir;
   if(galleryIndex < 0) galleryIndex = currentGallery.length - 1;
   if(galleryIndex >= currentGallery.length) galleryIndex = 0;
   lbImg().src = 'data/' + currentGallery[galleryIndex];
 }
-
 lbClose().addEventListener('click', ()=> lightbox().classList.remove('open'));
 lbPrev().addEventListener('click', ()=> cambiarImg(-1));
 lbNext().addEventListener('click', ()=> cambiarImg(1));
 
-// start
+// -----------------------------
+// START
+// -----------------------------
 iniciar();
