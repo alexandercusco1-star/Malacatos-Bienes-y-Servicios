@@ -211,7 +211,7 @@ body {
 }
 
 /* ====== EDITOR UI ====== */
-.editor-controls { margin-left: 12px; }
+.editor-controls { margin-left: 12px; display:flex; gap:8px; align-items:center;}
 .btn { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; background: var(--azul-mediterraneo); color: white; }
 .btn.small { padding: 6px 8px; font-size:14px; background: rgba(255,255,255,0.12); color: white; border:1px solid rgba(255,255,255,0.08); }
 .btn.danger { background: #e74c3c; color: white; }
@@ -236,3 +236,6 @@ body {
 .editor-body input, .editor-body textarea, .editor-body select {
   width:100%; padding:8px; margin-top:6px; border:1px solid var(--gris-claro); border-radius:6px;
 }
+
+/* pequeño ajuste para botones en panel principal */
+.ver-btn { background: var(--verde-esmeralda); border: none; color: white; padding:8px 12px; border-radius:8px; cursor:pointer; }
