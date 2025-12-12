@@ -489,7 +489,29 @@ function bindControls(){
     });
   });
 
+  // reset desde servidor (lee los archivos en data/ y reemplaza localStorage)
+  btnResetServer.addEventListener('click', async ()=> {
+    if(!confirm('¿Restablecer desde los archivos originales en data/? Esto eliminará los cambios locales guardados.')) return;
+    try {
+      const [bienes, servicios, categorias] = await Promise.all([
+        cargar('data/bienes.json'),
+        cargar('data/servicios.json'),
+        cargar('data/categorias.json')
+      ]);
+      ALL.bienes = bienes;
+      ALL.servicios = servicios;
+      ALL.categorias = categorias;
+      localStorage.removeItem('malacatos_data_v1');
+      generarFiltros();
+      pintarLeyenda();
+      renderizarTodo();
+      alert('Restaurado desde data/ y localStorage eliminado.');
+    } catch(e){
+      alert('Error al reiniciar desde servidor: ' + e.message);
+    }
+  });
 
+}
 
 // -----------------------------
 // EDITOR HELPERS
