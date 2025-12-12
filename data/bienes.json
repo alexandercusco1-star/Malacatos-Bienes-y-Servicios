@@ -2,10 +2,10 @@
   {
     "nombre": "Parque central de Malacatos",
     "tipo": "bienes",
-    "categoria": "Parque",
+    "categoria": "parque",
     "descripcion": "Espacio público principal del centro de Malacatos.",
     "ubicacion": "Centro de Malacatos",
-    "latitud": -4.219358700,
+    "latitud": -4.2193587,
     "longitud": -79.258833,
     "icono": "icon-parque.jpeg",
     "imagenes": [
@@ -19,7 +19,7 @@
   {
     "nombre": "Iglesia de Malacatos",
     "tipo": "bienes",
-    "categoria": "Iglesia",
+    "categoria": "iglesia",
     "descripcion": "Punto histórico y religioso de Malacatos.",
     "ubicacion": "Centro de Malacatos",
     "latitud": -4.219117,
@@ -30,6 +30,7 @@
       "b2.1.jpg",
       "b2.2.jpg",
       "b2.3.jpg"
-    ]
+    ],
+    "destacado": false
   }
 ]
