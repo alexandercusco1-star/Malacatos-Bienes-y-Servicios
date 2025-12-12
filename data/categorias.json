@@ -1,35 +1,33 @@
 {
-  "categorias": [
-    { "nombre": "parque", "icono": "icon-parque.jpeg" },
-    { "nombre": "iglesia", "icono": "icon-iglesia.jpeg" },
-    { "nombre": "areas verdes", "icono": "icon-areas-verdes.jpeg" },
-    { "nombre": "mirador", "icono": "icon-mirador.jpeg" },
-    { "nombre": "motos", "icono": "icon-motos.jpeg" },
-    { "nombre": "tienda", "icono": "icon-tienda.jpeg" },
-    { "nombre": "supermercado", "icono": "icon-supermercado.jpeg" },
-    { "nombre": "cafeteria", "icono": "icon-cafeteria.jpeg" },
-    { "nombre": "panaderia", "icono": "icon-panaderia.jpeg" },
-    { "nombre": "farmacia", "icono": "icon-farmacia.jpeg" },
+  "parque": { "icono": "icon-parque.jpeg" },
+  "iglesia": { "icono": "icon-iglesia.jpeg" },
+  "areas verdes": { "icono": "icon-areas-verdes.jpeg" },
+  "mirador": { "icono": "icon-mirador.jpeg" },
+  "motos": { "icono": "icon-motos.jpeg" },
+  "tienda": { "icono": "icon-tienda.jpeg" },
+  "supermercado": { "icono": "icon-supermercado.jpeg" },
+  "cafeteria": { "icono": "icon-cafeteria.jpeg" },
+  "panaderia": { "icono": "icon-panaderia.jpeg" },
+  "farmacia": { "icono": "icon-farmacia.jpeg" },
 
-    { "nombre": "transporte", "icono": "icon-transporte.jpeg" },
-    { "nombre": "transporte1", "icono": "icon-transporte1.jpeg" },
-    { "nombre": "transporte2", "icono": "icon-transporte2.jpeg" },
+  "transporte": { "icono": "icon-transporte.jpeg" },
+  "transporte1": { "icono": "icon-transporte1.jpeg" },
+  "transporte2": { "icono": "icon-transporte2.jpeg" },
 
-    { "nombre": "hostal", "icono": "icon-hostal.jpeg" },
-    { "nombre": "hosteria", "icono": "icon-hosteria.jpeg" },
-    { "nombre": "lugar-eventos", "icono": "icon-lugar-eventos.jpeg" },
+  "hostal": { "icono": "icon-hostal.jpeg" },
+  "hosteria": { "icono": "icon-hosteria.jpeg" },
+  "lugar-eventos": { "icono": "icon-lugar-eventos.jpeg" },
 
-    { "nombre": "peluqueria", "icono": "icon-peluqueria.jpeg" },
-    { "nombre": "barberia", "icono": "icon-barberia.jpeg" },
+  "peluqueria": { "icono": "icon-peluqueria.jpeg" },
+  "barberia": { "icono": "icon-barberia.jpeg" },
 
-    { "nombre": "mecanica", "icono": "icon-mecanica.jpeg" },
-    { "nombre": "llantera", "icono": "icon-llantera.jpeg" },
-    { "nombre": "heladeria", "icono": "icon-heladeria.jpeg" },
-    { "nombre": "optica", "icono": "icon-optica.jpeg" },
-    { "nombre": "vidreria", "icono": "icon-vidreria.jpeg" },
-    { "nombre": "veterinaria", "icono": "icon-veterinaria.jpeg" },
+  "mecanica": { "icono": "icon-mecanica.jpeg" },
+  "llantera": { "icono": "icon-llantera.jpeg" },
+  "heladeria": { "icono": "icon-heladeria.jpeg" },
+  "optica": { "icono": "icon-optica.jpeg" },
+  "vidreria": { "icono": "icon-vidreria.jpeg" },
+  "veterinaria": { "icono": "icon-veterinaria.jpeg" },
 
-    { "nombre": "canchas-futbol", "icono": "icon-canchas-futbol.jpeg" },
-    { "nombre": "canchas-ecuavoley", "icono": "icon-canchas-ecuavoley.jpeg" }
-  ]
+  "canchas-futbol": { "icono": "icon-canchas-futbol.jpeg" },
+  "canchas-ecuavoley": { "icono": "icon-canchas-ecuavoley.jpeg" }
 }
