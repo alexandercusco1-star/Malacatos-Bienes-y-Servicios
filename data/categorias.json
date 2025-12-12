@@ -1,35 +1,37 @@
 {
   "bienes": {
     "parque": { "icono": "icon-parque.jpeg" },
-    "areas-verdes": { "icono": "icon-areas-verdes.jpeg" },
     "iglesia": { "icono": "icon-iglesia.jpeg" },
     "mirador": { "icono": "icon-mirador.jpeg" },
-    "tienda": { "icono": "icon-tienda.jpeg" },
-    "super-mercado": { "icono": "icon-super-mercado.jpeg" },
-    "cafeteria": { "icono": "icon-cafeteria.jpeg" },
-    "panaderia": { "icono": "icon-panaderia.jpeg" },
-    "hosteria": { "icono": "icon-hosteria.jpeg" },
-    "hostal": { "icono": "icon-hostal.jpeg" },
-    "lugar-eventos": { "icono": "icon-lugar-eventos.jpeg" }
+    "areas-verdes": { "icono": "icon-areas-verdes.jpeg" }
   },
 
   "servicios": {
     "peluqueria": { "icono": "icon-peluqueria.jpeg" },
     "barberia": { "icono": "icon-barberia.jpeg" },
-    "mecanica": { "icono": "icon-mecanica.jpeg" },
-    "vidrieria": { "icono": "icon-vidrieria.jpeg" },
+    "mecanica": { "icono": "icon-llave.jpeg" },
+    "llantera": { "icono": "icon-llantera.jpeg" },
+    "lavadora-de-carros": { "icono": "icon-lavadora-de-carros.jpeg" },
     "veterinaria": { "icono": "icon-veterinaria.jpeg" },
-    "optica": { "icono": "icon-optica.jpeg" },
+    "vidreria": { "icono": "icon-vidreria.jpeg" },
     "carniceria": { "icono": "icon-carniceria.jpeg" },
     "heladeria": { "icono": "icon-heladeria.jpeg" },
-    "motos": { "icono": "icon-motos.jpeg" },
+    "optica": { "icono": "icon-optica.jpeg" },
+    "tienda": { "icono": "icon-tienda.jpeg" },
+    "supermercado": { "icono": "icon-supermercado.jpeg" },
+    "cafeteria": { "icono": "icon-cafeteria.jpeg" },
+    "panaderia": { "icono": "icon-panaderia.jpeg" },
     "farmacia": { "icono": "icon-farmacia.jpeg" },
+
+    "hosteria": { "icono": "icon-hosteria.jpeg" },
+    "hostal": { "icono": "icon-hostal.jpeg" },
+    "lugar-eventos": { "icono": "icon-lugar-eventos.jpeg" },
+
+    "canchas-futbol": { "icono": "icon-canchas-futbol.jpeg" },
+    "canchas-ecuavoley": { "icono": "icon-canchas-ecuavoley.jpeg" },
     "transporte": { "icono": "icon-transporte.jpeg" },
     "transporte-1": { "icono": "icon-transporte-1.jpeg" },
     "transporte-2": { "icono": "icon-transporte-2.jpeg" },
-    "llantera": { "icono": "icon-llantera.jpeg" },
-    "lavadora-de-carros": { "icono": "icon-lavadora-de-carros.jpeg" },
-    "canchas-futbol": { "icono": "icon-canchas-futbol.jpeg" },
-    "canchas-ecuavoley": { "icono": "icon-canchas-ecuavoley.jpeg" }
+    "motos": { "icono": "icon-motos.jpeg" }
   }
 }
