@@ -29,9 +29,11 @@
 
     "canchas-futbol": { "icono": "icon-canchas-futbol.jpeg" },
     "canchas-ecuavoley": { "icono": "icon-canchas-ecuavoley.jpeg" },
+
     "transporte": { "icono": "icon-transporte.jpeg" },
     "transporte-1": { "icono": "icon-transporte-1.jpeg" },
     "transporte-2": { "icono": "icon-transporte-2.jpeg" },
+
     "motos": { "icono": "icon-motos.jpeg" }
   }
 }
