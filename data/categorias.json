@@ -16,7 +16,7 @@
     "Hostal":       { "icono": "icon-cama.jpeg" },
     "Restaurante":  { "icono": "icon-restaurante.jpeg" },
     "Cafetería":    { "icono": "icon-cafe.jpeg" },
-    "Panadería":    { "icono": "icon-cafe.jpeg" },
+    "Panadería":    { "icono": "icon-pan.jpeg" },
     "Bar":          { "icono": "icon-vaso.jpeg" },
     "Lavado":       { "icono": "icon-auto.jpeg" },
     "Transporte":   { "icono": "icon-taxi.jpeg" },
