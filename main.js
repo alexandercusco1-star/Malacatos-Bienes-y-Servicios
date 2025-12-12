@@ -1,4 +1,5 @@
 // main.js - mapa, carga data, buscador, filtros, bottom-panel y galería completa
+// + Modo Editor con botón flotante (SIN ‘restablecer desde servidor’)
 
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
@@ -16,17 +17,15 @@ let currentSearch = '';
 let currentGallery = [];
 let galleryIndex = 0;
 
-// UI refs
+// UI
 const searchInput = () => document.getElementById('search-input');
 const filtersBox = () => document.getElementById('filters');
 const destacadosCont = () => document.getElementById('destacados-contenedor');
-const bannerArea = () => document.getElementById('banner-area');
 const leyendaDrawer = () => document.getElementById('leyenda-drawer');
 const leyendaItems = () => document.getElementById('leyenda-items');
 const leyendaBar = () => document.getElementById('leyenda-bar');
 const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
-const bpClose = () => document.getElementById('bp-close');
 
 // Lightbox
 const lightbox = () => document.getElementById('lightbox');
@@ -34,6 +33,76 @@ const lbImg = () => document.getElementById('lb-img');
 const lbPrev = () => document.getElementById('lb-prev');
 const lbNext = () => document.getElementById('lb-next');
 const lbClose = () => document.getElementById('lb-close');
+
+// panel editor
+let editorAbierto = false;
+const editorBtn = document.createElement("button");
+editorBtn.textContent = "Editar";
+editorBtn.style.position = "fixed";
+editorBtn.style.bottom = "20px";
+editorBtn.style.right = "20px";
+editorBtn.style.zIndex = "9999";
+editorBtn.style.background = "#2ecc71";
+editorBtn.style.color = "white";
+editorBtn.style.padding = "12px 18px";
+editorBtn.style.border = "none";
+editorBtn.style.borderRadius = "10px";
+editorBtn.style.fontSize = "16px";
+editorBtn.style.boxShadow = "0 3px 8px rgba(0,0,0,0.3)";
+document.body.appendChild(editorBtn);
+
+// crear panel editor
+const editorPanel = document.createElement("div");
+editorPanel.style.position = "fixed";
+editorPanel.style.bottom = "-100%";
+editorPanel.style.left = "0";
+editorPanel.style.width = "100%";
+editorPanel.style.maxHeight = "60%";
+editorPanel.style.background = "white";
+editorPanel.style.borderTop = "3px solid #2ecc71";
+editorPanel.style.zIndex = "10000";
+editorPanel.style.transition = "bottom .3s";
+editorPanel.style.padding = "14px";
+editorPanel.style.overflowY = "auto";
+editorPanel.innerHTML = `
+  <h2 style="color:#2b7a78; margin-bottom:10px;">Modo Editor</h2>
+  <p style="font-size:14px;color:#444;">Aquí podrás ver o modificar datos de los negocios, especialmente coordenadas.</p>
+  <div id="editor-content"></div>
+  <button id="editor-close" style="
+    margin-top:15px;
+    width:100%;
+    padding:10px;
+    background:#2b7a78;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+  ">Cerrar</button>
+`;
+document.body.appendChild(editorPanel);
+
+// abrir/cerrar editor
+editorBtn.onclick = () => {
+  editorPanel.style.bottom = "0";
+  cargarListadoEditor();
+};
+document.getElementById("editor-close").onclick = () => {
+  editorPanel.style.bottom = "-100%";
+};
+
+// cargar lista en editor
+function cargarListadoEditor(){
+  const box = document.getElementById("editor-content");
+  let all = [...ALL.bienes, ...ALL.servicios];
+
+  box.innerHTML = all.map(item => `
+    <div style="padding:10px 0; border-bottom:1px solid #ddd;">
+      <b>${item.nombre}</b><br>
+      Lat: <span>${item.latitud}</span><br>
+      Lng: <span>${item.longitud}</span>
+    </div>
+  `).join("");
+}
 
 async function iniciar(){
   [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
@@ -54,7 +123,7 @@ function clearMarkers(){
   markers = [];
 }
 
-// render everything considering filters & search
+// render
 function renderizarTodo(){
   clearMarkers();
 
@@ -67,7 +136,7 @@ function renderizarTodo(){
     return true;
   });
 
-  // Render destacados
+  // destacados
   const dest = combined.filter(x=>x.destacado === true);
   renderDestacados(dest);
 
@@ -81,6 +150,7 @@ function renderizarTodo(){
     const size = item.destacado ? 52 : 36;
 
     const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
+
     marker.on('click', ()=> {
       map.setView([lat,lng], item.destacado ? 16 : 15);
       mostrarBottomPanel(item);
@@ -95,7 +165,6 @@ function renderizarTodo(){
   }
 }
 
-// render destacados
 function renderDestacados(arr){
   destacadosCont().innerHTML = arr.map(it=>{
     const img = it.imagenes?.[0] ? `<img src="data/${it.imagenes[0]}" alt="${it.nombre}">` : '';
@@ -154,7 +223,6 @@ function mostrarBottomPanel(item){
   bottomPanel().classList.add('open');
 }
 
-// hide bottom panel
 function ocultarBottomPanel(){
   bottomPanel().classList.remove('open');
 }
@@ -192,30 +260,27 @@ function activar(btn){
   btn.classList.add('active');
 }
 
-// bind controls
 function bindControls(){
   searchInput().addEventListener('input', (e)=>{
     currentSearch = e.target.value.trim();
     renderizarTodo();
   });
 
-  leyendaBar().addEventListener('click', ()=>{
-    leyendaDrawer().classList.toggle("open");
-  });
+  leyendaBar().addEventListener('click', ()=> leyendaDrawer().classList.toggle("open"));
 
-  bpClose().addEventListener('click', ocultarBottomPanel);
+  document.getElementById('bp-close').addEventListener('click', ocultarBottomPanel);
 
   document.addEventListener('click', (e)=>{
     const bp = bottomPanel();
     if(!bp) return;
     if(bp.contains(e.target)) return;
     const ls = ['filters','search-input','top-bar','leyenda-bar','leyenda-drawer'];
-    if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
+    if(ls.some(id => document.getElementById(id)?.contains(e.target))) return;
     ocultarBottomPanel();
   });
 }
 
-// pintar leyenda
+// leyenda
 function pintarLeyenda(){
   const caja = leyendaItems();
   caja.innerHTML = '';
@@ -248,5 +313,4 @@ lbClose().addEventListener('click', ()=> lightbox().classList.remove('open'));
 lbPrev().addEventListener('click', ()=> cambiarImg(-1));
 lbNext().addEventListener('click', ()=> cambiarImg(1));
 
-// start
 iniciar();
