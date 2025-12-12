@@ -1,10 +1,10 @@
 [
   {
-    "nombre": "Peluquería Lauris",
+    "nombre": "Peluqueria Lauris",
     "tipo": "servicios",
     "categoria": "peluqueria",
-    "descripcion": "Cortes, maquillaje y diseño de uñas.",
-    "direccion": "Pío Montúfar y Lauro Coronel, esquina",
+    "descripcion": "Cortes, maquillaje y diseno de unas.",
+    "direccion": "pio montufar y lauro coronel, esquina",
     "telefono": "+593959007258",
     "latitud": -4.224,
     "longitud": -79.2592,
@@ -19,11 +19,11 @@
     "banner": "banner-lauris.jpg"
   },
   {
-    "nombre": "Mecánica Juan",
+    "nombre": "Mecanica Juan",
     "tipo": "servicios",
     "categoria": "mecanica",
-    "descripcion": "Servicio de mecánica y llantas.",
-    "direccion": "Pío Montúfar y Coronel",
+    "descripcion": "Servicio de mecanica y llantas.",
+    "direccion": "pio montufar y coronel",
     "telefono": "+593959007259",
     "latitud": -4.21845,
     "longitud": -79.25305,
