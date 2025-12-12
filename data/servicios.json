@@ -2,12 +2,12 @@
   {
     "nombre": "Peluquería Lauris",
     "tipo": "servicios",
-    "categoria": "Peluquería",
+    "categoria": "peluqueria",
     "descripcion": "Cortes, maquillaje y diseño de uñas.",
     "direccion": "Pío Montúfar y Lauro Coronel, esquina",
     "telefono": "+593959007258",
-    "latitud": -4.224000,
-    "longitud": -79.259200,
+    "latitud": -4.224,
+    "longitud": -79.2592,
     "icono": "icon-peluqueria.jpeg",
     "imagenes": [
       "s1.jpg",
@@ -16,22 +16,21 @@
       "s1.3.jpg"
     ],
     "destacado": true,
-    "banner": "banner-lauris.jpg",
-    "promocion": "15% de descuento en cortes para nuevos clientes."
+    "banner": "banner-lauris.jpg"
   },
-
   {
     "nombre": "Mecánica Juan",
     "tipo": "servicios",
-    "categoria": "Mecánica",
+    "categoria": "mecanica",
     "descripcion": "Servicio de mecánica y llantas.",
     "direccion": "Pío Montúfar y Coronel",
     "telefono": "+593959007259",
-    "latitud": -4.218450,
-    "longitud": -79.253050,
+    "latitud": -4.21845,
+    "longitud": -79.25305,
     "icono": "icon-llave.jpeg",
     "imagenes": [
       "s2.jpg"
-    ]
+    ],
+    "destacado": false
   }
 ]
