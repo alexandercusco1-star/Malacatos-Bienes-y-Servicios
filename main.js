@@ -1,11 +1,11 @@
-// main.js — versión corregida para leyenda + botón desactivado + iconos mitad tamaño
+// main.js — Reparado: subcategorías clicables + leyenda clicable + btnReset desactivado
 // -------------------------------------------------------
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19 }).addTo(map);
 
 // helpers
 async function cargar(ruta){ const r = await fetch(ruta); return await r.json(); }
-function iconoDe(ruta, size=18){ // tamaños reducidos: 18 normal, 26 destacado
+function iconoDe(ruta, size=18){
   return L.icon({
     iconUrl: `data/${ruta}`,
     iconSize: [size,size],
@@ -16,7 +16,7 @@ function iconoDe(ruta, size=18){ // tamaños reducidos: 18 normal, 26 destacado
 
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
-let currentFilter = null;
+let currentFilter = null;    // nombre de subcategoría activa (case-insensitive)
 let currentSearch = '';
 let currentGallery = [];
 let galleryIndex = 0;
@@ -33,7 +33,7 @@ const bottomPanel = () => document.getElementById('bottom-panel');
 const bpContent = () => document.getElementById('bp-content');
 const bpClose = () => document.getElementById('bp-close');
 
-const btnResetServer = document.getElementById('btn-reset-server'); // botón que desactivaremos
+const btnResetServer = document.getElementById('btn-reset-server') || null;
 
 // Lightbox refs
 const lightbox = () => document.getElementById('lightbox');
@@ -49,28 +49,28 @@ async function iniciar(){
       cargar('data/servicios.json'),
       cargar('data/categorias.json')
     ]);
-    ALL.bienes = bienes;
-    ALL.servicios = servicios;
-    ALL.categorias = categorias;
+    ALL.bienes = bienes || [];
+    ALL.servicios = servicios || [];
+    ALL.categorias = categorias || {};
   } catch(e){
     console.error('Error cargando JSON desde data/:', e);
     ALL = { bienes: [], servicios: [], categorias: {} };
   }
 
   bindControls();
-  generarFiltros();
+  generarFiltros();        // genera barra principal (por compatibilidad)
+  generarSubcategoriasBar(); // crea barra superior de subcategorias clicables
   renderizarTodo();
   pintarLeyenda();
-  desactivarBtnResetServer(); // desactivar al inicio por seguridad
+  desactivarBtnResetServer();
 }
 
-// clear markers
+// ---------- markers ----------
 function clearMarkers(){
   markers.forEach(m=>map.removeLayer(m));
   markers = [];
 }
 
-// render everything considering filters & search
 function renderizarTodo(){
   clearMarkers();
 
@@ -78,21 +78,21 @@ function renderizarTodo(){
   const visibles = combined.filter(i=>{
     const text = ((i.nombre||'') + ' ' + (i.categoria||'') + ' ' + (i.descripcion||'')).toLowerCase();
     if(currentSearch && !text.includes(currentSearch.toLowerCase())) return false;
-    if(currentFilter && (i.categoria||'').toLowerCase() !== currentFilter.toLowerCase()) return false;
+    if(currentFilter && (''+ (i.categoria||'')).toLowerCase() !== (''+currentFilter).toLowerCase()) return false;
     return true;
   });
 
-  // render destacados area
+  // render destacados
   renderDestacados(combined.filter(x=>x.destacado === true));
 
+  // markers para los visibles
   visibles.forEach(item=>{
     const lat = parseFloat(item.latitud);
     const lng = parseFloat(item.longitud);
     if(Number.isNaN(lat) || Number.isNaN(lng)) return;
 
-    // elegir icono: item.icono OR buscar en categorias (admite dos estructuras)
-    let iconFile = item.icono || findCategoryIcon(item) || 'icon-default.jpeg';
-    const size = item.destacado ? 26 : 18; // destacados más grandes (pero aun mitad del original)
+    const iconFile = item.icono || findCategoryIcon(item) || 'icon-default.jpeg';
+    const size = item.destacado ? 26 : 18;
     const marker = L.marker([lat,lng], { icon: iconoDe(iconFile, size) }).addTo(map);
 
     marker.on('click', ()=> {
@@ -104,29 +104,27 @@ function renderizarTodo(){
   });
 }
 
+// Busca icono por categoría (soporta varias estructuras)
 function findCategoryIcon(item){
-  // intenta buscar icono en ALL.categorias soportando ambos formatos:
-  // 1) ALL.categorias = { "parque": { "icono": "icon-parque.jpeg" }, ... }
-  // 2) ALL.categorias = { bienes: { "Parque": { icono: "icon..." } }, servicios: {...} }
   try {
-    // 1 — formato plano (keys ya en minúscula o como el JSON tenga)
-    if(ALL.categorias && typeof ALL.categorias === 'object' && !ALL.categorias.bienes && !ALL.categorias.servicios){
-      const key = (item.categoria || '').toLowerCase();
-      for(const k of Object.keys(ALL.categorias)){
-        if(k.toLowerCase() === key){
-          return ALL.categorias[k].icono || '';
+    const cat = (item.categoria||'').toString();
+    if(!cat) return '';
+    // formato anidado: ALL.categorias.bienes / servicios
+    if(ALL.categorias && (ALL.categorias.bienes || ALL.categorias.servicios)){
+      const tipo = item.tipo || (ALL.bienes.includes(item) ? 'bienes' : 'servicios');
+      const block = ALL.categorias[tipo] || {};
+      for(const k of Object.keys(block)){
+        if(k.toLowerCase() === cat.toLowerCase()){
+          return block[k].icono || '';
         }
       }
     }
-    // 2 — formato anidado
-    if(ALL.categorias && (ALL.categorias.bienes || ALL.categorias.servicios)){
-      const tipo = item.tipo || (ALL.bienes.includes(item) ? 'bienes' : 'servicios');
-      const cat = item.categoria || '';
-      const block = ALL.categorias[tipo] || ALL.categorias.bienes || ALL.categorias.servicios || {};
-      // buscar por coincidencia directa (case-insensitive)
-      for(const k of Object.keys(block)){
-        if(k.toLowerCase() === (cat||'').toLowerCase()){
-          return block[k].icono || '';
+    // formato plano: ALL.categorias = { "parque": {icono:...}, ... } o { "parque": "icon-parque.jpeg" }
+    if(ALL.categorias && !ALL.categorias.bienes && !ALL.categorias.servicios){
+      for(const k of Object.keys(ALL.categorias||{})){
+        if(k.toLowerCase() === cat.toLowerCase()){
+          const val = ALL.categorias[k];
+          return (val && val.icono) ? val.icono : (typeof val === 'string' ? val : '');
         }
       }
     }
@@ -136,7 +134,7 @@ function findCategoryIcon(item){
   return '';
 }
 
-// render destacados
+// ---------- destacados ----------
 function renderDestacados(arr){
   const cont = destacadosCont();
   if(!cont) return;
@@ -165,7 +163,7 @@ function renderDestacados(arr){
   });
 }
 
-// bottom panel: builds HTML and opens it
+// ---------- bottom panel ----------
 function mostrarBottomPanel(item){
   const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : '';
   const telBtn = item.telefono ? `<a class="btn" href="https://wa.me/${item.telefono.replace('+','')}" target="_blank">WhatsApp</a>` : '';
@@ -195,37 +193,42 @@ function mostrarBottomPanel(item){
 
   bottomPanel().classList.add('open');
 }
+function ocultarBottomPanel(){ bottomPanel().classList.remove('open'); }
 
-// hide bottom panel
-function ocultarBottomPanel(){
-  bottomPanel().classList.remove('open');
-  bottomPanel().setAttribute('aria-hidden','true');
-}
 
-// generate filters from categories JSON (simple: keys)
+// ---------- filtros (top) ----------
 function generarFiltros(){
   const container = filtersBox();
   if(!container) return;
   container.innerHTML = '';
 
-  // si ALL.categorias tiene bienes/servicios, tomar sub-keys; si es plano, tomar keys
+  // intentar obtener subcategorías desde ALL.categorias
   const cats = new Set();
-  if(ALL.categorias){
-    if(ALL.categorias.bienes || ALL.categorias.servicios){
-      Object.keys(ALL.categorias.bienes||{}).forEach(k=>cats.add(k));
-      Object.keys(ALL.categorias.servicios||{}).forEach(k=>cats.add(k));
-    } else {
-      Object.keys(ALL.categorias||{}).forEach(k=>cats.add(k));
-    }
+
+  if(ALL.categorias && (ALL.categorias.bienes || ALL.categorias.servicios)){
+    Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
+    Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
+  } else if(ALL.categorias && typeof ALL.categorias === 'object'){
+    Object.keys(ALL.categorias).forEach(k=>{
+      // si el valor es objeto con icono, usar llave; si valor es string, usar llave
+      cats.add(k);
+    });
+  } else {
+    // fallback: extraer categorias directas de bienes + servicios
+    [...ALL.bienes, ...ALL.servicios].forEach(it=>{
+      if(it.categoria) cats.add(it.categoria);
+    });
   }
 
+  // "Todos" button
   const btnAll = document.createElement('button');
   btnAll.className = 'filter-btn active';
   btnAll.textContent = 'Todos';
   btnAll.addEventListener('click', ()=>{ currentFilter = null; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btnAll.classList.add('active'); renderizarTodo(); });
   container.appendChild(btnAll);
 
-  cats.forEach(cat=>{
+  // crear botones
+  Array.from(cats).forEach(cat=>{
     const b = document.createElement('button');
     b.className = 'filter-btn';
     b.textContent = cat;
@@ -239,7 +242,54 @@ function generarFiltros(){
   });
 }
 
-// bind controls: search, leyenda bar, bottom panel close
+
+// ---------- SUBCATEGORIAS BAR (la de arriba que pediste) ----------
+function generarSubcategoriasBar(){
+  // si ya existe, no duplicar
+  if(document.getElementById('subcats-bar')) return;
+
+  const topBar = document.getElementById('top-bar');
+  if(!topBar) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'subcats-bar';
+  bar.style.display = 'flex';
+  bar.style.gap = '8px';
+  bar.style.marginTop = '8px';
+  bar.style.overflowX = 'auto';
+  bar.style.paddingBottom = '6px';
+
+  // obtener subcategorias (similar a generarFiltros)
+  const cats = new Set();
+  if(ALL.categorias && (ALL.categorias.bienes || ALL.categorias.servicios)){
+    Object.keys(ALL.categorias.bienes || {}).forEach(k=>cats.add(k));
+    Object.keys(ALL.categorias.servicios || {}).forEach(k=>cats.add(k));
+  } else if(ALL.categorias && typeof ALL.categorias === 'object'){
+    Object.keys(ALL.categorias).forEach(k => cats.add(k));
+  } else {
+    [...ALL.bienes, ...ALL.servicios].forEach(it => { if(it.categoria) cats.add(it.categoria); });
+  }
+
+  // botón "Todos" pequeño
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = ()=>{ currentFilter=null; renderizarTodo(); };
+  bar.appendChild(allBtn);
+
+  Array.from(cats).forEach(cat=>{
+    const b = document.createElement('button');
+    b.className = 'filter-btn';
+    b.textContent = cat;
+    b.onclick = ()=> { currentFilter = cat; renderizarTodo(); /* marcar visual si quieres */ };
+    bar.appendChild(b);
+  });
+
+  topBar.appendChild(bar);
+}
+
+
+// ---------- BIND CONTROLES ----------
 function bindControls(){
   const inp = searchInput();
   if(inp) inp.addEventListener('input', (e)=> {
@@ -249,99 +299,135 @@ function bindControls(){
 
   if(leyendaBar()) leyendaBar().addEventListener('click', ()=>{
     leyendaDrawer().classList.toggle('open');
-    document.body.classList.toggle('leyenda-open');
   });
 
   if(bpClose()) bpClose().addEventListener('click', ocultarBottomPanel);
 
+  // click outside to close bottom panel
   document.addEventListener('click', (e)=>{
     const bp = bottomPanel();
     if(!bp) return;
     if(bp.contains(e.target)) return;
-    const ls = ['filters','search-input','leyenda-bar','leyenda-drawer'];
+    const ls = ['filters','search-input','leyenda-bar','leyenda-drawer','subcats-bar'];
     if(ls.some(id => document.getElementById(id) && document.getElementById(id).contains(e.target))) return;
     ocultarBottomPanel();
   });
 }
 
-// paint legend from categories (robusta)
+// ---------- LEYENDA (ahora CLICABLE) ----------
 function pintarLeyenda(){
   const caja = leyendaItems();
   if(!caja) return;
   caja.innerHTML = '';
 
-  // 1) si categorias tiene bienes/servicios
+  // si estructura anidada
   if(ALL.categorias && (ALL.categorias.bienes || ALL.categorias.servicios)){
     Object.keys(ALL.categorias.bienes || {}).forEach(k => {
       const ico = ALL.categorias.bienes[k].icono || '';
-      caja.innerHTML += `<div class="leyenda-item"><img src="data/${ico}" onerror="this.src='data/icon-default.jpeg'">${k}</div>`;
+      caja.appendChild(leyendaItemNode(k, ico));
     });
     Object.keys(ALL.categorias.servicios || {}).forEach(k => {
       const ico = ALL.categorias.servicios[k].icono || '';
-      caja.innerHTML += `<div class="leyenda-item"><img src="data/${ico}" onerror="this.src='data/icon-default.jpeg'">${k}</div>`;
+      caja.appendChild(leyendaItemNode(k, ico));
     });
     return;
   }
 
-  // 2) si categorias es plano
+  // si estructura plana
   if(ALL.categorias && typeof ALL.categorias === 'object'){
     Object.keys(ALL.categorias).forEach(k => {
-      const ico = ALL.categorias[k]?.icono || ALL.categorias[k] || '';
-      caja.innerHTML += `<div class="leyenda-item"><img src="data/${ico}" onerror="this.src='data/icon-default.jpeg'">${k}</div>`;
+      const val = ALL.categorias[k];
+      const ico = (val && val.icono) ? val.icono : (typeof val === 'string' ? val : '');
+      caja.appendChild(leyendaItemNode(k, ico));
     });
     return;
   }
 
-  // fallback: mostrar subcategorias de bienes y servicios
-  (ALL.bienes || []).slice(0,30).forEach(it=>{
-    const icon = it.icono || '';
-    const label = it.categoria || it.nombre || 'sin nombre';
-    caja.innerHTML += `<div class="leyenda-item"><img src="data/${icon}" onerror="this.src='data/icon-default.jpeg'">${label}</div>`;
+  // fallback: derivar de items
+  const seen = new Set();
+  [...ALL.bienes, ...ALL.servicios].forEach(it=>{
+    const k = it.categoria || it.nombre || 'sin categoria';
+    if(seen.has(k)) return; seen.add(k);
+    const ico = it.icono || '';
+    caja.appendChild(leyendaItemNode(k, ico));
   });
 }
 
-// GALERIA: abrir galería de imágenes
+function leyendaItemNode(label, iconFilename){
+  const wrap = document.createElement('div');
+  wrap.className = 'leyenda-item';
+  const img = document.createElement('img');
+  img.src = `data/${iconFilename || 'icon-default.jpeg'}`;
+  img.onerror = function(){ this.src = 'data/icon-default.jpeg'; };
+  img.style.width = '28px'; img.style.height = '28px'; img.style.objectFit = 'cover';
+  const txt = document.createElement('span');
+  txt.innerText = label;
+  txt.style.marginLeft = '8px';
+  wrap.appendChild(img);
+  wrap.appendChild(txt);
+
+  // clic en leyenda = aplicar filtro y cerrar drawer
+  wrap.addEventListener('click', ()=>{
+    currentFilter = label;
+    renderizarTodo();
+    // close drawer
+    if(leyendaDrawer()) leyendaDrawer().classList.remove('open');
+    // highlight matching filter button (top bar) if exists
+    highlightFilterButton(label);
+  });
+
+  return wrap;
+}
+
+function highlightFilterButton(label){
+  const btns = document.querySelectorAll('#filters .filter-btn, #subcats-bar .filter-btn');
+  btns.forEach(b=>{
+    if(b.innerText && b.innerText.toLowerCase() === (''+label).toLowerCase()){
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+}
+
+// ---------- GALERIA (lightbox) ----------
 function mostrarGaleria(item){
   const fotos = item.imagenes || [];
   if(fotos.length === 0) return;
   currentGallery = fotos;
   galleryIndex = 0;
-  lbImg().src = 'data/' + currentGallery[galleryIndex];
+  lbImg().src = 'data/' + currentGallery[0];
   lightbox().classList.add('open');
 }
-
 function cambiarImg(dir){
+  if(!currentGallery || currentGallery.length===0) return;
   galleryIndex += dir;
   if(galleryIndex < 0) galleryIndex = currentGallery.length - 1;
   if(galleryIndex >= currentGallery.length) galleryIndex = 0;
   lbImg().src = 'data/' + currentGallery[galleryIndex];
 }
-
-// desactivar botón “Restablecer desde servidor” de forma segura
-function desactivarBtnResetServer(){
-  try {
-    if(!btnResetServer) return;
-    // quitar todos los listeners y desactivarlo visualmente
-    const clone = btnResetServer.cloneNode(true);
-    clone.id = btnResetServer.id;
-    clone.innerText = btnResetServer.innerText;
-    // estilo disabled visual
-    clone.style.pointerEvents = 'none';
-    clone.style.opacity = '0.5';
-    clone.title = "Este botón está desactivado";
-    btnResetServer.parentNode.replaceChild(clone, btnResetServer);
-    console.log('btnResetServer DESACTIVADO');
-  } catch(e){
-    console.warn('No se pudo desactivar btnResetServer', e);
-  }
-}
-
-// hooks lightbox
 try {
   lbClose().addEventListener('click', ()=> lightbox().classList.remove('open'));
   lbPrev().addEventListener('click', ()=> cambiarImg(-1));
   lbNext().addEventListener('click', ()=> cambiarImg(1));
-} catch(e){ /* no pasa nada si faltan elementos */ }
+} catch(e){}
 
-// start
+// ---------- desactivar botón reset ----------
+function desactivarBtnResetServer(){
+  try {
+    if(!btnResetServer) return;
+    const clone = btnResetServer.cloneNode(true);
+    clone.id = btnResetServer.id;
+    clone.innerText = btnResetServer.innerText;
+    clone.style.pointerEvents = 'none';
+    clone.style.opacity = '0.45';
+    clone.title = 'Desactivado por seguridad';
+    btnResetServer.parentNode.replaceChild(clone, btnResetServer);
+    console.log('btnResetServer desactivado');
+  } catch(e){
+    console.warn('No existe btnResetServer para desactivar');
+  }
+}
+
+// START
 iniciar();
