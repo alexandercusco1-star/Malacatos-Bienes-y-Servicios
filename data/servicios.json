@@ -2,13 +2,13 @@
   {
     "nombre": "Peluqueria Lauris",
     "tipo": "servicios",
-    "categoria": "motos",
+    "categoria": "peluqueria",
     "descripcion": "Cortes, maquillaje y diseno de unas.",
     "direccion": "pio montufar y lauro coronel, esquina",
     "telefono": "+593959007258",
     "latitud": -4.224,
     "longitud": -79.2592,
-    "icono": "icon-motos.jpeg",
+    "icono": "icon-peluqueria.jpeg",
     "imagenes": [
       "s1.jpg",
       "s1.1.jpg",
