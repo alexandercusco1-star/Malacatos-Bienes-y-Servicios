@@ -1,250 +1,201 @@
-// main.js — BASE DEFINITIVA MALACATOS
-// ==================================
+// ================================
+// MAIN.JS – BASE DEFINITIVA MALACATOS
+// SIN localStorage
+// SIN reset desde servidor
+// ================================
 
-// MAPA
+// ---------------- MAPA ----------------
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
-// HELPERS
-async function cargar(ruta){
+// ---------------- HELPERS ----------------
+async function cargar(ruta) {
   const r = await fetch(ruta);
   return await r.json();
 }
 
-function iconoSeguro(item, size = 28){
-  let iconFile = 'icon-default.jpeg';
-
-  if(item.icono && item.icono.trim() !== ''){
-    iconFile = item.icono;
-  } else if(ALL.categorias?.[item.categoria]?.icono){
-    iconFile = ALL.categorias[item.categoria].icono;
-  }
-
+function crearIcono(ruta, size = 28) {
   return L.icon({
-    iconUrl: `data/${iconFile}`,
+    iconUrl: `data/${ruta}`,
     iconSize: [size, size],
-    iconAnchor: [size/2, size],
-    popupAnchor: [0, -size + 4]
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size + 6]
   });
 }
 
-function imgSeguro(nombre){
-  if(!nombre) return '';
-  return `data/${nombre}`;
-}
+// ---------------- ESTADO ----------------
+let BIENES = [];
+let SERVICIOS = [];
+let CATEGORIAS = {};
+let MARKERS = [];
 
-// ESTADO
-let ALL = { bienes: [], servicios: [], categorias: {} };
-let markers = [];
-let currentFilter = null;
-let currentSearch = '';
-let editorOn = false;
-let editingItem = null;
-let tempMarker = null;
+let editorActivo = false;
+let itemEditando = null;
+let marcadorTemp = null;
 
-// UI
-const destacadosCont = () => document.getElementById('destacados-contenedor');
-const filtersBox = () => document.getElementById('filters');
-const searchInput = () => document.getElementById('search-input');
-const bottomPanel = () => document.getElementById('bottom-panel');
-const bpContent = () => document.getElementById('bp-content');
-const bpClose = () => document.getElementById('bp-close');
-const leyendaItems = () => document.getElementById('leyenda-items');
-const leyendaBar = () => document.getElementById('leyenda-bar');
-const leyendaDrawer = () => document.getElementById('leyenda-drawer');
-
-// BOTONES
-const btnToggleEdit = document.getElementById('btn-toggle-edit');
-const btnResetServer = document.getElementById('btn-reset-server');
-
-// EDITOR
-const editorPanel = document.getElementById('editor-panel');
-const editorNombre = document.getElementById('editor-nombre');
-const editorCategoria = document.getElementById('editor-categoria');
-const editorDescripcion = document.getElementById('editor-descripcion');
-const editorDireccion = document.getElementById('editor-direccion');
-const editorTelefono = document.getElementById('editor-telefono');
-const editorIcono = document.getElementById('editor-icono');
-const editorBanner = document.getElementById('editor-banner');
-const editorImagenes = document.getElementById('editor-imagenes');
-const editorLat = document.getElementById('editor-latitud');
-const editorLng = document.getElementById('editor-longitud');
-const editorSetCoord = document.getElementById('editor-set-coord');
-const editorSave = document.getElementById('editor-save');
-const editorDelete = document.getElementById('editor-delete');
-
-// INICIO
-async function iniciar(){
-  const [bienes, servicios, categorias] = await Promise.all([
-    cargar('data/bienes.json'),
-    cargar('data/servicios.json'),
-    cargar('data/categorias.json')
-  ]);
-
-  ALL.bienes = bienes;
-  ALL.servicios = servicios;
-  ALL.categorias = categorias;
-
-  const local = localStorage.getItem('malacatos_data_v1');
-  if(local){
-    try{
-      const parsed = JSON.parse(local);
-      ALL = parsed;
-    }catch{}
-  }
+// ---------------- INICIO ----------------
+async function iniciar() {
+  BIENES = await cargar('data/bienes.json');
+  SERVICIOS = await cargar('data/servicios.json');
+  CATEGORIAS = await cargar('data/categorias.json');
 
   generarFiltros();
-  bindControls();
-  renderizarTodo();
+  renderizar();
   pintarLeyenda();
+  configurarEditor();
 }
 
-// RENDER
-function clearMarkers(){
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
+// ---------------- RENDER MAPA ----------------
+function limpiarMapa() {
+  MARKERS.forEach(m => map.removeLayer(m));
+  MARKERS = [];
 }
 
-function renderizarTodo(){
-  clearMarkers();
+function renderizar() {
+  limpiarMapa();
 
-  const todos = [...ALL.bienes, ...ALL.servicios];
+  [...BIENES, ...SERVICIOS].forEach(item => {
+    if (!item.latitud || !item.longitud) return;
 
-  const visibles = todos.filter(i=>{
-    if(!i.latitud || !i.longitud) return false;
-    if(currentFilter && i.categoria !== currentFilter) return false;
-    if(currentSearch){
-      const t = (i.nombre + i.descripcion + i.categoria).toLowerCase();
-      if(!t.includes(currentSearch.toLowerCase())) return false;
-    }
-    return true;
-  });
+    const icono = crearIcono(item.icono || 'icon-default.jpeg');
+    const marker = L.marker([item.latitud, item.longitud], { icon: icono })
+      .addTo(map)
+      .on('click', () => {
+        mostrarInfo(item);
+        if (editorActivo) abrirEditor(item);
+      });
 
-  // DESTACADOS
-  const destacados = todos.filter(x => x.destacado === true);
-  renderDestacados(destacados);
-
-  visibles.forEach(item=>{
-    const marker = L.marker(
-      [item.latitud, item.longitud],
-      { icon: iconoSeguro(item) }
-    ).addTo(map);
-
-    marker.on('click', ()=>{
-      mostrarBottomPanel(item);
-      if(editorOn) abrirEditorPara(item);
-    });
-
-    markers.push(marker);
+    MARKERS.push(marker);
   });
 }
 
-function renderDestacados(arr){
-  destacadosCont().innerHTML = arr.map(it=>{
-    const img = it.imagenes?.[0]
-      ? `<img src="${imgSeguro(it.imagenes[0])}">`
-      : '';
-    return `
-      <div class="tarjeta">
-        ${img}
-        <h3>${it.nombre}</h3>
-        <p>${it.descripcion || ''}</p>
-      </div>
-    `;
-  }).join('');
-}
+// ---------------- INFO PANEL ----------------
+function mostrarInfo(item) {
+  const panel = document.getElementById('bottom-panel');
+  const cont = document.getElementById('bp-content');
 
-// BOTTOM PANEL
-function mostrarBottomPanel(item){
-  bpContent().innerHTML = `
+  const img = item.imagenes?.[0]
+    ? `<img src="data/${item.imagenes[0]}" class="bp-img">`
+    : '';
+
+  cont.innerHTML = `
+    ${img}
     <h3>${item.nombre}</h3>
-    <p>${item.descripcion || item.direccion || ''}</p>
-    ${item.imagenes?.map(i=>`<img src="${imgSeguro(i)}">`).join('') || ''}
+    <p>${item.descripcion || ''}</p>
+    <p>${item.direccion || item.ubicacion || ''}</p>
   `;
-  bottomPanel().classList.add('open');
+
+  panel.classList.add('open');
 }
 
-// FILTROS
-function generarFiltros(){
-  filtersBox().innerHTML = '';
+document.getElementById('bp-close').onclick = () =>
+  document.getElementById('bottom-panel').classList.remove('open');
 
-  const btnAll = document.createElement('button');
-  btnAll.textContent = 'Todos';
-  btnAll.onclick = ()=>{ currentFilter=null; renderizarTodo(); };
-  filtersBox().appendChild(btnAll);
+// ---------------- FILTROS ----------------
+function generarFiltros() {
+  const box = document.getElementById('filters');
+  box.innerHTML = '';
 
-  Object.keys(ALL.categorias).forEach(cat=>{
+  const btnTodos = document.createElement('button');
+  btnTodos.textContent = 'Todos';
+  btnTodos.className = 'filter-btn active';
+  btnTodos.onclick = () => renderizar();
+  box.appendChild(btnTodos);
+
+  Object.keys(CATEGORIAS).forEach(cat => {
     const b = document.createElement('button');
     b.textContent = cat;
-    b.onclick = ()=>{ currentFilter=cat; renderizarTodo(); };
-    filtersBox().appendChild(b);
+    b.className = 'filter-btn';
+    b.onclick = () => filtrarCategoria(cat);
+    box.appendChild(b);
   });
 }
 
-// EDITOR
-function bindControls(){
-  searchInput()?.addEventListener('input', e=>{
-    currentSearch = e.target.value;
-    renderizarTodo();
-  });
+function filtrarCategoria(cat) {
+  limpiarMapa();
+  [...BIENES, ...SERVICIOS]
+    .filter(i => i.categoria === cat)
+    .forEach(i => {
+      const m = L.marker([i.latitud, i.longitud], {
+        icon: crearIcono(i.icono)
+      }).addTo(map);
+      MARKERS.push(m);
+    });
+}
 
-  bpClose()?.addEventListener('click', ()=>{
-    bottomPanel().classList.remove('open');
-  });
+// ---------------- LEYENDA ----------------
+function pintarLeyenda() {
+  const caja = document.getElementById('leyenda-items');
+  caja.innerHTML = '';
 
-  leyendaBar()?.addEventListener('click', ()=>{
-    leyendaDrawer().classList.toggle('open');
+  Object.entries(CATEGORIAS).forEach(([nombre, data]) => {
+    caja.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${data.icono}">
+        <span>${nombre}</span>
+      </div>
+    `;
   });
+}
 
-  // EDITAR SI FUNCIONA
-  btnToggleEdit.onclick = ()=>{
-    editorOn = !editorOn;
-    editorPanel.setAttribute('aria-hidden', editorOn ? 'false' : 'true');
+document.getElementById('leyenda-bar').onclick = () =>
+  document.getElementById('leyenda-drawer').classList.toggle('open');
+
+// ---------------- EDITOR ----------------
+function configurarEditor() {
+  const btnEdit = document.getElementById('btn-toggle-edit');
+  const panel = document.getElementById('editor-panel');
+
+  btnEdit.onclick = () => {
+    editorActivo = !editorActivo;
+    panel.setAttribute('aria-hidden', !editorActivo);
+    btnEdit.textContent = editorActivo
+      ? 'Salir de edición'
+      : 'Entrar en modo edición';
   };
 
-  // ❌ BOTÓN RESTABLECER DESDE SERVIDOR — DESACTIVADO
-  btnResetServer.onclick = ()=>{
-    alert('Este botón está desactivado por seguridad.');
-  };
-
-  editorSetCoord.onclick = ()=>{
+  document.getElementById('editor-set-coord').onclick = () => {
     alert('Toca el mapa para fijar coordenadas');
-    const handler = e=>{
-      editorLat.value = e.latlng.lat;
-      editorLng.value = e.latlng.lng;
-      map.off('click', handler);
+    map.once('click', e => {
+      document.getElementById('editor-latitud').value = e.latlng.lat;
+      document.getElementById('editor-longitud').value = e.latlng.lng;
+
+      if (marcadorTemp) map.removeLayer(marcadorTemp);
+      marcadorTemp = L.marker(e.latlng, { draggable: true }).addTo(map);
+    });
+  };
+
+  document.getElementById('editor-save').onclick = () => {
+    if (!itemEditando) return alert('Selecciona un negocio');
+
+    itemEditando.nombre = editorNombre.value;
+    itemEditando.categoria = editorCategoria.value;
+    itemEditando.descripcion = editorDescripcion.value;
+    itemEditando.direccion = editorDireccion.value;
+    itemEditando.telefono = editorTelefono.value;
+    itemEditando.icono = editorIcono.value;
+    itemEditando.banner = editorBanner.value;
+    itemEditando.imagenes = editorImagenes.value.split(',');
+    itemEditando.latitud = Number(editorLat.value);
+    itemEditando.longitud = Number(editorLng.value);
+
+    renderizar();
+    alert('Cambios aplicados (recuerda guardar el JSON)');
+  };
+
+  // BOTÓN RESTABLECER – DESACTIVADO
+  const reset = document.getElementById('btn-reset-server');
+  if (reset) {
+    reset.onclick = () => {
+      alert('Función desactivada por seguridad');
     };
-    map.on('click', handler);
-  };
-
-  editorSave.onclick = ()=>{
-    if(!editingItem) return alert('Selecciona un marcador');
-    editingItem.nombre = editorNombre.value;
-    editingItem.categoria = editorCategoria.value;
-    editingItem.descripcion = editorDescripcion.value;
-    editingItem.direccion = editorDireccion.value;
-    editingItem.telefono = editorTelefono.value;
-    editingItem.icono = editorIcono.value;
-    editingItem.banner = editorBanner.value;
-    editingItem.imagenes = editorImagenes.value.split(',').map(x=>x.trim());
-    editingItem.latitud = Number(editorLat.value);
-    editingItem.longitud = Number(editorLng.value);
-
-    persistLocal();
-    renderizarTodo();
-    alert('Guardado');
-  };
-
-  // ❌ BORRAR DESACTIVADO
-  editorDelete.onclick = ()=>{
-    alert('Eliminar está desactivado por seguridad.');
-  };
+  }
 }
 
-function abrirEditorPara(item){
-  editingItem = item;
+function abrirEditor(item) {
+  itemEditando = item;
   editorNombre.value = item.nombre || '';
   editorCategoria.value = item.categoria || '';
   editorDescripcion.value = item.descripcion || '';
@@ -257,20 +208,5 @@ function abrirEditorPara(item){
   editorLng.value = item.longitud || '';
 }
 
-// LEYENDA
-function pintarLeyenda(){
-  leyendaItems().innerHTML = Object.entries(ALL.categorias).map(([k,v])=>`
-    <div class="leyenda-item">
-      <img src="data/${v.icono}">
-      ${k}
-    </div>
-  `).join('');
-}
-
-// PERSISTENCIA
-function persistLocal(){
-  localStorage.setItem('malacatos_data_v1', JSON.stringify(ALL));
-}
-
-// START
+// ---------------- START ----------------
 iniciar();
