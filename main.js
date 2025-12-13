@@ -1,5 +1,5 @@
 // =======================================================
-// MALACATOS - MAIN.JS BASE ESTABLE FUNCIONAL
+// MALACATOS - MAIN.JS BASE CORREGIDA (SIN DAÑAR NADA)
 // =======================================================
 
 // -------------------------------------------------------
@@ -35,9 +35,13 @@ let markers = [];
 let currentFilter = null;
 let currentSearch = "";
 
-// ====== MODO EDICIÓN REAL ======
-let editMode = false;
-let editMarker = null;
+// EDITOR
+let editorOn = false;
+let tempMarker = null;
+
+// GALERÍA
+let currentGallery = [];
+let galleryIndex = 0;
 
 // -------------------------------------------------------
 // INICIO
@@ -94,43 +98,54 @@ function renderizarTodo() {
     }).addTo(map);
 
     marker.on("click", () => mostrarDetalle(item));
+
     markers.push(marker);
+  });
+
+  renderDestacados(todos.filter(x => x.destacado));
+}
+
+// -------------------------------------------------------
+// DESTACADOS
+// -------------------------------------------------------
+function renderDestacados(arr) {
+  const cont = document.getElementById("destacados-contenedor");
+  cont.innerHTML = "";
+
+  arr.forEach(it => {
+    const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : "";
+    cont.innerHTML += `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : ""}
+        <h3>${it.nombre} ⭐</h3>
+        <button onclick="abrirGaleria('${it.nombre}')">Ver</button>
+      </div>
+    `;
   });
 }
 
 // -------------------------------------------------------
-// DETALLE
+// PANEL DETALLE
 // -------------------------------------------------------
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
 
-  let galeriaHTML = "";
-  if (Array.isArray(item.imagenes)) {
-    galeriaHTML = item.imagenes
-      .map(img => `<img src="data/${img}" class="bp-img">`)
-      .join("");
-  }
-
   cont.innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
-    <div class="bp-galeria">${galeriaHTML}</div>
   `;
 
   panel.classList.add("open");
 }
 
 // -------------------------------------------------------
-// GALERÍA (FUNCIONAL)
+// GALERÍA (FIX TOTAL)
 // -------------------------------------------------------
-let currentGallery = [];
-let galleryIndex = 0;
-
-function mostrarGaleria(nombre) {
+function abrirGaleria(nombre) {
   const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-  if (!item || !item.imagenes?.length) return;
+  if (!item || !item.imagenes || !item.imagenes.length) return;
 
   currentGallery = item.imagenes;
   galleryIndex = 0;
@@ -140,14 +155,10 @@ function mostrarGaleria(nombre) {
 }
 
 function cambiarImg(dir) {
-  if (!currentGallery.length) return;
-
   galleryIndex += dir;
   if (galleryIndex < 0) galleryIndex = currentGallery.length - 1;
   if (galleryIndex >= currentGallery.length) galleryIndex = 0;
-
-  document.getElementById("lb-img").src =
-    `data/${currentGallery[galleryIndex]}`;
+  document.getElementById("lb-img").src = `data/${currentGallery[galleryIndex]}`;
 }
 
 function cerrarGaleria() {
@@ -198,77 +209,52 @@ function generarFiltros() {
 }
 
 // -------------------------------------------------------
-// CONTROLES
+// CONTROLES (ARREGLADOS)
 // -------------------------------------------------------
 function bindControls() {
 
   // BUSCADOR
-  document.getElementById("search-input")
-    ?.addEventListener("input", e => {
-      currentSearch = e.target.value;
-      renderizarTodo();
-    });
+  document.getElementById("search-input").addEventListener("input", e => {
+    currentSearch = e.target.value;
+    renderizarTodo();
+  });
 
   // LEYENDA
-  document.getElementById("leyenda-bar")
-    ?.addEventListener("click", () => {
-      document.getElementById("leyenda-drawer")
-        ?.classList.toggle("open");
-    });
+  const bar = document.getElementById("leyenda-bar");
+  const drawer = document.getElementById("leyenda-drawer");
+  if (bar && drawer) {
+    bar.onclick = () => drawer.classList.toggle("open");
+  }
 
-  // ❌ GALERÍA
-  document.getElementById("lb-close")
-    ?.addEventListener("click", cerrarGaleria);
-
-  // FLECHAS GALERÍA
-  document.getElementById("lb-prev")
-    ?.addEventListener("click", () => cambiarImg(-1));
-
-  document.getElementById("lb-next")
-    ?.addEventListener("click", () => cambiarImg(1));
-
-  // ====== MODO EDICIÓN REAL ======
+  // BOTÓN EDITAR (FUNCIONA)
   const btnEdit = document.getElementById("btn-toggle-edit");
-  const coordsBox = document.getElementById("editor-coords");
-
   if (btnEdit) {
     btnEdit.onclick = () => {
-      editMode = !editMode;
-      btnEdit.innerText = editMode
-        ? "Salir de edición"
-        : "Entrar en modo edición";
-
-      if (!editMode && editMarker) {
-        map.removeLayer(editMarker);
-        editMarker = null;
-      }
+      editorOn = !editorOn;
+      alert(editorOn ? "Modo edición activo: toca el mapa" : "Modo edición desactivado");
     };
   }
 
+  // MAPA CLICK PARA COORDENADAS
   map.on("click", e => {
-    if (!editMode) return;
+    if (!editorOn) return;
 
-    const { lat, lng } = e.latlng;
+    if (tempMarker) map.removeLayer(tempMarker);
 
-    if (!editMarker) {
-      editMarker = L.marker(e.latlng, {
-        draggable: true
-      }).addTo(map);
-
-      editMarker.on("drag", ev => {
-        const p = ev.target.getLatLng();
-        if (coordsBox) {
-          coordsBox.innerText =
-            `Lat: ${p.lat.toFixed(6)} | Lng: ${p.lng.toFixed(6)}`;
-        }
-      });
-    } else {
-      editMarker.setLatLng(e.latlng);
-    }
-
-    if (coordsBox) {
-      coordsBox.innerText =
-        `Lat: ${lat.toFixed(6)} | Lng: ${lng.toFixed(6)}`;
-    }
+    tempMarker = L.marker(e.latlng, { draggable: true }).addTo(map);
+    alert(`Lat: ${e.latlng.lat}\nLng: ${e.latlng.lng}`);
   });
+
+  // LIGHTBOX CONTROLES
+  document.getElementById("lb-prev")?.addEventListener("click", () => cambiarImg(-1));
+  document.getElementById("lb-next")?.addEventListener("click", () => cambiarImg(1));
+  document.getElementById("lb-close")?.addEventListener("click", cerrarGaleria);
+
+  // RESET DESACTIVADO
+  const resetBtn = document.getElementById("btn-reset-server");
+  if (resetBtn) {
+    resetBtn.disabled = true;
+    resetBtn.style.opacity = "0.4";
+    resetBtn.style.pointerEvents = "none";
+  }
 }
