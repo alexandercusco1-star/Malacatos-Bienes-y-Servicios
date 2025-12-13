@@ -33,5 +33,20 @@
       "s2.1.jpg"
     ],
   },
+    {
+    "nombre": "Ferretería Disensa",
+    "tipo": "servicios",
+    "categoria": "ferreteria",
+    "descripcion": "Venta de todo tipo de material de construcción.",
+    "ubicacion": "Av.Loja y entrada a Calera esquina",
+    "latitud": -4.219517,
+    "longitud": -79.259034,
+    "icono": "icon-ferreteria.jpeg",
+    "imagenes": [
+      "b3_ferreteria_disensa.jpg",
+      "b3.1.jpg"
+    ],
+    "destacado": false
+  }
 
 ]
