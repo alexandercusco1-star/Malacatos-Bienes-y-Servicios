@@ -19,17 +19,17 @@
     "banner": "banner-lauris.jpg"
   },
   {
-    "nombre": "Mecanica Juan",
+    "nombre": "MOTUS",
     "tipo": "servicios",
-    "categoria": "mecanica",
-    "descripcion": "Servicio de mecanica y llantas.",
-    "direccion": "pio montufar y coronel",
+    "categoria": "motos",
+    "descripcion": "Servicio de mecanica y accesorios para motos.",
+    "direccion": "Av. Loja pasando entrada a la granja",
     "telefono": "+593959007259",
     "latitud": -4.21845,
     "longitud": -79.25305,
-    "icono": "icon-llave.jpeg",
+    "icono": "icon-moto.jpeg",
     "imagenes": [
-      "s2.jpg"
+      "s2-taller-moto.jpg"
     ],
     "destacado": false
   }
