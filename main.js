@@ -1,22 +1,24 @@
-// ================================
-// MAIN.JS – BASE DEFINITIVA MALACATOS
-// SIN localStorage
-// SIN reset desde servidor
-// ================================
+// =======================================================
+// MALACATOS - MAIN.JS BASE DEFINITIVA
+// =======================================================
 
-// ---------------- MAPA ----------------
+// -------------------------------------------------------
+// MAPA
+// -------------------------------------------------------
 const map = L.map('map').setView([-4.219167, -79.258333], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
-// ---------------- HELPERS ----------------
+// -------------------------------------------------------
+// HELPERS
+// -------------------------------------------------------
 async function cargar(ruta) {
   const r = await fetch(ruta);
   return await r.json();
 }
 
-function crearIcono(ruta, size = 28) {
+function iconoDe(ruta, size = 32) {
   return L.icon({
     iconUrl: `data/${ruta}`,
     iconSize: [size, size],
@@ -25,188 +27,237 @@ function crearIcono(ruta, size = 28) {
   });
 }
 
-// ---------------- ESTADO ----------------
-let BIENES = [];
-let SERVICIOS = [];
-let CATEGORIAS = {};
-let MARKERS = [];
+// -------------------------------------------------------
+// ESTADO GLOBAL
+// -------------------------------------------------------
+let ALL = {
+  bienes: [],
+  servicios: [],
+  categorias: {}
+};
 
-let editorActivo = false;
-let itemEditando = null;
-let marcadorTemp = null;
+let markers = [];
+let currentFilter = null;
+let currentSearch = "";
+let editorOn = false;
 
-// ---------------- INICIO ----------------
+// -------------------------------------------------------
+// INICIO
+// -------------------------------------------------------
 async function iniciar() {
-  BIENES = await cargar('data/bienes.json');
-  SERVICIOS = await cargar('data/servicios.json');
-  CATEGORIAS = await cargar('data/categorias.json');
+  const [bienes, servicios, categorias] = await Promise.all([
+    cargar("data/bienes.json"),
+    cargar("data/servicios.json"),
+    cargar("data/categorias.json")
+  ]);
+
+  ALL.bienes = bienes;
+  ALL.servicios = servicios;
+  ALL.categorias = categorias;
 
   generarFiltros();
-  renderizar();
+  renderizarTodo();
   pintarLeyenda();
-  configurarEditor();
+  bindControls();
 }
 
-// ---------------- RENDER MAPA ----------------
-function limpiarMapa() {
-  MARKERS.forEach(m => map.removeLayer(m));
-  MARKERS = [];
-}
+iniciar();
 
-function renderizar() {
-  limpiarMapa();
+// -------------------------------------------------------
+// VALIDACIÓN (NO ROMPE)
+// -------------------------------------------------------
+function validarItem(item) {
+  if (!ALL.categorias[item.categoria]) {
+    console.warn("Categoría no registrada:", item.categoria, item.nombre);
+  }
 
-  [...BIENES, ...SERVICIOS].forEach(item => {
-    if (!item.latitud || !item.longitud) return;
+  if (item.icono) {
+    fetch(`data/${item.icono}`).catch(() =>
+      console.warn("Ícono no encontrado:", item.icono)
+    );
+  }
 
-    const icono = crearIcono(item.icono || 'icon-default.jpeg');
-    const marker = L.marker([item.latitud, item.longitud], { icon: icono })
-      .addTo(map)
-      .on('click', () => {
-        mostrarInfo(item);
-        if (editorActivo) abrirEditor(item);
-      });
-
-    MARKERS.push(marker);
-  });
-}
-
-// ---------------- INFO PANEL ----------------
-function mostrarInfo(item) {
-  const panel = document.getElementById('bottom-panel');
-  const cont = document.getElementById('bp-content');
-
-  const img = item.imagenes?.[0]
-    ? `<img src="data/${item.imagenes[0]}" class="bp-img">`
-    : '';
-
-  cont.innerHTML = `
-    ${img}
-    <h3>${item.nombre}</h3>
-    <p>${item.descripcion || ''}</p>
-    <p>${item.direccion || item.ubicacion || ''}</p>
-  `;
-
-  panel.classList.add('open');
-}
-
-document.getElementById('bp-close').onclick = () =>
-  document.getElementById('bottom-panel').classList.remove('open');
-
-// ---------------- FILTROS ----------------
-function generarFiltros() {
-  const box = document.getElementById('filters');
-  box.innerHTML = '';
-
-  const btnTodos = document.createElement('button');
-  btnTodos.textContent = 'Todos';
-  btnTodos.className = 'filter-btn active';
-  btnTodos.onclick = () => renderizar();
-  box.appendChild(btnTodos);
-
-  Object.keys(CATEGORIAS).forEach(cat => {
-    const b = document.createElement('button');
-    b.textContent = cat;
-    b.className = 'filter-btn';
-    b.onclick = () => filtrarCategoria(cat);
-    box.appendChild(b);
-  });
-}
-
-function filtrarCategoria(cat) {
-  limpiarMapa();
-  [...BIENES, ...SERVICIOS]
-    .filter(i => i.categoria === cat)
-    .forEach(i => {
-      const m = L.marker([i.latitud, i.longitud], {
-        icon: crearIcono(i.icono)
-      }).addTo(map);
-      MARKERS.push(m);
+  if (Array.isArray(item.imagenes)) {
+    item.imagenes.forEach(img => {
+      fetch(`data/${img}`).catch(() =>
+        console.warn("Imagen no encontrada:", img)
+      );
     });
+  }
 }
 
-// ---------------- LEYENDA ----------------
-function pintarLeyenda() {
-  const caja = document.getElementById('leyenda-items');
-  caja.innerHTML = '';
+// -------------------------------------------------------
+// RENDER MAPA
+// -------------------------------------------------------
+function clearMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+}
 
-  Object.entries(CATEGORIAS).forEach(([nombre, data]) => {
-    caja.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${data.icono}">
-        <span>${nombre}</span>
+function renderizarTodo() {
+  clearMarkers();
+
+  const todos = [...ALL.bienes, ...ALL.servicios];
+
+  const visibles = todos.filter(i => {
+    const txt = `${i.nombre} ${i.categoria} ${i.descripcion || ""}`.toLowerCase();
+    if (currentSearch && !txt.includes(currentSearch.toLowerCase())) return false;
+    if (currentFilter && i.categoria !== currentFilter) return false;
+    return true;
+  });
+
+  visibles.forEach(item => {
+    validarItem(item);
+
+    if (isNaN(item.latitud) || isNaN(item.longitud)) return;
+
+    const iconFile =
+      item.icono ||
+      ALL.categorias[item.categoria]?.icono ||
+      "icon-default.jpeg";
+
+    const marker = L.marker([item.latitud, item.longitud], {
+      icon: iconoDe(iconFile, 28)
+    }).addTo(map);
+
+    marker.on("click", () => {
+      mostrarDetalle(item);
+    });
+
+    markers.push(marker);
+  });
+
+  renderDestacados(todos.filter(x => x.destacado));
+}
+
+// -------------------------------------------------------
+// DESTACADOS
+// -------------------------------------------------------
+function renderDestacados(arr) {
+  const cont = document.getElementById("destacados-contenedor");
+  cont.innerHTML = "";
+
+  arr.forEach(it => {
+    const img = it.imagenes?.[0]
+      ? `data/${it.imagenes[0]}`
+      : "";
+
+    cont.innerHTML += `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : `<div class="img-placeholder">Sin imagen</div>`}
+        <h3>${it.nombre}</h3>
+        <p>${it.descripcion || ""}</p>
+        <button onclick="mostrarGaleria('${it.nombre}')">Ver</button>
       </div>
     `;
   });
 }
 
-document.getElementById('leyenda-bar').onclick = () =>
-  document.getElementById('leyenda-drawer').classList.toggle('open');
+// -------------------------------------------------------
+// DETALLE
+// -------------------------------------------------------
+function mostrarDetalle(item) {
+  const panel = document.getElementById("bottom-panel");
+  const cont = document.getElementById("bp-content");
 
-// ---------------- EDITOR ----------------
-function configurarEditor() {
-  const btnEdit = document.getElementById('btn-toggle-edit');
-  const panel = document.getElementById('editor-panel');
+  const img = item.imagenes?.[0]
+    ? `data/${item.imagenes[0]}`
+    : "";
 
-  btnEdit.onclick = () => {
-    editorActivo = !editorActivo;
-    panel.setAttribute('aria-hidden', !editorActivo);
-    btnEdit.textContent = editorActivo
-      ? 'Salir de edición'
-      : 'Entrar en modo edición';
-  };
+  cont.innerHTML = `
+    ${img ? `<img src="${img}" class="bp-img">` : ""}
+    <h3>${item.nombre}</h3>
+    <p>${item.descripcion || ""}</p>
+    <p>${item.direccion || ""}</p>
+  `;
 
-  document.getElementById('editor-set-coord').onclick = () => {
-    alert('Toca el mapa para fijar coordenadas');
-    map.once('click', e => {
-      document.getElementById('editor-latitud').value = e.latlng.lat;
-      document.getElementById('editor-longitud').value = e.latlng.lng;
+  panel.classList.add("open");
+}
 
-      if (marcadorTemp) map.removeLayer(marcadorTemp);
-      marcadorTemp = L.marker(e.latlng, { draggable: true }).addTo(map);
-    });
-  };
+// -------------------------------------------------------
+// GALERÍA
+// -------------------------------------------------------
+let currentGallery = [];
+let galleryIndex = 0;
 
-  document.getElementById('editor-save').onclick = () => {
-    if (!itemEditando) return alert('Selecciona un negocio');
-
-    itemEditando.nombre = editorNombre.value;
-    itemEditando.categoria = editorCategoria.value;
-    itemEditando.descripcion = editorDescripcion.value;
-    itemEditando.direccion = editorDireccion.value;
-    itemEditando.telefono = editorTelefono.value;
-    itemEditando.icono = editorIcono.value;
-    itemEditando.banner = editorBanner.value;
-    itemEditando.imagenes = editorImagenes.value.split(',');
-    itemEditando.latitud = Number(editorLat.value);
-    itemEditando.longitud = Number(editorLng.value);
-
-    renderizar();
-    alert('Cambios aplicados (recuerda guardar el JSON)');
-  };
-
-  // BOTÓN RESTABLECER – DESACTIVADO
-  const reset = document.getElementById('btn-reset-server');
-  if (reset) {
-    reset.onclick = () => {
-      alert('Función desactivada por seguridad');
-    };
+function mostrarGaleria(nombre) {
+  const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
+  if (!item || !item.imagenes || !item.imagenes.length) {
+    alert("Este negocio no tiene imágenes.");
+    return;
   }
+
+  currentGallery = item.imagenes;
+  galleryIndex = 0;
+
+  document.getElementById("lb-img").src = `data/${currentGallery[0]}`;
+  document.getElementById("lightbox").classList.add("open");
 }
 
-function abrirEditor(item) {
-  itemEditando = item;
-  editorNombre.value = item.nombre || '';
-  editorCategoria.value = item.categoria || '';
-  editorDescripcion.value = item.descripcion || '';
-  editorDireccion.value = item.direccion || '';
-  editorTelefono.value = item.telefono || '';
-  editorIcono.value = item.icono || '';
-  editorBanner.value = item.banner || '';
-  editorImagenes.value = (item.imagenes || []).join(',');
-  editorLat.value = item.latitud || '';
-  editorLng.value = item.longitud || '';
+function cambiarImg(dir) {
+  galleryIndex += dir;
+  if (galleryIndex < 0) galleryIndex = currentGallery.length - 1;
+  if (galleryIndex >= currentGallery.length) galleryIndex = 0;
+  document.getElementById("lb-img").src = `data/${currentGallery[galleryIndex]}`;
 }
 
-// ---------------- START ----------------
-iniciar();
+// -------------------------------------------------------
+// LEYENDA
+// -------------------------------------------------------
+function pintarLeyenda() {
+  const cont = document.getElementById("leyenda-items");
+  cont.innerHTML = "";
+
+  Object.entries(ALL.categorias).forEach(([cat, data]) => {
+    cont.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${data.icono}">
+        ${cat}
+      </div>
+    `;
+  });
+}
+
+// -------------------------------------------------------
+// FILTROS
+// -------------------------------------------------------
+function generarFiltros() {
+  const box = document.getElementById("filters");
+  box.innerHTML = "";
+
+  const btnAll = document.createElement("button");
+  btnAll.textContent = "Todos";
+  btnAll.onclick = () => {
+    currentFilter = null;
+    renderizarTodo();
+  };
+  box.appendChild(btnAll);
+
+  Object.keys(ALL.categorias).forEach(cat => {
+    const b = document.createElement("button");
+    b.textContent = cat;
+    b.onclick = () => {
+      currentFilter = cat;
+      renderizarTodo();
+    };
+    box.appendChild(b);
+  });
+}
+
+// -------------------------------------------------------
+// CONTROLES
+// -------------------------------------------------------
+function bindControls() {
+  document.getElementById("search-input").addEventListener("input", e => {
+    currentSearch = e.target.value;
+    renderizarTodo();
+  });
+
+  // ❌ DESACTIVADO DEFINITIVAMENTE
+  const resetBtn = document.getElementById("btn-reset-server");
+  if (resetBtn) {
+    resetBtn.onclick = () => false;
+    resetBtn.style.opacity = "0.4";
+    resetBtn.style.pointerEvents = "none";
+  }
+                   }
