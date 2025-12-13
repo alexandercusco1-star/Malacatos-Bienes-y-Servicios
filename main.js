@@ -260,4 +260,4 @@ function bindControls() {
     resetBtn.style.opacity = "0.4";
     resetBtn.style.pointerEvents = "none";
   }
-                   }
+    }
