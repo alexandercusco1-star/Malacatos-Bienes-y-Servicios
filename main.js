@@ -35,6 +35,9 @@ let markers = [];
 let currentFilter = null;
 let currentSearch = "";
 
+// --- MODO EDICIÓN ---
+let editorOn = false;
+
 // -------------------------------------------------------
 // INICIO
 // -------------------------------------------------------
@@ -168,7 +171,7 @@ function cambiarImg(dir) {
 }
 
 // -------------------------------------------------------
-// LEYENDA (ARREGLADA)
+// LEYENDA
 // -------------------------------------------------------
 function pintarLeyenda() {
   const cont = document.getElementById("leyenda-items");
@@ -211,9 +214,11 @@ function generarFiltros() {
 }
 
 // -------------------------------------------------------
-// CONTROLES
+// CONTROLES (ARREGLADOS)
 // -------------------------------------------------------
 function bindControls() {
+
+  // BUSCADOR
   document.getElementById("search-input").addEventListener("input", e => {
     currentSearch = e.target.value;
     renderizarTodo();
@@ -232,5 +237,31 @@ function bindControls() {
     resetBtn.onclick = () => false;
     resetBtn.style.pointerEvents = "none";
     resetBtn.style.opacity = "0.4";
+  }
+
+  // =========================================
+  // BOTÓN ENTRAR EN MODO EDICIÓN (FUNCIONAL)
+  // =========================================
+  const btnEdit = document.getElementById("btn-toggle-edit");
+  const editorPanel = document.getElementById("editor-panel");
+
+  if (btnEdit && editorPanel) {
+    btnEdit.onclick = () => {
+      editorOn = !editorOn;
+      btnEdit.innerText = editorOn ? "Salir de edición" : "Entrar en modo edición";
+      editorPanel.setAttribute("aria-hidden", editorOn ? "false" : "true");
+    };
+  }
+
+  // =========================================
+  // BOTÓN ❌ CERRAR GALERÍA (FUNCIONAL)
+  // =========================================
+  const lbClose = document.getElementById("lb-close");
+  const lightbox = document.getElementById("lightbox");
+
+  if (lbClose && lightbox) {
+    lbClose.onclick = () => {
+      lightbox.classList.remove("open");
+    };
   }
 }
