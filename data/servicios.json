@@ -19,18 +19,18 @@
     "banner": "banner-lauris.jpg"
   },
   {
-    "nombre": "Motus",
+    "nombre": "Lavadora ROA",
     "tipo": "servicios",
-    "categoria": "motos",
+    "categoria": "lavadora",
     "descripcion": "Cortes, maquillaje y diseno de unas.",
     "direccion": "pio montufar y lauro coronel, esquina",
     "telefono": "+593959007258",
     "latitud": -4.22501,
     "longitud": -79.2597,
-    "icono": "icon-motos.jpeg",
+    "icono": "icon-lavadora-carros.jpeg",
     "imagenes": [
-      "s2-taller-motos.jpg",
-      "s2.1.jpg"
+      "s3-lavadora-carros.jpg",
+      "s3.1.jpg"
     ]
   }
 
