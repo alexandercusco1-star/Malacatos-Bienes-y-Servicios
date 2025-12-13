@@ -21,15 +21,15 @@
   {
     "nombre": "MOTUS",
     "tipo": "servicios",
-    "categoria": "motos",
+    "categoria": "servicios",
     "descripcion": "Servicio de mecanica y accesorios para motos.",
     "direccion": "Av. Loja pasando entrada a la granja",
     "telefono": "+593959007259",
     "latitud": -4.21845,
     "longitud": -79.25305,
-    "icono": "icon-moto.jpeg",
+    "icono": "icon-motos.jpeg",
     "imagenes": [
-      "s2-taller-moto.jpg"
+      "s2-taller-motos.jpg"
     ],
     "destacado": false
   }
