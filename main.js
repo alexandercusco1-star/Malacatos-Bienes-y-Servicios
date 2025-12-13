@@ -1,5 +1,5 @@
 // =======================================================
-// MALACATOS - MAIN.JS BASE ESTABLE DEFINITIVA
+// MALACATOS - MAIN.JS BASE ESTABLE FUNCIONAL
 // =======================================================
 
 // -------------------------------------------------------
@@ -35,8 +35,9 @@ let markers = [];
 let currentFilter = null;
 let currentSearch = "";
 
-// --- MODO EDICIÓN ---
-let editorOn = false;
+// ====== MODO EDICIÓN REAL ======
+let editMode = false;
+let editMarker = null;
 
 // -------------------------------------------------------
 // INICIO
@@ -61,7 +62,7 @@ async function iniciar() {
 iniciar();
 
 // -------------------------------------------------------
-// RENDER MAPA
+// MAPA
 // -------------------------------------------------------
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
@@ -95,35 +96,10 @@ function renderizarTodo() {
     marker.on("click", () => mostrarDetalle(item));
     markers.push(marker);
   });
-
-  renderDestacados(todos.filter(x => x.destacado));
 }
 
 // -------------------------------------------------------
-// DESTACADOS
-// -------------------------------------------------------
-function renderDestacados(arr) {
-  const cont = document.getElementById("destacados-contenedor");
-  cont.innerHTML = "";
-
-  arr.forEach(it => {
-    const img = it.imagenes?.[0]
-      ? `data/${it.imagenes[0]}`
-      : "";
-
-    cont.innerHTML += `
-      <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${it.nombre} ⭐</h3>
-        <p>${it.descripcion || ""}</p>
-        <button onclick="mostrarGaleria('${it.nombre}')">Ver</button>
-      </div>
-    `;
-  });
-}
-
-// -------------------------------------------------------
-// DETALLE / PÁGINA SECUNDARIA
+// DETALLE
 // -------------------------------------------------------
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
@@ -147,14 +123,14 @@ function mostrarDetalle(item) {
 }
 
 // -------------------------------------------------------
-// GALERÍA (LIGHTBOX)
+// GALERÍA (FUNCIONAL)
 // -------------------------------------------------------
 let currentGallery = [];
 let galleryIndex = 0;
 
 function mostrarGaleria(nombre) {
   const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-  if (!item || !item.imagenes || !item.imagenes.length) return;
+  if (!item || !item.imagenes?.length) return;
 
   currentGallery = item.imagenes;
   galleryIndex = 0;
@@ -164,10 +140,18 @@ function mostrarGaleria(nombre) {
 }
 
 function cambiarImg(dir) {
+  if (!currentGallery.length) return;
+
   galleryIndex += dir;
   if (galleryIndex < 0) galleryIndex = currentGallery.length - 1;
   if (galleryIndex >= currentGallery.length) galleryIndex = 0;
-  document.getElementById("lb-img").src = `data/${currentGallery[galleryIndex]}`;
+
+  document.getElementById("lb-img").src =
+    `data/${currentGallery[galleryIndex]}`;
+}
+
+function cerrarGaleria() {
+  document.getElementById("lightbox").classList.remove("open");
 }
 
 // -------------------------------------------------------
@@ -214,54 +198,77 @@ function generarFiltros() {
 }
 
 // -------------------------------------------------------
-// CONTROLES (ARREGLADOS)
+// CONTROLES
 // -------------------------------------------------------
 function bindControls() {
 
   // BUSCADOR
-  document.getElementById("search-input").addEventListener("input", e => {
-    currentSearch = e.target.value;
-    renderizarTodo();
-  });
+  document.getElementById("search-input")
+    ?.addEventListener("input", e => {
+      currentSearch = e.target.value;
+      renderizarTodo();
+    });
 
-  // LEYENDA ON / OFF
-  const bar = document.getElementById("leyenda-bar");
-  const drawer = document.getElementById("leyenda-drawer");
-  if (bar && drawer) {
-    bar.onclick = () => drawer.classList.toggle("open");
-  }
+  // LEYENDA
+  document.getElementById("leyenda-bar")
+    ?.addEventListener("click", () => {
+      document.getElementById("leyenda-drawer")
+        ?.classList.toggle("open");
+    });
 
-  // RESET DESACTIVADO
-  const resetBtn = document.getElementById("btn-reset-server");
-  if (resetBtn) {
-    resetBtn.onclick = () => false;
-    resetBtn.style.pointerEvents = "none";
-    resetBtn.style.opacity = "0.4";
-  }
+  // ❌ GALERÍA
+  document.getElementById("lb-close")
+    ?.addEventListener("click", cerrarGaleria);
 
-  // =========================================
-  // BOTÓN ENTRAR EN MODO EDICIÓN (FUNCIONAL)
-  // =========================================
+  // FLECHAS GALERÍA
+  document.getElementById("lb-prev")
+    ?.addEventListener("click", () => cambiarImg(-1));
+
+  document.getElementById("lb-next")
+    ?.addEventListener("click", () => cambiarImg(1));
+
+  // ====== MODO EDICIÓN REAL ======
   const btnEdit = document.getElementById("btn-toggle-edit");
-  const editorPanel = document.getElementById("editor-panel");
+  const coordsBox = document.getElementById("editor-coords");
 
-  if (btnEdit && editorPanel) {
+  if (btnEdit) {
     btnEdit.onclick = () => {
-      editorOn = !editorOn;
-      btnEdit.innerText = editorOn ? "Salir de edición" : "Entrar en modo edición";
-      editorPanel.setAttribute("aria-hidden", editorOn ? "false" : "true");
+      editMode = !editMode;
+      btnEdit.innerText = editMode
+        ? "Salir de edición"
+        : "Entrar en modo edición";
+
+      if (!editMode && editMarker) {
+        map.removeLayer(editMarker);
+        editMarker = null;
+      }
     };
   }
 
-  // =========================================
-  // BOTÓN ❌ CERRAR GALERÍA (FUNCIONAL)
-  // =========================================
-  const lbClose = document.getElementById("lb-close");
-  const lightbox = document.getElementById("lightbox");
+  map.on("click", e => {
+    if (!editMode) return;
 
-  if (lbClose && lightbox) {
-    lbClose.onclick = () => {
-      lightbox.classList.remove("open");
-    };
-  }
+    const { lat, lng } = e.latlng;
+
+    if (!editMarker) {
+      editMarker = L.marker(e.latlng, {
+        draggable: true
+      }).addTo(map);
+
+      editMarker.on("drag", ev => {
+        const p = ev.target.getLatLng();
+        if (coordsBox) {
+          coordsBox.innerText =
+            `Lat: ${p.lat.toFixed(6)} | Lng: ${p.lng.toFixed(6)}`;
+        }
+      });
+    } else {
+      editMarker.setLatLng(e.latlng);
+    }
+
+    if (coordsBox) {
+      coordsBox.innerText =
+        `Lat: ${lat.toFixed(6)} | Lng: ${lng.toFixed(6)}`;
+    }
+  });
 }
