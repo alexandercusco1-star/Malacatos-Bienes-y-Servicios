@@ -34,16 +34,16 @@
     ],
   },
     {
-    "nombre": "Ferretería Disensa",
+    "nombre": "Vidreria Ochoa",
     "tipo": "servicios",
-    "categoria": "ferreteria",
-    "descripcion": "Venta de todo tipo de material de construcción.",
-    "ubicacion": "Av.Loja y entrada a Calera esquina",
+    "categoria": "vidreria",
+    "descripcion": "Contruccion y diseño de ventanas y todo en vidrio",
+    "ubicacion": "Av.Loja junto a ferretería Disensa",
     "latitud": -4.219517,
-    "longitud": -79.259034,
-    "icono": "icon-ferreteria.jpeg",
+    "longitud": -79.259424,
+    "icono": "icon-vidreria.jpeg",
     "imagenes": [
-      "b3_ferreteria_disensa.jpg",
+      "b3_vidreria_Ochoa.jpg",
       "b3.1.jpg"
     ],
     "destacado": false
