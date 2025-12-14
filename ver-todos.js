@@ -14,12 +14,12 @@ async function iniciar() {
 
   todos.forEach(item => {
     const img = item.imagenes?.[0]
-      ? `<img src="data/${item.imagenes[0]}" style="width:100%;border-radius:6px">`
+      ? `data/${item.imagenes[0]}`
       : "";
 
     cont.innerHTML += `
       <div class="tarjeta">
-        ${img}
+        ${img ? `<img src="${img}">` : ""}
         <h3>${item.nombre}</h3>
         <p><b>Categoría:</b> ${item.categoria}</p>
         <p>${item.descripcion || ""}</p>
