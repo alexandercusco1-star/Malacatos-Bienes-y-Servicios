@@ -102,69 +102,6 @@ map.on("click", e => {
   markerSeleccionado = null;
 });
 
-
-
-// DESTACADOS (NO TOCADO)
-function renderDestacados(arr) {
-  const c = document.getElementById("destacados-contenedor");
-  c.innerHTML = "";
-
-  arr.forEach(it => {
-    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
-    c.innerHTML += `
-      <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${it.nombre}</h3>
-        <p>${it.descripcion || ""}</p>
-        <button onclick="mostrarGaleria('${it.nombre}')">ver</button>
-      </div>
-    `;
-  });
-}
-
-// PANEL DETALLE (NO TOCADO)
-function mostrarDetalle(item) {
-  const panel = document.getElementById("bottom-panel");
-  const cont = document.getElementById("bp-content");
-
-  cont.innerHTML = `
-    <h3>${item.nombre}</h3>
-    <p>${item.descripcion || ""}</p>
-    <p>${item.direccion || ""}</p>
-    <div class="bp-galeria">
-      ${(item.imagenes || []).map(i => `<img src="data/${i}">`).join("")}
-    </div>
-  `;
-  panel.classList.add("open");
-}
-
-document.getElementById("bp-close").onclick = () =>
-  document.getElementById("bottom-panel").classList.remove("open");
-
-// GALERÍA (NO TOCADO)
-let currentGallery = [];
-let galleryIndex = 0;
-
-function mostrarGaleria(nombre) {
-  const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-  if (!item || !item.imagenes) return;
-
-  currentGallery = item.imagenes;
-  galleryIndex = 0;
-  document.getElementById("lb-img").src = "data/" + currentGallery[0];
-  document.getElementById("lightbox").classList.add("open");
-}
-
-function cambiarImg(dir) {
-  galleryIndex =
-    (galleryIndex + dir + currentGallery.length) % currentGallery.length;
-  document.getElementById("lb-img").src =
-    "data/" + currentGallery[galleryIndex];
-}
-
-document.getElementById("lb-close").onclick = () =>
-  document.getElementById("lightbox").classList.remove("open");
-
 // LEYENDA (NO TOCADO)
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
@@ -221,4 +158,64 @@ function bindControls() {
   };
 
   document.getElementById("btn-reset-server").onclick = () => false;
+}
+// DESTACADOS (NO TOCADO)
+function renderDestacados(arr) {
+  const c = document.getElementById("destacados-contenedor");
+  c.innerHTML = "";
+
+  arr.forEach(it => {
+    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
+    c.innerHTML += `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : ""}
+        <h3>${it.nombre}</h3>
+        <p>${it.descripcion || ""}</p>
+        <button onclick="mostrarGaleria('${it.nombre}')">ver</button>
+      </div>
+    `;
+  });
+}
+
+// PANEL DETALLE (NO TOCADO)
+function mostrarDetalle(item) {
+  const panel = document.getElementById("bottom-panel");
+  const cont = document.getElementById("bp-content");
+
+  cont.innerHTML = `
+    <h3>${item.nombre}</h3>
+    <p>${item.descripcion || ""}</p>
+    <p>${item.direccion || ""}</p>
+    <div class="bp-galeria">
+      ${(item.imagenes || []).map(i => `<img src="data/${i}">`).join("")}
+    </div>
+  `;
+  panel.classList.add("open");
+}
+
+document.getElementById("bp-close").onclick = () =>
+  document.getElementById("bottom-panel").classList.remove("open");
+
+// GALERÍA (NO TOCADO)
+let currentGallery = [];
+let galleryIndex = 0;
+
+function mostrarGaleria(nombre) {
+  const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
+  if (!item || !item.imagenes) return;
+
+  currentGallery = item.imagenes;
+  galleryIndex = 0;
+  document.getElementById("lb-img").src = "data/" + currentGallery[0];
+  document.getElementById("lightbox").classList.add("open");
+}
+
+function cambiarImg(dir) {
+  galleryIndex =
+    (galleryIndex + dir + currentGallery.length) % currentGallery.length;
+  document.getElementById("lb-img").src =
+    "data/" + currentGallery[galleryIndex];
+
+document.getElementById("lb-close").onclick = () =>
+  document.getElementById("lightbox").classList.remove("open");
 }
