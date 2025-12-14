@@ -1,18 +1,10 @@
-// =======================================================
-// MALACATOS - MAIN.JS BASE CORREGIDA (SIN DAÑAR NADA)
-// =======================================================
-
-// -------------------------------------------------------
 // MAPA
-// -------------------------------------------------------
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const map = L.map("map").setView([-4.219167, -79.258333], 15);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19
 }).addTo(map);
 
-// -------------------------------------------------------
 // HELPERS
-// -------------------------------------------------------
 async function cargar(ruta) {
   const r = await fetch(ruta);
   return await r.json();
@@ -20,54 +12,39 @@ async function cargar(ruta) {
 
 function iconoDe(ruta, size = 28) {
   return L.icon({
-    iconUrl: `data/${ruta}`,
+    iconUrl: "data/" + ruta,
     iconSize: [size, size],
-    iconAnchor: [size / 2, size],
-    popupAnchor: [0, -size + 6]
+    iconAnchor: [size / 2, size]
   });
 }
 
-// -------------------------------------------------------
 // ESTADO
-// -------------------------------------------------------
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = "";
 
-// EDITOR
-let editorOn = false;
-let tempMarker = null;
-
-// GALERÍA
-let currentGallery = [];
-let galleryIndex = 0;
-
-// -------------------------------------------------------
 // INICIO
-// -------------------------------------------------------
 async function iniciar() {
-  const [bienes, servicios, categorias] = await Promise.all([
+  const [b, s, c] = await Promise.all([
     cargar("data/bienes.json"),
     cargar("data/servicios.json"),
     cargar("data/categorias.json")
   ]);
 
-  ALL.bienes = bienes;
-  ALL.servicios = servicios;
-  ALL.categorias = categorias;
+  ALL.bienes = b;
+  ALL.servicios = s;
+  ALL.categorias = c;
 
   generarFiltros();
-  renderizarTodo();
   pintarLeyenda();
   bindControls();
+  renderizarTodo();
 }
 
 iniciar();
 
-// -------------------------------------------------------
-// MAPA
-// -------------------------------------------------------
+// RENDER MAPA
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
@@ -78,55 +55,54 @@ function renderizarTodo() {
 
   const todos = [...ALL.bienes, ...ALL.servicios];
 
-  const visibles = todos.filter(i => {
-    const t = `${i.nombre} ${i.categoria} ${i.descripcion || ""}`.toLowerCase();
-    if (currentSearch && !t.includes(currentSearch.toLowerCase())) return false;
-    if (currentFilter && i.categoria !== currentFilter) return false;
-    return true;
-  });
+  todos
+    .filter(i => {
+      const t = `${i.nombre} ${i.categoria} ${i.descripcion || ""}`.toLowerCase();
+      if (currentSearch && !t.includes(currentSearch)) return false;
+      if (currentFilter && i.categoria !== currentFilter) return false;
+      return true;
+    })
+    .forEach(item => {
+      if (isNaN(item.latitud) || isNaN(item.longitud)) return;
 
-  visibles.forEach(item => {
-    if (isNaN(item.latitud) || isNaN(item.longitud)) return;
+      const icono =
+        item.icono ||
+        ALL.categorias[item.categoria]?.icono ||
+        "icon-default.jpeg";
 
-    const iconFile =
-      item.icono ||
-      ALL.categorias[item.categoria]?.icono ||
-      "icon-default.jpeg";
+      const marker = L.marker(
+        [item.latitud, item.longitud],
+        { icon: iconoDe(icono) }
+      ).addTo(map);
 
-    const marker = L.marker([item.latitud, item.longitud], {
-      icon: iconoDe(iconFile)
-    }).addTo(map);
-
-    marker.on("click", () => mostrarDetalle(item));
-
-    markers.push(marker);
-  });
+      marker.on("click", () => mostrarDetalle(item));
+      markers.push(marker);
+    });
 
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// -------------------------------------------------------
 // DESTACADOS
-// -------------------------------------------------------
 function renderDestacados(arr) {
   const cont = document.getElementById("destacados-contenedor");
   cont.innerHTML = "";
 
   arr.forEach(it => {
-    const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : "";
+    const img = it.imagenes?.[0]
+      ? `<img src="data/${it.imagenes[0]}">`
+      : "";
+
     cont.innerHTML += `
       <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${it.nombre} ⭐</h3>
-        <button onclick="abrirGaleria('${it.nombre}')">Ver</button>
+        ${img}
+        <h3>${it.nombre}</h3>
+        <button onclick="mostrarGaleria('${it.nombre}')">ver</button>
       </div>
     `;
   });
 }
 
-// -------------------------------------------------------
-// PANEL DETALLE
-// -------------------------------------------------------
+// DETALLE
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
@@ -134,68 +110,69 @@ function mostrarDetalle(item) {
   cont.innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
-    <p>${item.direccion || ""}</p>
+    ${(item.imagenes || [])
+      .map(i => `<img class="bp-img" src="data/${i}">`)
+      .join("")}
   `;
 
   panel.classList.add("open");
 }
 
-// -------------------------------------------------------
-// GALERÍA (FIX TOTAL)
-// -------------------------------------------------------
-function abrirGaleria(nombre) {
+// GALERÍA
+let currentGallery = [];
+let galleryIndex = 0;
+
+function mostrarGaleria(nombre) {
   const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
-  if (!item || !item.imagenes || !item.imagenes.length) return;
+  if (!item || !item.imagenes?.length) return;
 
   currentGallery = item.imagenes;
   galleryIndex = 0;
 
-  document.getElementById("lb-img").src = `data/${currentGallery[0]}`;
+  document.getElementById("lb-img").src = "data/" + currentGallery[0];
   document.getElementById("lightbox").classList.add("open");
 }
+
+document.getElementById("lb-prev").onclick = () => cambiarImg(-1);
+document.getElementById("lb-next").onclick = () => cambiarImg(1);
+document.getElementById("lb-close").onclick = () =>
+  document.getElementById("lightbox").classList.remove("open");
 
 function cambiarImg(dir) {
   galleryIndex += dir;
   if (galleryIndex < 0) galleryIndex = currentGallery.length - 1;
   if (galleryIndex >= currentGallery.length) galleryIndex = 0;
-  document.getElementById("lb-img").src = `data/${currentGallery[galleryIndex]}`;
+  document.getElementById("lb-img").src =
+    "data/" + currentGallery[galleryIndex];
 }
 
-function cerrarGaleria() {
-  document.getElementById("lightbox").classList.remove("open");
-}
-
-// -------------------------------------------------------
 // LEYENDA
-// -------------------------------------------------------
 function pintarLeyenda() {
   const cont = document.getElementById("leyenda-items");
   cont.innerHTML = "";
 
-  Object.entries(ALL.categorias).forEach(([cat, data]) => {
+  Object.entries(ALL.categorias).forEach(([k, v]) => {
     cont.innerHTML += `
       <div class="leyenda-item">
-        <img src="data/${data.icono}">
-        ${cat}
+        <img src="data/${v.icono}">
+        ${k}
       </div>
     `;
   });
 }
 
-// -------------------------------------------------------
 // FILTROS
-// -------------------------------------------------------
 function generarFiltros() {
   const box = document.getElementById("filters");
   box.innerHTML = "";
 
-  const btnAll = document.createElement("button");
-  btnAll.textContent = "Todos";
-  btnAll.onclick = () => {
+  const all = document.createElement("button");
+  all.textContent = "todos";
+  all.onclick = () => {
     currentFilter = null;
     renderizarTodo();
   };
-  box.appendChild(btnAll);
+  box.appendChild(all);
 
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
@@ -208,53 +185,21 @@ function generarFiltros() {
   });
 }
 
-// -------------------------------------------------------
-// CONTROLES (ARREGLADOS)
-// -------------------------------------------------------
+// CONTROLES
 function bindControls() {
-
-  // BUSCADOR
-  document.getElementById("search-input").addEventListener("input", e => {
-    currentSearch = e.target.value;
+  document.getElementById("search-input").oninput = e => {
+    currentSearch = e.target.value.toLowerCase();
     renderizarTodo();
-  });
+  };
 
-  // LEYENDA
-  const bar = document.getElementById("leyenda-bar");
-  const drawer = document.getElementById("leyenda-drawer");
-  if (bar && drawer) {
-    bar.onclick = () => drawer.classList.toggle("open");
-  }
+  document.getElementById("bp-close").onclick = () =>
+    document.getElementById("bottom-panel").classList.remove("open");
 
-  // BOTÓN EDITAR (FUNCIONA)
-  const btnEdit = document.getElementById("btn-toggle-edit");
-  if (btnEdit) {
-    btnEdit.onclick = () => {
-      editorOn = !editorOn;
-      alert(editorOn ? "Modo edición activo: toca el mapa" : "Modo edición desactivado");
-    };
-  }
+  document.getElementById("leyenda-bar").onclick = () =>
+    document.getElementById("leyenda-drawer").classList.toggle("open");
 
-  // MAPA CLICK PARA COORDENADAS
-  map.on("click", e => {
-    if (!editorOn) return;
-
-    if (tempMarker) map.removeLayer(tempMarker);
-
-    tempMarker = L.marker(e.latlng, { draggable: true }).addTo(map);
-    alert(`Lat: ${e.latlng.lat}\nLng: ${e.latlng.lng}`);
-  });
-
-  // LIGHTBOX CONTROLES
-  document.getElementById("lb-prev")?.addEventListener("click", () => cambiarImg(-1));
-  document.getElementById("lb-next")?.addEventListener("click", () => cambiarImg(1));
-  document.getElementById("lb-close")?.addEventListener("click", cerrarGaleria);
-
-  // RESET DESACTIVADO
-  const resetBtn = document.getElementById("btn-reset-server");
-  if (resetBtn) {
-    resetBtn.disabled = true;
-    resetBtn.style.opacity = "0.4";
-    resetBtn.style.pointerEvents = "none";
-  }
+  // DESACTIVAR RESET
+  const reset = document.getElementById("btn-reset-server");
+  reset.style.pointerEvents = "none";
+  reset.style.opacity = "0.4";
 }
