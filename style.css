@@ -1,20 +1,26 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
   margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
 }
 
-header {
+.top {
   padding: 10px;
-  background: #1e88e5;
+  background: #2f7d75;
   color: white;
 }
 
-#filters button,
+.top input {
+  width: 100%;
+  padding: 6px;
+  margin: 6px 0;
+}
+
 .top-buttons button {
+  margin: 4px;
+}
+
+#filters button {
   margin: 3px;
 }
 
@@ -22,18 +28,58 @@ header {
   height: 50vh;
 }
 
+#leyenda-bar {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  background: #2f7d75;
+  color: white;
+  padding: 8px;
+  z-index: 1000;
+}
+
+#leyenda-drawer {
+  position: fixed;
+  right: -260px;
+  top: 0;
+  width: 260px;
+  height: 100%;
+  background: white;
+  overflow-y: auto;
+  padding: 10px;
+  transition: right 0.3s;
+  z-index: 999;
+}
+
+#leyenda-drawer.open {
+  right: 0;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.leyenda-item img {
+  width: 24px;
+}
+
 #destacados {
   padding: 10px;
 }
 
 .tarjeta {
-  border: 1px solid #ccc;
-  padding: 10px;
+  background: white;
   margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .tarjeta img {
   width: 100%;
+  border-radius: 4px;
 }
 
 #bottom-panel {
@@ -42,11 +88,9 @@ header {
   left: 0;
   right: 0;
   background: white;
-  border-top: 2px solid #000;
-  max-height: 60%;
-  overflow: auto;
-  transition: 0.3s;
   padding: 10px;
+  transition: bottom 0.3s;
+  z-index: 1000;
 }
 
 #bottom-panel.open {
@@ -57,72 +101,30 @@ header {
   float: right;
 }
 
-.bp-img {
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-#leyenda-bar {
-  position: fixed;
-  left: 0;
-  top: 50%;
-  background: black;
-  color: white;
-  padding: 5px;
-}
-
-#leyenda-drawer {
-  position: fixed;
-  left: -200px;
-  top: 0;
-  width: 200px;
-  height: 100%;
-  background: white;
-  transition: 0.3s;
-  overflow: auto;
-}
-
-#leyenda-drawer.open {
-  left: 0;
-}
-
-.leyenda-item {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-}
-
-.leyenda-item img {
-  width: 24px;
-  margin-right: 5px;
+.bp-galeria img {
+  width: 100px;
+  margin: 4px;
 }
 
 #lightbox {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.8);
-  align-items: center;
+  display: none;
   justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 
 #lightbox.open {
   display: flex;
 }
 
-#lb-img {
-  max-width: 90%;
+#lightbox img {
+  max-width: 80%;
 }
 
-#lb-close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  color: white;
-  font-size: 24px;
-}
-
-.lb-btn {
-  position: absolute;
-  bottom: 20px;
+.disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
