@@ -5,34 +5,36 @@
 
 body {
   margin: 0;
-  background: #f4f4f4;
+  background: #f5f5f5;
 }
 
-.top-bar {
-  display: flex;
-  gap: 6px;
+header {
   padding: 8px;
-  background: #222;
+  display: flex;
+  gap: 5px;
+  background: #ffffff;
 }
 
-.top-bar input,
-.top-bar button {
+#search-input {
+  flex: 1;
   padding: 6px;
+}
+
+button {
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 #filters {
+  padding: 6px;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 6px;
-  background: #eee;
+  gap: 5px;
 }
 
 #filters button {
-  padding: 5px 8px;
-  border: none;
-  background: #ddd;
-  cursor: pointer;
+  background: #eee;
+  border: 1px solid #ccc;
 }
 
 #map {
@@ -40,17 +42,15 @@ body {
 }
 
 #leyenda-bar {
-  background: #333;
-  color: #fff;
-  padding: 6px;
+  padding: 8px;
+  background: #ddd;
   cursor: pointer;
 }
 
 #leyenda-drawer {
   display: none;
   background: #fff;
-  max-height: 200px;
-  overflow-y: auto;
+  padding: 10px;
 }
 
 #leyenda-drawer.open {
@@ -61,68 +61,65 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px;
+  margin-bottom: 5px;
 }
 
 .leyenda-item img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
-.titulo {
-  padding: 8px;
-}
-
-#destacados-contenedor {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
+#destacados {
   padding: 10px;
 }
 
 .tarjeta {
-  min-width: 200px;
-  background: white;
-  padding: 6px;
-  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 5px;
 }
 
 .tarjeta img {
   width: 100%;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
 #bottom-panel {
   position: fixed;
-  bottom: -100%;
+  bottom: 0;
   left: 0;
-  width: 100%;
-  background: #fff;
+  right: 0;
   max-height: 60%;
+  background: #fff;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  padding: 10px;
   overflow-y: auto;
-  transition: bottom 0.3s;
+  z-index: 1000;
 }
 
 #bottom-panel.open {
-  bottom: 0;
+  transform: translateY(0);
 }
 
 #bp-close {
   float: right;
 }
 
-.bp-img {
+.bp-galeria img {
   width: 100%;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 #lightbox {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.8);
+  display: none;
   justify-content: center;
   align-items: center;
+  z-index: 2000;
 }
 
 #lightbox.open {
@@ -134,16 +131,15 @@ body {
   max-height: 80%;
 }
 
-#lb-prev,
-#lb-next,
-#lb-close {
+.lb-close,
+.lb-prev,
+.lb-next {
   position: absolute;
-  background: #fff;
+  background: white;
   border: none;
-  padding: 8px;
-  cursor: pointer;
+  font-size: 20px;
 }
 
-#lb-prev { left: 10px; }
-#lb-next { right: 10px; }
-#lb-close { top: 10px; right: 10px; }
+.lb-close { top: 10px; right: 10px; }
+.lb-prev { left: 10px; }
+.lb-next { right: 10px; }
