@@ -1,10 +1,6 @@
 async function cargar(ruta) {
-  try {
-    const r = await fetch(ruta);
-    return await r.json();
-  } catch {
-    return [];
-  }
+  const r = await fetch(ruta);
+  return r.json();
 }
 
 async function iniciar() {
@@ -17,18 +13,17 @@ async function iniciar() {
   cont.innerHTML = "";
 
   todos.forEach(item => {
-    const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : "";
+    const img = item.imagenes?.[0] ? "data/" + item.imagenes[0] : "";
+    const mas = item.imagenes && item.imagenes.length > 1;
 
     cont.innerHTML += `
       <div class="tarjeta">
         ${img ? `<img src="${img}">` : ""}
         <h3>${item.nombre}</h3>
-        <p><b>Categoría:</b> ${item.categoria}</p>
         <p>${item.descripcion || ""}</p>
-        <p>${item.direccion || ""}</p>
+        ${mas ? `<button onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>Ver imágenes</button>` : ""}
       </div>
     `;
   });
 }
-
 iniciar();
