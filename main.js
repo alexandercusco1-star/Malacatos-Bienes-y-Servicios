@@ -102,6 +102,9 @@ map.on("click", e => {
   markerSeleccionado = null;
 });
 
+
+
+// DESTACADOS (NO TOCADO)
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -119,6 +122,7 @@ function renderDestacados(arr) {
   });
 }
 
+// PANEL DETALLE (NO TOCADO)
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
@@ -137,6 +141,7 @@ function mostrarDetalle(item) {
 document.getElementById("bp-close").onclick = () =>
   document.getElementById("bottom-panel").classList.remove("open");
 
+// GALERÍA (NO TOCADO)
 let currentGallery = [];
 let galleryIndex = 0;
 
@@ -160,6 +165,7 @@ function cambiarImg(dir) {
 document.getElementById("lb-close").onclick = () =>
   document.getElementById("lightbox").classList.remove("open");
 
+// LEYENDA (NO TOCADO)
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
@@ -173,6 +179,7 @@ function pintarLeyenda() {
   });
 }
 
+// FILTROS (NO TOCADO)
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
@@ -196,6 +203,7 @@ function generarFiltros() {
   });
 }
 
+// CONTROLES
 function bindControls() {
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
@@ -207,9 +215,10 @@ function bindControls() {
 
   document.getElementById("btn-edit").onclick = () => {
     editMode = !editMode;
+    markerSeleccionado = null;
     document.getElementById("btn-edit").textContent =
       editMode ? "salir de modo edicion" : "entrar en modo edicion";
   };
 
   document.getElementById("btn-reset-server").onclick = () => false;
-      }
+}
