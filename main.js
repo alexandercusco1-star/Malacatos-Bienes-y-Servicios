@@ -102,63 +102,6 @@ map.on("click", e => {
   markerSeleccionado = null;
 });
 
-// LEYENDA (NO TOCADO)
-function pintarLeyenda() {
-  const c = document.getElementById("leyenda-items");
-  c.innerHTML = "";
-  Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${v.icono}">
-        ${k}
-      </div>
-    `;
-  });
-}
-
-// FILTROS (NO TOCADO)
-function generarFiltros() {
-  const f = document.getElementById("filters");
-  f.innerHTML = "";
-
-  const todosBtn = document.createElement("button");
-  todosBtn.textContent = "TODOS";
-  todosBtn.onclick = () => {
-    currentFilter = "TODOS";
-    renderizarTodo();
-  };
-  f.appendChild(todosBtn);
-
-  Object.keys(ALL.categorias).forEach(cat => {
-    const b = document.createElement("button");
-    b.textContent = cat;
-    b.onclick = () => {
-      currentFilter = cat;
-      renderizarTodo();
-    };
-    f.appendChild(b);
-  });
-}
-
-// CONTROLES
-function bindControls() {
-  document.getElementById("leyenda-bar").onclick = () =>
-    document.getElementById("leyenda-drawer").classList.toggle("open");
-
-  document.getElementById("search-input").oninput = e => {
-    currentSearch = e.target.value;
-    renderizarTodo();
-  };
-
-  document.getElementById("btn-edit").onclick = () => {
-    editMode = !editMode;
-    markerSeleccionado = null;
-    document.getElementById("btn-edit").textContent =
-      editMode ? "salir de modo edicion" : "entrar en modo edicion";
-  };
-
-  document.getElementById("btn-reset-server").onclick = () => false;
-}
 // DESTACADOS (NO TOCADO)
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
@@ -215,7 +158,65 @@ function cambiarImg(dir) {
     (galleryIndex + dir + currentGallery.length) % currentGallery.length;
   document.getElementById("lb-img").src =
     "data/" + currentGallery[galleryIndex];
+}
 
 document.getElementById("lb-close").onclick = () =>
   document.getElementById("lightbox").classList.remove("open");
+
+// LEYENDA (NO TOCADO)
+function pintarLeyenda() {
+  const c = document.getElementById("leyenda-items");
+  c.innerHTML = "";
+  Object.entries(ALL.categorias).forEach(([k, v]) => {
+    c.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${v.icono}">
+        ${k}
+      </div>
+    `;
+  });
 }
+
+// FILTROS (NO TOCADO)
+function generarFiltros() {
+  const f = document.getElementById("filters");
+  f.innerHTML = "";
+
+  const todosBtn = document.createElement("button");
+  todosBtn.textContent = "TODOS";
+  todosBtn.onclick = () => {
+    currentFilter = "TODOS";
+    renderizarTodo();
+  };
+  f.appendChild(todosBtn);
+
+  Object.keys(ALL.categorias).forEach(cat => {
+    const b = document.createElement("button");
+    b.textContent = cat;
+    b.onclick = () => {
+      currentFilter = cat;
+      renderizarTodo();
+    };
+    f.appendChild(b);
+  });
+}
+
+// CONTROLES
+function bindControls() {
+  document.getElementById("leyenda-bar").onclick = () =>
+    document.getElementById("leyenda-drawer").classList.toggle("open");
+
+  document.getElementById("search-input").oninput = e => {
+    currentSearch = e.target.value;
+    renderizarTodo();
+  };
+
+  document.getElementById("btn-edit").onclick = () => {
+    editMode = !editMode;
+    markerSeleccionado = null;
+    document.getElementById("btn-edit").textContent =
+      editMode ? "salir de modo edicion" : "entrar en modo edicion";
+  };
+
+  document.getElementById("btn-reset-server").onclick = () => false;
+              }
