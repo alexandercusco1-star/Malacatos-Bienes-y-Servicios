@@ -1,5 +1,5 @@
 // =======================================================
-// MALACATOS - MAIN.JS BASE CORREGIDA (SIN DAÑAR NADA)
+// MALACATOS - MAIN.JS BASE ESTABLE DEFINITIVA
 // =======================================================
 
 // -------------------------------------------------------
@@ -34,14 +34,8 @@ let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = "";
-
-// EDITOR
 let editorOn = false;
-let tempMarker = null;
-
-// GALERÍA
-let currentGallery = [];
-let galleryIndex = 0;
+let markerTemp = null;
 
 // -------------------------------------------------------
 // INICIO
@@ -66,7 +60,7 @@ async function iniciar() {
 iniciar();
 
 // -------------------------------------------------------
-// MAPA
+// RENDER MAPA
 // -------------------------------------------------------
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
@@ -97,7 +91,11 @@ function renderizarTodo() {
       icon: iconoDe(iconFile)
     }).addTo(map);
 
-    marker.on("click", () => mostrarDetalle(item));
+    // 🔴 CLAVE: recuperar click del marcador
+    marker.on("click", (e) => {
+      e.originalEvent.stopPropagation();
+      mostrarDetalle(item);
+    });
 
     markers.push(marker);
   });
@@ -113,37 +111,52 @@ function renderDestacados(arr) {
   cont.innerHTML = "";
 
   arr.forEach(it => {
-    const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : "";
+    const img = it.imagenes?.[0]
+      ? `data/${it.imagenes[0]}`
+      : "";
+
     cont.innerHTML += `
       <div class="tarjeta">
         ${img ? `<img src="${img}">` : ""}
         <h3>${it.nombre} ⭐</h3>
-        <button onclick="abrirGaleria('${it.nombre}')">Ver</button>
+        <p>${it.descripcion || ""}</p>
+        <button onclick="mostrarGaleria('${it.nombre}')">Ver</button>
       </div>
     `;
   });
 }
 
 // -------------------------------------------------------
-// PANEL DETALLE
+// DETALLE / PANEL INFERIOR
 // -------------------------------------------------------
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
 
+  let galeriaHTML = "";
+  if (Array.isArray(item.imagenes)) {
+    galeriaHTML = item.imagenes
+      .map(img => `<img src="data/${img}" class="bp-img">`)
+      .join("");
+  }
+
   cont.innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
+    <div class="bp-galeria">${galeriaHTML}</div>
   `;
 
   panel.classList.add("open");
 }
 
 // -------------------------------------------------------
-// GALERÍA (FIX TOTAL)
+// GALERÍA (LIGHTBOX)
 // -------------------------------------------------------
-function abrirGaleria(nombre) {
+let currentGallery = [];
+let galleryIndex = 0;
+
+function mostrarGaleria(nombre) {
   const item = [...ALL.bienes, ...ALL.servicios].find(x => x.nombre === nombre);
   if (!item || !item.imagenes || !item.imagenes.length) return;
 
@@ -209,11 +222,9 @@ function generarFiltros() {
 }
 
 // -------------------------------------------------------
-// CONTROLES (ARREGLADOS)
+// CONTROLES
 // -------------------------------------------------------
 function bindControls() {
-
-  // BUSCADOR
   document.getElementById("search-input").addEventListener("input", e => {
     currentSearch = e.target.value;
     renderizarTodo();
@@ -226,35 +237,35 @@ function bindControls() {
     bar.onclick = () => drawer.classList.toggle("open");
   }
 
-  // BOTÓN EDITAR (FUNCIONA)
-  const btnEdit = document.getElementById("btn-toggle-edit");
-  if (btnEdit) {
-    btnEdit.onclick = () => {
-      editorOn = !editorOn;
-      alert(editorOn ? "Modo edición activo: toca el mapa" : "Modo edición desactivado");
-    };
-  }
-
-  // MAPA CLICK PARA COORDENADAS
-  map.on("click", e => {
-    if (!editorOn) return;
-
-    if (tempMarker) map.removeLayer(tempMarker);
-
-    tempMarker = L.marker(e.latlng, { draggable: true }).addTo(map);
-    alert(`Lat: ${e.latlng.lat}\nLng: ${e.latlng.lng}`);
-  });
-
-  // LIGHTBOX CONTROLES
-  document.getElementById("lb-prev")?.addEventListener("click", () => cambiarImg(-1));
-  document.getElementById("lb-next")?.addEventListener("click", () => cambiarImg(1));
-  document.getElementById("lb-close")?.addEventListener("click", cerrarGaleria);
-
   // RESET DESACTIVADO
   const resetBtn = document.getElementById("btn-reset-server");
   if (resetBtn) {
-    resetBtn.disabled = true;
-    resetBtn.style.opacity = "0.4";
+    resetBtn.onclick = () => false;
     resetBtn.style.pointerEvents = "none";
+    resetBtn.style.opacity = "0.4";
+  }
+
+  // MODO EDICIÓN
+  const editBtn = document.getElementById("btn-edit");
+  if (editBtn) {
+    editBtn.onclick = () => {
+      editorOn = !editorOn;
+      alert(editorOn ? "Modo edición activado" : "Modo edición desactivado");
+    };
   }
 }
+
+// -------------------------------------------------------
+// CLICK MAPA PARA VER COORDENADAS (EDICIÓN)
+// -------------------------------------------------------
+map.on("click", e => {
+  if (!editorOn) return;
+
+  const { lat, lng } = e.latlng;
+
+  if (markerTemp) map.removeLayer(markerTemp);
+
+  markerTemp = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+  alert(`Latitud: ${lat}\nLongitud: ${lng}`);
+});
