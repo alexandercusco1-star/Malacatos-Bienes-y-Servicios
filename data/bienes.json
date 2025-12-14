@@ -17,20 +17,6 @@
     "destacado": true
   },
   {
-  "nombre": "Terreno en Malacatos – Sector San José",
-  "categoria": "Terrenos",
-  "latitud": -4.21895,
-  "longitud": -79.25912,
-  "descripcion": "Terreno plano de 500 m² ideal para vivienda o inversión.",
-  "direccion": "Sector San José, Malacatos",
-  "imagenes": [
-    "servicio10.jpg",
-    "s10.1.jpg"
-  ],
-  "destacado": true,
-  "icono": "icon-terreno.jpeg"
-}
-  {
     "nombre": "Iglesia de Malacatos",
     "tipo": "bienes",
     "categoria": "iglesia",
