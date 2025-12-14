@@ -1,6 +1,10 @@
 async function cargar(ruta) {
-  const r = await fetch(ruta);
-  return r.json();
+  try {
+    const r = await fetch(ruta);
+    return await r.json();
+  } catch {
+    return [];
+  }
 }
 
 async function iniciar() {
@@ -13,9 +17,7 @@ async function iniciar() {
   cont.innerHTML = "";
 
   todos.forEach(item => {
-    const img = item.imagenes?.[0]
-      ? `data/${item.imagenes[0]}`
-      : "";
+    const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : "";
 
     cont.innerHTML += `
       <div class="tarjeta">
