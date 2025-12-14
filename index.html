@@ -6,237 +6,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- LEAFLET -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
   <!-- ESTILOS -->
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    #map {
-      height: 100vh;
-      width: 100%;
-    }
-
-    /* BARRA SUPERIOR */
-    .top-bar {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      z-index: 1000;
-      display: flex;
-      gap: 6px;
-    }
-
-    .top-bar input {
-      flex: 1;
-      padding: 6px;
-    }
-
-    .top-bar button {
-      padding: 6px 10px;
-    }
-
-    /* FILTROS */
-    #filters {
-      position: fixed;
-      top: 60px;
-      left: 10px;
-      z-index: 1000;
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      max-width: 90%;
-    }
-
-    #filters button {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    /* LEYENDA */
-    #leyenda-bar {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      z-index: 1000;
-      background: #fff;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    #leyenda-drawer {
-      position: fixed;
-      bottom: 50px;
-      left: 10px;
-      background: white;
-      max-height: 50vh;
-      overflow-y: auto;
-      display: none;
-      z-index: 1000;
-      padding: 8px;
-      border-radius: 6px;
-    }
-
-    #leyenda-drawer.open {
-      display: block;
-    }
-
-    .leyenda-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      font-size: 13px;
-    }
-
-    .leyenda-item img {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* DESTACADOS */
-    #destacados-contenedor {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 1000;
-      max-width: 300px;
-    }
-
-    .tarjeta {
-      background: white;
-      margin-bottom: 8px;
-      padding: 6px;
-      border-radius: 6px;
-    }
-
-    .tarjeta img {
-      width: 100%;
-      border-radius: 4px;
-    }
-
-    /* PANEL INFERIOR */
-    #bottom-panel {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      max-height: 60vh;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-      overflow-y: auto;
-      padding: 10px;
-    }
-
-    #bottom-panel.open {
-      transform: translateY(0);
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 6px;
-      right: 10px;
-      font-size: 20px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    .bp-img {
-      width: 100%;
-      margin-bottom: 6px;
-      border-radius: 6px;
-    }
-
-    /* LIGHTBOX */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    #lightbox.open {
-      display: flex;
-    }
-
-    #lightbox img {
-      max-width: 90%;
-      max-height: 80%;
-    }
-
-    .lb-btn {
-      position: absolute;
-      top: 50%;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    #lb-prev { left: 20px; }
-    #lb-next { right: 20px; }
-
-    #lb-close {
-      top: 20px;
-      right: 20px;
-      font-size: 30px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-  <!-- BARRA SUPERIOR -->
-  <div class="top-bar">
-    <input id="search-input" placeholder="Buscar...">
-    <button id="btn-edit">Entrar en modo edición</button>
-    <button id="btn-reset-server" disabled>Reset</button>
+<!-- ================== HEADER ================== -->
+<header class="top-bar">
+  <input type="text" id="search-input" placeholder="Buscar...">
+  <div class="top-buttons">
+    <button id="btn-toggle-edit">Entrar en modo edición</button>
+    <button id="btn-reset-server">Restablecer desde servidor</button>
   </div>
+</header>
 
-  <!-- FILTROS -->
-  <div id="filters"></div>
+<!-- ================== FILTROS ================== -->
+<div id="filters" class="filters"></div>
 
-  <!-- MAPA -->
-  <div id="map"></div>
+<!-- ================== MAPA ================== -->
+<div id="map"></div>
 
-  <!-- LEYENDA -->
-  <div id="leyenda-bar">Leyenda</div>
-  <div id="leyenda-drawer">
-    <div id="leyenda-items"></div>
-  </div>
+<!-- ================== LEYENDA ================== -->
+<div id="leyenda-bar">Leyenda</div>
 
-  <!-- DESTACADOS -->
+<div id="leyenda-drawer">
+  <div id="leyenda-items"></div>
+</div>
+
+<!-- ================== DESTACADOS ================== -->
+<section id="destacados">
+  <h2>Destacados</h2>
   <div id="destacados-contenedor"></div>
+</section>
 
-  <!-- PANEL INFERIOR -->
-  <div id="bottom-panel">
-    <button class="close-btn" onclick="document.getElementById('bottom-panel').classList.remove('open')">✖</button>
-    <div id="bp-content"></div>
-  </div>
+<!-- ================== PANEL INFERIOR ================== -->
+<div id="bottom-panel">
+  <button id="bp-close">✕</button>
+  <div id="bp-content"></div>
+</div>
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox">
-    <span id="lb-prev" class="lb-btn" onclick="cambiarImg(-1)">‹</span>
-    <img id="lb-img">
-    <span id="lb-next" class="lb-btn" onclick="cambiarImg(1)">›</span>
-    <span id="lb-close" class="lb-btn" onclick="document.getElementById('lightbox').classList.remove('open')">✖</span>
-  </div>
+<!-- ================== LIGHTBOX ================== -->
+<div id="lightbox">
+  <button id="lb-close">✕</button>
+  <button id="lb-prev">‹</button>
+  <img id="lb-img" src="">
+  <button id="lb-next">›</button>
+</div>
 
-  <!-- SCRIPTS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="main.js"></script>
+<!-- ================== LEAFLET JS ================== -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ================== MAIN JS ================== -->
+<script src="main.js"></script>
+
+<script>
+/* ================== CIERRES FUNCIONALES ================== */
+document.getElementById("bp-close").onclick = () => {
+  document.getElementById("bottom-panel").classList.remove("open");
+};
+
+document.getElementById("lb-close").onclick = () => {
+  document.getElementById("lightbox").classList.remove("open");
+};
+
+document.getElementById("lb-prev").onclick = () => cambiarImg(-1);
+document.getElementById("lb-next").onclick = () => cambiarImg(1);
+</script>
 
 </body>
 </html>
