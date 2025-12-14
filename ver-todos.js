@@ -1,20 +1,29 @@
 async function cargar(ruta) {
   const r = await fetch(ruta);
-  return await r.json();
+  return r.json();
 }
 
 async function iniciar() {
-  const [bienes, servicios] = await Promise.all([
-    cargar("data/bienes.json"),
-    cargar("data/servicios.json")
-  ]);
+  const bienes = await cargar("data/bienes.json");
+  const servicios = await cargar("data/servicios.json");
 
-  const lista = document.getElementById("lista");
-  [...bienes, ...servicios].forEach(i => {
-    lista.innerHTML += `
+  const todos = [...bienes, ...servicios];
+  const cont = document.getElementById("lista-todos");
+
+  cont.innerHTML = "";
+
+  todos.forEach(item => {
+    const img = item.imagenes?.[0]
+      ? `<img src="data/${item.imagenes[0]}" style="width:100%;border-radius:6px">`
+      : "";
+
+    cont.innerHTML += `
       <div class="tarjeta">
-        <h3>${i.nombre}</h3>
-        <p>${i.descripcion || ""}</p>
+        ${img}
+        <h3>${item.nombre}</h3>
+        <p><b>Categoría:</b> ${item.categoria}</p>
+        <p>${item.descripcion || ""}</p>
+        <p>${item.direccion || ""}</p>
       </div>
     `;
   });
