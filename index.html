@@ -1,70 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Malacatos | Lugares turísticos y servicios</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Malacatos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 <body>
 
-<header class="top">
+<header>
   <h1>Malacatos</h1>
-  <p>Lugares turísticos y servicios</p>
 
-  <input id="search-input" placeholder="Buscar..." />
-
-  <div class="top-buttons">
-    <button id="btn-edit">entrar en modo edicion</button>
-    <button id="btn-reset-server" class="disabled">
-      restablecer desde servidor
-    </button>
-  </div>
+  <input type="text" id="search-input" placeholder="Buscar...">
 
   <div id="filters"></div>
+
+  <div class="top-buttons">
+    <button id="btn-edit">Entrar en modo edición</button>
+    <button id="btn-reset-server" disabled>Restablecer desde servidor</button>
+    <button onclick="location.href='ver-todos.html'">Ver todos</button>
+  </div>
 </header>
 
-<main>
-  <div id="map"></div>
+<div id="map"></div>
 
-  <aside id="leyenda-drawer">
-    <h3>leyenda</h3>
-    <div id="leyenda-items"></div>
-  </aside>
+<div id="destacados">
+  <h2>Destacados</h2>
+  <div id="destacados-contenedor"></div>
+</div>
 
-  <button id="leyenda-bar">Leyendas</button>
-
-  <section id="destacados">
-    <h2>Destacados</h2>
-    <div id="destacados-contenedor"></div>
-  </section>
-</main>
-
-<!-- PANEL DETALLE -->
+<!-- PANEL INFERIOR -->
 <div id="bottom-panel">
-  <button id="bp-close">✕</button>
+  <button id="bp-close">✖</button>
   <div id="bp-content"></div>
+</div>
+
+<!-- LEYENDA -->
+<div id="leyenda-bar">Leyenda</div>
+<div id="leyenda-drawer">
+  <div id="leyenda-items"></div>
 </div>
 
 <!-- LIGHTBOX -->
 <div id="lightbox">
-  <button id="lb-close">✕</button>
-  <button onclick="cambiarImg(-1)">‹</button>
-  <img id="lb-img" />
-  <button onclick="cambiarImg(1)">›</button>
+  <span id="lb-close">✖</span>
+  <img id="lb-img">
+  <button class="lb-btn" onclick="cambiarImg(-1)">◀</button>
+  <button class="lb-btn" onclick="cambiarImg(1)">▶</button>
 </div>
 
-<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="main.js"></script>
-
 </body>
 </html>
