@@ -1,145 +1,242 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Malacatos - Lugares Turísticos y Servicios</title>
+  <meta charset="UTF-8">
+  <title>Malacatos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- LEAFLET -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- ESTILOS -->
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-bar {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      gap: 6px;
+    }
+
+    .top-bar input {
+      flex: 1;
+      padding: 6px;
+    }
+
+    .top-bar button {
+      padding: 6px 10px;
+    }
+
+    /* FILTROS */
+    #filters {
+      position: fixed;
+      top: 60px;
+      left: 10px;
+      z-index: 1000;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      max-width: 90%;
+    }
+
+    #filters button {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    /* LEYENDA */
+    #leyenda-bar {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: #fff;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #leyenda-drawer {
+      position: fixed;
+      bottom: 50px;
+      left: 10px;
+      background: white;
+      max-height: 50vh;
+      overflow-y: auto;
+      display: none;
+      z-index: 1000;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    #leyenda-drawer.open {
+      display: block;
+    }
+
+    .leyenda-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .leyenda-item img {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* DESTACADOS */
+    #destacados-contenedor {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+      max-width: 300px;
+    }
+
+    .tarjeta {
+      background: white;
+      margin-bottom: 8px;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .tarjeta img {
+      width: 100%;
+      border-radius: 4px;
+    }
+
+    /* PANEL INFERIOR */
+    #bottom-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      max-height: 60vh;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #bottom-panel.open {
+      transform: translateY(0);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .bp-img {
+      width: 100%;
+      margin-bottom: 6px;
+      border-radius: 6px;
+    }
+
+    /* LIGHTBOX */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #lightbox.open {
+      display: flex;
+    }
+
+    #lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+    }
+
+    .lb-btn {
+      position: absolute;
+      top: 50%;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #lb-prev { left: 20px; }
+    #lb-next { right: 20px; }
+
+    #lb-close {
+      top: 20px;
+      right: 20px;
+      font-size: 30px;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Logo arriba izquierda -->
-  <img src="data/mi-logo.png" class="logo-personal" alt="Logo">
 
-  <!-- Header -->
-  <header class="header">
-    <div class="titulo-box">
-      <h1>Malacatos</h1>
-      <h2 class="subtitulo">Lugares turísticos y servicios</h2>
-    </div>
-
-    <!-- EDITOR CONTROL (arriba, junto al buscador area) -->
-    <div id="editor-controls" class="editor-controls">
-      <button id="btn-toggle-edit" class="btn small">Entrar en modo edición</button>
-      <button id="btn-upload-json" class="btn small">Subir JSON</button>
-      <button id="btn-reset-server" class="btn small">Restablecer desde servidor</button>
-      <!-- input oculto usado para seleccionar archivos JSON -->
-      <input id="file-input" type="file" accept=".json" style="display:none" multiple>
-    </div>
-  </header>
-
-  <!-- Buscador y filtros -->
-  <div id="top-bar">
-    <input id="search-input" type="text" placeholder="Buscar lugares o servicios…">
-    <div id="filters" class="filters"></div>
+  <!-- BARRA SUPERIOR -->
+  <div class="top-bar">
+    <input id="search-input" placeholder="Buscar...">
+    <button id="btn-edit">Entrar en modo edición</button>
+    <button id="btn-reset-server" disabled>Reset</button>
   </div>
 
-  <!-- Área principal: mapa y leyenda -->
-  <div id="main-area">
-    <div id="map"></div>
+  <!-- FILTROS -->
+  <div id="filters"></div>
 
-    <!-- Leyenda: barra y drawer -->
-    <div id="leyenda-bar">Leyendas</div>
-    <div id="leyenda-drawer">
-      <h3>LEYENDAS</h3>
-      <div id="leyenda-items"></div>
-    </div>
+  <!-- MAPA -->
+  <div id="map"></div>
+
+  <!-- LEYENDA -->
+  <div id="leyenda-bar">Leyenda</div>
+  <div id="leyenda-drawer">
+    <div id="leyenda-items"></div>
   </div>
 
-  <!-- Banner destacado -->
-  <div id="banner-area" aria-hidden="true"></div>
+  <!-- DESTACADOS -->
+  <div id="destacados-contenedor"></div>
 
-  <!-- Listas principales -->
-  <section>
-    <h2 class="lista-titulo">Destacados</h2>
-    <div id="destacados-contenedor" class="lista"></div>
-
-    <div style="text-align:center; margin:20px;">
-      <a href="ver-todos.html" target="_blank">
-        <button class="ver-btn" style="font-size:16px; padding:10px 18px;">Ver todos los bienes y servicios</button>
-      </a>
-    </div>
-  </section>
-
-  <!-- Bottom panel -->
-  <div id="bottom-panel" aria-hidden="true">
-    <button id="bp-close">✖</button>
+  <!-- PANEL INFERIOR -->
+  <div id="bottom-panel">
+    <button class="close-btn" onclick="document.getElementById('bottom-panel').classList.remove('open')">✖</button>
     <div id="bp-content"></div>
   </div>
 
-  <!-- Lightbox -->
+  <!-- LIGHTBOX -->
   <div id="lightbox">
-    <span id="lb-close">✕</span>
-    <span id="lb-prev">❮</span>
-    <img id="lb-img" src="">
-    <span id="lb-next">❯</span>
+    <span id="lb-prev" class="lb-btn" onclick="cambiarImg(-1)">‹</span>
+    <img id="lb-img">
+    <span id="lb-next" class="lb-btn" onclick="cambiarImg(1)">›</span>
+    <span id="lb-close" class="lb-btn" onclick="document.getElementById('lightbox').classList.remove('open')">✖</span>
   </div>
 
-  <!-- Editor panel (hidden until mode edit ON) -->
-  <div id="editor-panel" class="editor-panel" aria-hidden="true">
-    <div class="editor-header">
-      <h3>Editor - Negocio</h3>
-      <button id="editor-close" class="btn small">Cerrar</button>
-    </div>
-
-    <div class="editor-body">
-      <label>Tipo</label>
-      <select id="editor-tipo">
-        <option value="bienes">Bien</option>
-        <option value="servicios">Servicio</option>
-      </select>
-
-      <label>Nombre</label>
-      <input id="editor-nombre" type="text">
-
-      <label>Categoría</label>
-      <input id="editor-categoria" type="text">
-
-      <label>Descripción</label>
-      <textarea id="editor-descripcion" rows="3"></textarea>
-
-      <label>Dirección (texto)</label>
-      <input id="editor-direccion" type="text">
-
-      <label>Teléfono</label>
-      <input id="editor-telefono" type="text">
-
-      <label>Icono (archivo en data/)</label>
-      <input id="editor-icono" type="text" placeholder="ej: icon-tijeras.jpeg">
-
-      <label>Banner (archivo en data/)</label>
-      <input id="editor-banner" type="text" placeholder="ej: banner-lauris.jpg">
-
-      <label>Imágenes (archivos separados por coma, en data/)</label>
-      <input id="editor-imagenes" type="text" placeholder="ej: s1.jpg,s1.1.jpg">
-
-      <label>Latitud</label>
-      <input id="editor-latitud" type="number" step="0.000001">
-
-      <label>Longitud</label>
-      <input id="editor-longitud" type="number" step="0.000001">
-
-      <div style="display:flex;gap:8px;margin-top:10px;">
-        <button id="editor-set-coord" class="btn">Marcar en mapa</button>
-        <button id="editor-save" class="btn">Guardar cambios</button>
-        <button id="editor-new" class="btn">Nuevo negocio</button>
-        <button id="editor-delete" class="btn danger">Eliminar</button>
-      </div>
-
-      <div style="margin-top:12px;">
-        <button id="btn-download-json" class="btn">Descargar JSON actualizado</button>
-      </div>
-
-      <div style="margin-top:8px;color:#666;font-size:13px">
-        Consejo: usa "Marcar en mapa" y luego haz click en el mapa para elegir coordenadas.
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
+  <!-- SCRIPTS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="main.js"></script>
+
 </body>
 </html>
