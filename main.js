@@ -1,10 +1,19 @@
+// ====================
+// BASE DEL PROYECTO - NO TOCAR
+// ====================
+
 const map = L.map("map").setView([-4.219167, -79.258333], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-// HELPERS
+// HELPERS SEGUROS
 async function cargar(ruta) {
-  const r = await fetch(ruta);
-  return r.json();
+  try {
+    const r = await fetch(ruta);
+    return await r.json();
+  } catch (e) {
+    console.error("Error cargando", ruta);
+    return [];
+  }
 }
 
 function iconoDe(ruta) {
@@ -15,8 +24,8 @@ function iconoDe(ruta) {
   });
 }
 
-// ESTADO
-let ALL = { bienes: [], servicios: [], categorias: {} };
+// ESTADO BLOQUEADO
+const ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let editMode = false;
@@ -43,7 +52,7 @@ function renderizarTodo() {
   const todos = [...ALL.bienes, ...ALL.servicios];
 
   todos.forEach(item => {
-    if (isNaN(item.latitud)) return;
+    if (isNaN(item.latitud) || isNaN(item.longitud)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
 
     const icono =
@@ -73,7 +82,7 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// MODO EDICIÓN
+// EDICIÓN (SOLO COORDENADAS)
 map.on("click", e => {
   if (!editMode || !markerSeleccionado) return;
 
@@ -86,9 +95,10 @@ map.on("click", e => {
   markerSeleccionado = null;
 });
 
-// DESTACADOS
+// DESTACADOS (SEGURO)
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
+  if (!c) return;
   c.innerHTML = "";
 
   arr.forEach(it => {
@@ -116,12 +126,12 @@ function mostrarDetalle(item) {
   document.getElementById("bottom-panel").classList.add("open");
 }
 
-// 🔹 SUBCATEGORÍAS (ARREGLADO)
+// FILTROS (TODOS + CATEGORÍAS)
 function generarFiltros() {
   const f = document.getElementById("filters");
+  if (!f) return;
   f.innerHTML = "";
 
-  // BOTÓN TODOS
   const btnTodos = document.createElement("button");
   btnTodos.textContent = "TODOS";
   btnTodos.onclick = () => {
@@ -130,7 +140,6 @@ function generarFiltros() {
   };
   f.appendChild(btnTodos);
 
-  // BOTONES POR CATEGORÍA
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
     b.textContent = cat;
@@ -145,7 +154,9 @@ function generarFiltros() {
 // LEYENDA
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
+  if (!c) return;
   c.innerHTML = "";
+
   Object.entries(ALL.categorias).forEach(([k, v]) => {
     c.innerHTML += `
       <div class="leyenda-item">
@@ -170,7 +181,4 @@ function bindControls() {
 
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
-
-  const reset = document.getElementById("btn-reset-server");
-  if (reset) reset.onclick = () => false;
        }
