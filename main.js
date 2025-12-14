@@ -16,7 +16,7 @@ function iconoDe(ruta) {
 
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
-let currentFilter = null;
+let currentFilter = "TODOS";
 let currentSearch = "";
 let editMode = false;
 
@@ -38,7 +38,7 @@ function renderizarTodo() {
 
   let todos = [...ALL.bienes, ...ALL.servicios];
 
-  if (currentFilter) {
+  if (currentFilter !== "TODOS") {
     todos = todos.filter(x => x.categoria === currentFilter);
   }
 
@@ -65,7 +65,11 @@ function renderizarTodo() {
 
     marker.on("click", () => {
       if (editMode) {
-        alert(item.nombre + "\nLat: " + item.latitud + "\nLng: " + item.longitud);
+        alert(
+          item.nombre +
+          "\nLat: " + item.latitud +
+          "\nLng: " + item.longitud
+        );
       } else {
         mostrarDetalle(item);
       }
@@ -126,8 +130,10 @@ function mostrarGaleria(nombre) {
 }
 
 function cambiarImg(dir) {
-  galleryIndex = (galleryIndex + dir + currentGallery.length) % currentGallery.length;
-  document.getElementById("lb-img").src = "data/" + currentGallery[galleryIndex];
+  galleryIndex =
+    (galleryIndex + dir + currentGallery.length) % currentGallery.length;
+  document.getElementById("lb-img").src =
+    "data/" + currentGallery[galleryIndex];
 }
 
 document.getElementById("lb-close").onclick = () =>
@@ -149,6 +155,14 @@ function pintarLeyenda() {
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
+
+  const todosBtn = document.createElement("button");
+  todosBtn.textContent = "TODOS";
+  todosBtn.onclick = () => {
+    currentFilter = "TODOS";
+    renderizarTodo();
+  };
+  f.appendChild(todosBtn);
 
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
@@ -177,4 +191,4 @@ function bindControls() {
   };
 
   document.getElementById("btn-reset-server").onclick = () => false;
-    }
+              }
