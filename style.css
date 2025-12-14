@@ -128,3 +128,21 @@ body {
   opacity: 0.4;
   pointer-events: none;
 }
+.btn-ver-todos {
+  display: block;
+  margin: 15px auto;
+  padding: 14px 18px;
+  background: #1f6f8b; /* azul mediterráneo */
+  color: #f7f5f2;      /* blanco hueso */
+  text-align: center;
+  font-weight: bold;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 2px solid #2ecc71; /* verde esmeralda */
+  transition: all 0.3s ease;
+}
+
+.btn-ver-todos:hover {
+  background: #2ecc71; /* verde esmeralda */
+  color: #1f6f8b;
+}
