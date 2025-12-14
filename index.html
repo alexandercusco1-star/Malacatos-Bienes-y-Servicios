@@ -5,7 +5,7 @@
   <title>Malacatos | Lugares turísticos y servicios</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -15,12 +15,9 @@
   <h1>Malacatos</h1>
   <p>Lugares turísticos y servicios</p>
 
-  <input id="search-input" placeholder="Buscar..." />
-
   <div class="top-buttons">
     <button id="btn-edit">Entrar en modo edición</button>
-    <button id="btn-save">Guardar cambios</button>
-    <button id="btn-reset-server" class="disabled">Reset</button>
+    <button id="btn-reset-server" class="disabled">Restablecer</button>
   </div>
 
   <div id="filters"></div>
@@ -37,27 +34,31 @@
   <button id="leyenda-bar">Leyendas</button>
 
   <section id="destacados">
-    <h2>Destacados</h2>
+    <h2>Bienes y Servicios</h2>
     <div id="destacados-contenedor"></div>
+
+    <a href="ver-todos.html" class="btn-ver-todos">
+      Ver todos los bienes y servicios
+    </a>
   </section>
 </main>
 
+<!-- PANEL DETALLE -->
 <div id="bottom-panel">
   <button id="bp-close">✕</button>
   <div id="bp-content"></div>
 </div>
 
+<!-- GALERÍA -->
 <div id="lightbox">
   <button id="lb-close">✕</button>
-  <button onclick="cambiarImg(-1)">‹</button>
-  <img id="lb-img" />
-  <button onclick="cambiarImg(1)">›</button>
+  <button class="lb-btn" onclick="cambiarImg(-1)">‹</button>
+  <img id="lb-img">
+  <button class="lb-btn" onclick="cambiarImg(1)">›</button>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="main.js"></script>
+
 </body>
-  <a href="ver-todos.html" class="btn-ver-todos">
-  Ver todos los bienes y servicios
-</a>
 </html>
