@@ -19,6 +19,7 @@ let markers = [];
 let currentFilter = "TODOS";
 let currentSearch = "";
 let editMode = false;
+let markerSeleccionado = null;
 
 async function iniciar() {
   ALL.bienes = await cargar("data/bienes.json");
@@ -63,12 +64,15 @@ function renderizarTodo() {
       { icon: iconoDe(icono) }
     ).addTo(map);
 
+    marker.__data = item;
+
     marker.on("click", () => {
       if (editMode) {
+        markerSeleccionado = marker;
         alert(
+          "Ícono seleccionado:\n" +
           item.nombre +
-          "\nLat: " + item.latitud +
-          "\nLng: " + item.longitud
+          "\n\nAhora toca en el mapa donde quieras moverlo."
         );
       } else {
         mostrarDetalle(item);
@@ -77,10 +81,28 @@ function renderizarTodo() {
 
     markers.push(marker);
   });
-
-  renderDestacados(todos.filter(x => x.destacado));
 }
 
+// 👉 CLICK EN EL MAPA PARA MOVER ÍCONO
+map.on("click", e => {
+  if (!editMode || !markerSeleccionado) return;
+
+  const { lat, lng } = e.latlng;
+
+  markerSeleccionado.setLatLng([lat, lng]);
+  markerSeleccionado.__data.latitud = lat;
+  markerSeleccionado.__data.longitud = lng;
+
+  alert(
+    "NUEVAS COORDENADAS:\n" +
+    "Latitud: " + lat + "\n" +
+    "Longitud: " + lng
+  );
+
+  markerSeleccionado = null;
+});
+
+// DESTACADOS (NO TOCADO)
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -98,6 +120,7 @@ function renderDestacados(arr) {
   });
 }
 
+// PANEL DETALLE (NO TOCADO)
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
@@ -116,6 +139,7 @@ function mostrarDetalle(item) {
 document.getElementById("bp-close").onclick = () =>
   document.getElementById("bottom-panel").classList.remove("open");
 
+// GALERÍA (NO TOCADO)
 let currentGallery = [];
 let galleryIndex = 0;
 
@@ -139,6 +163,7 @@ function cambiarImg(dir) {
 document.getElementById("lb-close").onclick = () =>
   document.getElementById("lightbox").classList.remove("open");
 
+// LEYENDA (NO TOCADO)
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
@@ -152,6 +177,7 @@ function pintarLeyenda() {
   });
 }
 
+// FILTROS (NO TOCADO)
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
@@ -175,6 +201,7 @@ function generarFiltros() {
   });
 }
 
+// CONTROLES
 function bindControls() {
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
@@ -186,9 +213,10 @@ function bindControls() {
 
   document.getElementById("btn-edit").onclick = () => {
     editMode = !editMode;
+    markerSeleccionado = null;
     document.getElementById("btn-edit").textContent =
       editMode ? "salir de modo edicion" : "entrar en modo edicion";
   };
 
   document.getElementById("btn-reset-server").onclick = () => false;
-              }
+}
