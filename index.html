@@ -1,79 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Malacatos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- LEAFLET -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- ESTILOS -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<!-- ================== HEADER ================== -->
-<header class="top-bar">
-  <input type="text" id="search-input" placeholder="Buscar...">
-  <div class="top-buttons">
-    <button id="btn-toggle-edit">Entrar en modo edición</button>
-    <button id="btn-reset-server">Restablecer desde servidor</button>
-  </div>
-</header>
+  <!-- BUSCADOR -->
+  <input id="search-input" type="text" placeholder="Buscar..." />
 
-<!-- ================== FILTROS ================== -->
-<div id="filters" class="filters"></div>
+  <!-- FILTROS -->
+  <div id="filters"></div>
 
-<!-- ================== MAPA ================== -->
-<div id="map"></div>
+  <!-- MAPA -->
+  <div id="map"></div>
 
-<!-- ================== LEYENDA ================== -->
-<div id="leyenda-bar">Leyenda</div>
-
-<div id="leyenda-drawer">
-  <div id="leyenda-items"></div>
-</div>
-
-<!-- ================== DESTACADOS ================== -->
-<section id="destacados">
-  <h2>Destacados</h2>
+  <!-- DESTACADOS -->
   <div id="destacados-contenedor"></div>
-</section>
 
-<!-- ================== PANEL INFERIOR ================== -->
-<div id="bottom-panel">
-  <button id="bp-close">✕</button>
-  <div id="bp-content"></div>
-</div>
+  <!-- LEYENDA -->
+  <div id="leyenda-bar">Leyenda</div>
+  <div id="leyenda-drawer">
+    <div id="leyenda-items"></div>
+  </div>
 
-<!-- ================== LIGHTBOX ================== -->
-<div id="lightbox">
-  <button id="lb-close">✕</button>
-  <button id="lb-prev">‹</button>
-  <img id="lb-img" src="">
-  <button id="lb-next">›</button>
-</div>
+  <!-- PANEL INFERIOR -->
+  <div id="bottom-panel">
+    <button id="bp-close">✖</button>
+    <div id="bp-content"></div>
+  </div>
 
-<!-- ================== LEAFLET JS ================== -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <button id="lb-close">✖</button>
+    <button id="lb-prev">◀</button>
+    <img id="lb-img" />
+    <button id="lb-next">▶</button>
+  </div>
 
-<!-- ================== MAIN JS ================== -->
-<script src="main.js"></script>
-
-<script>
-/* ================== CIERRES FUNCIONALES ================== */
-document.getElementById("bp-close").onclick = () => {
-  document.getElementById("bottom-panel").classList.remove("open");
-};
-
-document.getElementById("lb-close").onclick = () => {
-  document.getElementById("lightbox").classList.remove("open");
-};
-
-document.getElementById("lb-prev").onclick = () => cambiarImg(-1);
-document.getElementById("lb-next").onclick = () => cambiarImg(1);
-</script>
-
+  <script src="main.js"></script>
 </body>
 </html>
