@@ -1,82 +1,86 @@
-const map = L.map('map').setView([-4.219167, -79.258333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+// MAPA
+const map = L.map("map").setView([-4.219167, -79.258333], 15);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-let ALL = { bienes: [], servicios: [], categorias: {} };
-let markers = [];
-let currentFilter = null;
-let currentSearch = "";
-let editMode = false;
-
+// HELPERS
 async function cargar(ruta) {
   const r = await fetch(ruta);
-  return await r.json();
+  return r.json();
 }
 
 function iconoDe(ruta) {
   return L.icon({
-    iconUrl: `data/${ruta}`,
-    iconSize: [28, 28]
+    iconUrl: "data/" + ruta,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
   });
 }
 
+// ESTADO
+let ALL = { bienes: [], servicios: [], categorias: {} };
+let markers = [];
+let currentFilter = null;
+let currentSearch = "";
+
+// INICIO
 async function iniciar() {
-  [ALL.bienes, ALL.servicios, ALL.categorias] = await Promise.all([
-    cargar("data/bienes.json"),
-    cargar("data/servicios.json"),
-    cargar("data/categorias.json")
-  ]);
+  ALL.bienes = await cargar("data/bienes.json");
+  ALL.servicios = await cargar("data/servicios.json");
+  ALL.categorias = await cargar("data/categorias.json");
 
   generarFiltros();
   renderizarTodo();
   pintarLeyenda();
   bindControls();
 }
-
 iniciar();
 
-function clearMarkers() {
+// RENDER MAPA
+function renderizarTodo() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
-}
 
-function renderizarTodo() {
-  clearMarkers();
+  const todos = [...ALL.bienes, ...ALL.servicios];
 
-  [...ALL.bienes, ...ALL.servicios].forEach(item => {
-    if (!item.latitud || !item.longitud) return;
+  todos.forEach(item => {
+    if (isNaN(item.latitud)) return;
 
     const icono =
       item.icono ||
       ALL.categorias[item.categoria]?.icono ||
       "icon-default.jpeg";
 
-    const m = L.marker([item.latitud, item.longitud], {
-      icon: iconoDe(icono)
-    }).addTo(map);
+    const marker = L.marker(
+      [item.latitud, item.longitud],
+      { icon: iconoDe(icono) }
+    ).addTo(map);
 
-    m.on("click", () => mostrarDetalle(item));
-    markers.push(m);
+    marker.on("click", () => mostrarDetalle(item));
+    markers.push(marker);
   });
 
-  renderDestacados([...ALL.bienes, ...ALL.servicios].filter(x => x.destacado));
+  renderDestacados(todos.filter(x => x.destacado));
 }
 
+// DESTACADOS
 function renderDestacados(arr) {
-  const cont = document.getElementById("destacados-contenedor");
-  cont.innerHTML = "";
+  const c = document.getElementById("destacados-contenedor");
+  c.innerHTML = "";
 
   arr.forEach(it => {
-    const img = it.imagenes?.[0] ? `data/${it.imagenes[0]}` : "";
-    cont.innerHTML += `
+    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
+    c.innerHTML += `
       <div class="tarjeta">
         ${img ? `<img src="${img}">` : ""}
         <h3>${it.nombre}</h3>
-        <button onclick="mostrarGaleria('${it.nombre}')">Ver</button>
+        <p>${it.descripcion || ""}</p>
+        <button onclick="mostrarGaleria('${it.nombre}')">ver</button>
       </div>
     `;
   });
 }
 
+// DETALLE
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
@@ -84,18 +88,19 @@ function mostrarDetalle(item) {
   cont.innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
-    <div>
-      ${(item.imagenes || []).map(i => `<img src="data/${i}" class="bp-img">`).join("")}
+    <p>${item.direccion || ""}</p>
+    <div class="bp-galeria">
+      ${(item.imagenes || []).map(i => `<img src="data/${i}">`).join("")}
     </div>
   `;
 
   panel.classList.add("open");
 }
 
-document.getElementById("bp-close").onclick = () => {
+document.getElementById("bp-close").onclick = () =>
   document.getElementById("bottom-panel").classList.remove("open");
-};
 
+// GALERIA
 let currentGallery = [];
 let galleryIndex = 0;
 
@@ -105,31 +110,38 @@ function mostrarGaleria(nombre) {
 
   currentGallery = item.imagenes;
   galleryIndex = 0;
-
-  document.getElementById("lb-img").src = `data/${currentGallery[0]}`;
+  document.getElementById("lb-img").src = "data/" + currentGallery[0];
   document.getElementById("lightbox").classList.add("open");
 }
 
 function cambiarImg(dir) {
   galleryIndex = (galleryIndex + dir + currentGallery.length) % currentGallery.length;
-  document.getElementById("lb-img").src = `data/${currentGallery[galleryIndex]}`;
+  document.getElementById("lb-img").src = "data/" + currentGallery[galleryIndex];
 }
 
-document.getElementById("lb-close").onclick = () => {
+document.getElementById("lb-close").onclick = () =>
   document.getElementById("lightbox").classList.remove("open");
-};
 
+// LEYENDA
 function pintarLeyenda() {
-  const cont = document.getElementById("leyenda-items");
-  cont.innerHTML = "";
+  const c = document.getElementById("leyenda-items");
+  c.innerHTML = "";
+
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    cont.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}">${k}</div>`;
+    c.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${v.icono}">
+        ${k}
+      </div>
+    `;
   });
 }
 
+// FILTROS
 function generarFiltros() {
-  const box = document.getElementById("filters");
-  box.innerHTML = "";
+  const f = document.getElementById("filters");
+  f.innerHTML = "";
+
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
     b.textContent = cat;
@@ -137,16 +149,16 @@ function generarFiltros() {
       currentFilter = cat;
       renderizarTodo();
     };
-    box.appendChild(b);
+    f.appendChild(b);
   });
 }
 
+// CONTROLES
 function bindControls() {
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
 
-  document.getElementById("btn-edit").onclick = () => {
-    editMode = !editMode;
-    alert("Modo edición: " + (editMode ? "ACTIVO" : "DESACTIVADO"));
-  };
-    }
+  // RESET DESACTIVADO (LO ÚNICO QUE CAMBIAMOS)
+  const reset = document.getElementById("btn-reset-server");
+  reset.onclick = () => false;
+}
