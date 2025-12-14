@@ -1,6 +1,7 @@
 const map = L.map("map").setView([-4.219167, -79.258333], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
+// HELPERS
 async function cargar(ruta) {
   const r = await fetch(ruta);
   return r.json();
@@ -14,11 +15,14 @@ function iconoDe(ruta) {
   });
 }
 
+// ESTADO
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
+let currentFilter = null;
 let editMode = false;
 let markerSeleccionado = null;
 
+// INICIO
 async function iniciar() {
   ALL.bienes = await cargar("data/bienes.json");
   ALL.servicios = await cargar("data/servicios.json");
@@ -31,6 +35,7 @@ async function iniciar() {
 }
 iniciar();
 
+// MAPA
 function renderizarTodo() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
@@ -39,6 +44,7 @@ function renderizarTodo() {
 
   todos.forEach(item => {
     if (isNaN(item.latitud)) return;
+    if (currentFilter && item.categoria !== currentFilter) return;
 
     const icono =
       item.icono ||
@@ -67,6 +73,7 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
+// MODO EDICIÓN
 map.on("click", e => {
   if (!editMode || !markerSeleccionado) return;
 
@@ -79,24 +86,7 @@ map.on("click", e => {
   markerSeleccionado = null;
 });
 
-// 🔥 GUARDAR CAMBIOS
-function guardarCambios() {
-  const data = {
-    bienes: ALL.bienes,
-    servicios: ALL.servicios
-  };
-
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: "application/json" }
-  );
-
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "DATOS_ACTUALIZADOS.json";
-  a.click();
-}
-
+// DESTACADOS
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -113,10 +103,12 @@ function renderDestacados(arr) {
   });
 }
 
+// DETALLE
 function mostrarDetalle(item) {
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
+    <p>${item.direccion || ""}</p>
     <div class="bp-galeria">
       ${(item.imagenes || []).map(i => `<img src="data/${i}">`).join("")}
     </div>
@@ -124,23 +116,47 @@ function mostrarDetalle(item) {
   document.getElementById("bottom-panel").classList.add("open");
 }
 
+// 🔹 SUBCATEGORÍAS (ARREGLADO)
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
-  const b = document.createElement("button");
-  b.textContent = "TODOS";
-  b.onclick = renderizarTodo;
-  f.appendChild(b);
+
+  // BOTÓN TODOS
+  const btnTodos = document.createElement("button");
+  btnTodos.textContent = "TODOS";
+  btnTodos.onclick = () => {
+    currentFilter = null;
+    renderizarTodo();
+  };
+  f.appendChild(btnTodos);
+
+  // BOTONES POR CATEGORÍA
+  Object.keys(ALL.categorias).forEach(cat => {
+    const b = document.createElement("button");
+    b.textContent = cat;
+    b.onclick = () => {
+      currentFilter = cat;
+      renderizarTodo();
+    };
+    f.appendChild(b);
+  });
 }
 
+// LEYENDA
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}">${k}</div>`;
+    c.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${v.icono}">
+        ${k}
+      </div>
+    `;
   });
 }
 
+// CONTROLES
 function bindControls() {
   document.getElementById("btn-edit").onclick = () => {
     editMode = !editMode;
@@ -149,10 +165,12 @@ function bindControls() {
       editMode ? "Salir de edición" : "Entrar en modo edición";
   };
 
-  document.getElementById("btn-save").onclick = guardarCambios;
   document.getElementById("bp-close").onclick = () =>
     document.getElementById("bottom-panel").classList.remove("open");
 
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
-    }
+
+  const reset = document.getElementById("btn-reset-server");
+  if (reset) reset.onclick = () => false;
+       }
