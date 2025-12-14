@@ -2,13 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Todos los negocios</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Malacatos | Todos los lugares</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Todos los bienes y servicios</h1>
-<div id="lista"></div>
+<header class="top">
+  <h1>Todos los lugares</h1>
+  <p>Bienes y servicios</p>
+
+  <button onclick="history.back()">← Volver</button>
+</header>
+
+<main id="lista-todos" style="padding:10px"></main>
 
 <script src="ver-todos.js"></script>
 </body>
