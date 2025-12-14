@@ -1,8 +1,6 @@
-// MAPA
 const map = L.map("map").setView([-4.219167, -79.258333], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-// HELPERS
 async function cargar(ruta) {
   const r = await fetch(ruta);
   return r.json();
@@ -16,13 +14,12 @@ function iconoDe(ruta) {
   });
 }
 
-// ESTADO
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let currentSearch = "";
+let editMode = false;
 
-// INICIO
 async function iniciar() {
   ALL.bienes = await cargar("data/bienes.json");
   ALL.servicios = await cargar("data/servicios.json");
@@ -35,12 +32,23 @@ async function iniciar() {
 }
 iniciar();
 
-// RENDER MAPA
 function renderizarTodo() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  const todos = [...ALL.bienes, ...ALL.servicios];
+  let todos = [...ALL.bienes, ...ALL.servicios];
+
+  if (currentFilter) {
+    todos = todos.filter(x => x.categoria === currentFilter);
+  }
+
+  if (currentSearch) {
+    const t = currentSearch.toLowerCase();
+    todos = todos.filter(x =>
+      x.nombre.toLowerCase().includes(t) ||
+      (x.descripcion || "").toLowerCase().includes(t)
+    );
+  }
 
   todos.forEach(item => {
     if (isNaN(item.latitud)) return;
@@ -55,14 +63,20 @@ function renderizarTodo() {
       { icon: iconoDe(icono) }
     ).addTo(map);
 
-    marker.on("click", () => mostrarDetalle(item));
+    marker.on("click", () => {
+      if (editMode) {
+        alert(item.nombre + "\nLat: " + item.latitud + "\nLng: " + item.longitud);
+      } else {
+        mostrarDetalle(item);
+      }
+    });
+
     markers.push(marker);
   });
 
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// DESTACADOS
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -80,7 +94,6 @@ function renderDestacados(arr) {
   });
 }
 
-// DETALLE
 function mostrarDetalle(item) {
   const panel = document.getElementById("bottom-panel");
   const cont = document.getElementById("bp-content");
@@ -93,14 +106,12 @@ function mostrarDetalle(item) {
       ${(item.imagenes || []).map(i => `<img src="data/${i}">`).join("")}
     </div>
   `;
-
   panel.classList.add("open");
 }
 
 document.getElementById("bp-close").onclick = () =>
   document.getElementById("bottom-panel").classList.remove("open");
 
-// GALERIA
 let currentGallery = [];
 let galleryIndex = 0;
 
@@ -122,11 +133,9 @@ function cambiarImg(dir) {
 document.getElementById("lb-close").onclick = () =>
   document.getElementById("lightbox").classList.remove("open");
 
-// LEYENDA
 function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
-
   Object.entries(ALL.categorias).forEach(([k, v]) => {
     c.innerHTML += `
       <div class="leyenda-item">
@@ -137,7 +146,6 @@ function pintarLeyenda() {
   });
 }
 
-// FILTROS
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
@@ -153,12 +161,20 @@ function generarFiltros() {
   });
 }
 
-// CONTROLES
 function bindControls() {
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
 
-  // RESET DESACTIVADO (LO ÚNICO QUE CAMBIAMOS)
-  const reset = document.getElementById("btn-reset-server");
-  reset.onclick = () => false;
-}
+  document.getElementById("search-input").oninput = e => {
+    currentSearch = e.target.value;
+    renderizarTodo();
+  };
+
+  document.getElementById("btn-edit").onclick = () => {
+    editMode = !editMode;
+    document.getElementById("btn-edit").textContent =
+      editMode ? "salir de modo edicion" : "entrar en modo edicion";
+  };
+
+  document.getElementById("btn-reset-server").onclick = () => false;
+    }
