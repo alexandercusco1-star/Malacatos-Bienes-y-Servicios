@@ -6,15 +6,22 @@
   <title>Malacatos</title>
 
   <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 
+  <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
   <!-- BUSCADOR -->
-  <input id="search-input" type="text" placeholder="Buscar..." />
+  <div class="top-bar">
+    <input id="search-input" type="text" placeholder="Buscar..." />
+    <button id="btn-toggle-edit">entrar en modo edicion</button>
+    <button id="btn-reset-server">restablecer desde servidor</button>
+  </div>
 
   <!-- FILTROS -->
   <div id="filters"></div>
@@ -22,29 +29,34 @@
   <!-- MAPA -->
   <div id="map"></div>
 
-  <!-- DESTACADOS -->
-  <div id="destacados-contenedor"></div>
-
   <!-- LEYENDA -->
-  <div id="leyenda-bar">Leyenda</div>
+  <div id="leyenda-bar">leyenda</div>
   <div id="leyenda-drawer">
     <div id="leyenda-items"></div>
   </div>
 
+  <!-- DESTACADOS -->
+  <h2 class="titulo">destacados</h2>
+  <div id="destacados-contenedor"></div>
+
   <!-- PANEL INFERIOR -->
   <div id="bottom-panel">
-    <button id="bp-close">✖</button>
+    <button id="bp-close">✕</button>
     <div id="bp-content"></div>
   </div>
 
   <!-- LIGHTBOX -->
   <div id="lightbox">
-    <button id="lb-close">✖</button>
-    <button id="lb-prev">◀</button>
+    <button id="lb-close">✕</button>
+    <button id="lb-prev">‹</button>
     <img id="lb-img" />
-    <button id="lb-next">▶</button>
+    <button id="lb-next">›</button>
   </div>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- JS principal -->
   <script src="main.js"></script>
 </body>
 </html>
