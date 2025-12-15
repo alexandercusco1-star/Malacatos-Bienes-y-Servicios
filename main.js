@@ -184,10 +184,19 @@ function pintarLeyenda() {
   });
 }
 
-// CONTROLES
 function bindControls() {
-  // 👉 BOTÓN EDICIÓN (ESTO ES LO QUE FALTABA)
+
+  const CLAVE_EDICION = "2747842663"; // ← CAMBIA SOLO ESTA CLAVE SI QUIERES
+
   document.getElementById("btn-edit").onclick = () => {
+    if (!editMode) {
+      const clave = prompt("Clave para entrar en modo edición:");
+      if (clave !== CLAVE_EDICION) {
+        alert("Clave incorrecta");
+        return;
+      }
+    }
+
     editMode = !editMode;
     markerSeleccionado = null;
 
