@@ -26,6 +26,14 @@ async function iniciar() {
         <p><b>Categoría:</b> ${item.categoria}</p>
         <p>${item.descripcion || ""}</p>
         <p>${item.direccion || ""}</p>
+
+        ${
+          item.imagenes && item.imagenes.length > 1
+            ? `<button onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>
+                Ver más
+              </button>`
+            : ""
+        }
       </div>
     `;
   });
