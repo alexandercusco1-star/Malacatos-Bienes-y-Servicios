@@ -7,7 +7,14 @@ async function cargar(ruta) {
   const r = await fetch(ruta);
   return r.json();
 }
-
+function datoSeguro(item) {
+  if (!item) return false;
+  if (!item.nombre) return false;
+  if (isNaN(item.latitud)) return false;
+  if (isNaN(item.longitud)) return false;
+  if (!item.categoria) return false;
+  return true;
+}
 function iconoDe(ruta) {
   return L.icon({
     iconUrl: "data/" + ruta,
