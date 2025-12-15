@@ -55,6 +55,7 @@ function renderizarTodo() {
   const todos = [...ALL.bienes, ...ALL.servicios];
 
   todos.forEach(item => {
+  if (!datoSeguro(item)) return;
     if (isNaN(item.latitud)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
 
