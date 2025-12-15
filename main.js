@@ -28,6 +28,7 @@ let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
 let currentFilter = null;
 let editMode = false;
+const CLAVE_EDICION = "2747842663";
 let markerSeleccionado = null;
 
 // GALERÍA
