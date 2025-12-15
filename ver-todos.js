@@ -30,8 +30,8 @@ async function iniciar() {
         ${
           item.imagenes && item.imagenes.length > 1
             ? `<button onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>
-                Ver más
-              </button>`
+                 Ver más
+               </button>`
             : ""
         }
       </div>
