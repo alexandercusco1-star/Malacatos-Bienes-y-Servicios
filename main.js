@@ -108,20 +108,24 @@ function renderDestacados(arr) {
   c.innerHTML = "";
 
   arr.forEach(it => {
-    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
-    c.innerHTML += `
-      <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${it.nombre}</h3>
-        <p>${it.descripcion || ""}</p>
-        ${
-          it.imagenes && it.imagenes.length > 1
-            ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver más</button>`
-            : ""
-        }
-      </div>
-    `;
-  });
+  const img =
+    Array.isArray(it.imagenes) && it.imagenes.length > 0
+      ? "data/" + it.imagenes[0]
+      : null;
+
+  c.innerHTML += `
+    <div class="tarjeta">
+      ${img ? `<img src="${img}" onerror="this.style.display='none'">` : ""}
+      <h3>${it.nombre}</h3>
+      <p>${it.descripcion || ""}</p>
+      ${
+        Array.isArray(it.imagenes) && it.imagenes.length > 1
+          ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver más</button>`
+          : ""
+      }
+    </div>
+  `;
+});
 }
 
 // DETALLE
