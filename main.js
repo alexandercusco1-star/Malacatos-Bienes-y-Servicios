@@ -195,8 +195,6 @@ function pintarLeyenda() {
 
 function bindControls() {
 
-  const CLAVE_EDICION = "2747842663"; // ← CAMBIA SOLO ESTA CLAVE SI QUIERES
-
   document.getElementById("btn-edit").onclick = () => {
     if (!editMode) {
       const clave = prompt("Clave para entrar en modo edición:");
