@@ -2,12 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Todos los negocios</title>
+  <title>Todos los bienes y servicios</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
 <header class="top">
   <h1>Todos los bienes y servicios</h1>
   <a href="index.html" style="color:white;">⬅ Volver</a>
@@ -15,13 +17,14 @@
 
 <main id="lista-todos" style="padding:10px;"></main>
 
-<script src="ver-todos.js"></script>
-<script src="main.js"></script>
-  <div id="lightbox">
+<!-- LIGHTBOX (IGUAL QUE EN LA PRINCIPAL) -->
+<div id="lightbox">
   <button id="lb-close">✕</button>
   <button onclick="cambiarImg(-1)">‹</button>
   <img id="lb-img">
   <button onclick="cambiarImg(1)">›</button>
 </div>
+
+<script src="ver-todos.js"></script>
 </body>
 </html>
