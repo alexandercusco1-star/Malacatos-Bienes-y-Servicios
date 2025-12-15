@@ -1,3 +1,33 @@
+// =====================
+// GALERÍA (IGUAL A LA PRINCIPAL)
+// =====================
+let currentGallery = [];
+let galleryIndex = 0;
+
+function abrirGaleria(imagenes) {
+  if (!imagenes || imagenes.length === 0) return;
+
+  currentGallery = imagenes;
+  galleryIndex = 0;
+  document.getElementById("lb-img").src = "data/" + currentGallery[0];
+  document.getElementById("lightbox").classList.add("open");
+}
+
+function cambiarImg(dir) {
+  galleryIndex =
+    (galleryIndex + dir + currentGallery.length) % currentGallery.length;
+
+  document.getElementById("lb-img").src =
+    "data/" + currentGallery[galleryIndex];
+}
+
+document.getElementById("lb-close").onclick = () => {
+  document.getElementById("lightbox").classList.remove("open");
+};
+
+// =====================
+// CARGA DE DATOS
+// =====================
 async function cargar(ruta) {
   try {
     const r = await fetch(ruta);
@@ -17,7 +47,9 @@ async function iniciar() {
   cont.innerHTML = "";
 
   todos.forEach(item => {
-    const img = item.imagenes?.[0] ? `data/${item.imagenes[0]}` : "";
+    const img = item.imagenes?.[0]
+      ? `data/${item.imagenes[0]}`
+      : "";
 
     cont.innerHTML += `
       <div class="tarjeta">
