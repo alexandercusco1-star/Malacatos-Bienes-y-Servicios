@@ -23,7 +23,7 @@ let currentFilter = null;
 let editMode = false;
 let markerSeleccionado = null;
 
-// GALERÍA GLOBAL
+// GALERÍA
 let currentGallery = [];
 let galleryIndex = 0;
 
@@ -61,14 +61,39 @@ function renderizarTodo() {
       { icon: iconoDe(icono) }
     ).addTo(map);
 
-    marker.on("click", () => mostrarDetalle(item));
+    marker.__data = item;
+
+    marker.on("click", () => {
+      if (editMode) {
+        markerSeleccionado = marker;
+        alert("Toca el mapa para mover este ícono");
+      } else {
+        mostrarDetalle(item);
+      }
+    });
+
     markers.push(marker);
   });
 
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// DESTACADOS (CON VER MÁS)
+// 👉 MOVER ÍCONO EN MODO EDICIÓN
+map.on("click", e => {
+  if (!editMode || !markerSeleccionado) return;
+
+  const { lat, lng } = e.latlng;
+
+  markerSeleccionado.setLatLng([lat, lng]);
+  markerSeleccionado.__data.latitud = lat;
+  markerSeleccionado.__data.longitud = lng;
+
+  alert(`Nuevas coordenadas:\nLat: ${lat}\nLng: ${lng}`);
+
+  markerSeleccionado = null;
+});
+
+// DESTACADOS
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -80,16 +105,17 @@ function renderDestacados(arr) {
         ${img ? `<img src="${img}">` : ""}
         <h3>${it.nombre}</h3>
         <p>${it.descripcion || ""}</p>
-        ${it.imagenes && it.imagenes.length > 1
-          ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver más</button>`
-          : ""
+        ${
+          it.imagenes && it.imagenes.length > 1
+            ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver más</button>`
+            : ""
         }
       </div>
     `;
   });
 }
 
-// DETALLE + GALERÍA
+// DETALLE
 function mostrarDetalle(item) {
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
@@ -104,7 +130,7 @@ function mostrarDetalle(item) {
   document.getElementById("bottom-panel").classList.add("open");
 }
 
-// GALERÍA LIGHTBOX (FUNCIONA)
+// GALERÍA
 function abrirGaleria(imagenes) {
   currentGallery = imagenes;
   galleryIndex = 0;
@@ -160,9 +186,18 @@ function pintarLeyenda() {
 
 // CONTROLES
 function bindControls() {
+  // 👉 BOTÓN EDICIÓN (ESTO ES LO QUE FALTABA)
+  document.getElementById("btn-edit").onclick = () => {
+    editMode = !editMode;
+    markerSeleccionado = null;
+
+    document.getElementById("btn-edit").textContent =
+      editMode ? "Salir de modo edición" : "Entrar en modo edición";
+  };
+
   document.getElementById("bp-close").onclick = () =>
     document.getElementById("bottom-panel").classList.remove("open");
 
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
-          }
+}
