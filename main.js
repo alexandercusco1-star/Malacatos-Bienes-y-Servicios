@@ -20,6 +20,9 @@ let currentFilter = null;
 let editMode = false;
 let markerSeleccionado = null;
 
+let galeria = [];
+let idx = 0;
+
 async function iniciar() {
   ALL.bienes = await cargar("data/bienes.json");
   ALL.servicios = await cargar("data/servicios.json");
@@ -42,10 +45,7 @@ function renderizarTodo() {
     if (isNaN(item.latitud)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
 
-    const icono =
-      item.icono ||
-      ALL.categorias[item.categoria]?.icono ||
-      "icon-default.jpeg";
+    const icono = item.icono || ALL.categorias[item.categoria]?.icono || "icon-default.jpeg";
 
     const marker = L.marker(
       [item.latitud, item.longitud],
@@ -71,11 +71,13 @@ function renderizarTodo() {
 
 map.on("click", e => {
   if (!editMode || !markerSeleccionado) return;
+
   const { lat, lng } = e.latlng;
   markerSeleccionado.setLatLng([lat, lng]);
   markerSeleccionado.__data.latitud = lat;
   markerSeleccionado.__data.longitud = lng;
-  alert(`Lat: ${lat}\nLng: ${lng}`);
+
+  alert(`Nuevas coordenadas:\nLat: ${lat}\nLng: ${lng}`);
   markerSeleccionado = null;
 });
 
@@ -85,14 +87,11 @@ function renderDestacados(arr) {
 
   arr.forEach(it => {
     const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
-    const mas = it.imagenes && it.imagenes.length > 1;
-
     c.innerHTML += `
       <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
+        ${img ? `<img src="${img}" onclick='abrirGaleria(${JSON.stringify(it.imagenes || [])})'>` : ""}
         <h3>${it.nombre}</h3>
         <p>${it.descripcion || ""}</p>
-        ${mas ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver imágenes</button>` : ""}
       </div>
     `;
   });
@@ -103,21 +102,37 @@ function mostrarDetalle(item) {
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
+    <div class="bp-galeria">
+      ${(item.imagenes || []).map(i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`).join("")}
+    </div>
   `;
   document.getElementById("bottom-panel").classList.add("open");
+}
+
+function abrirGaleria(arr) {
+  if (!arr || arr.length === 0) return;
+  galeria = arr;
+  idx = 0;
+  document.getElementById("lb-img").src = "data/" + galeria[0];
+  document.getElementById("lightbox").classList.add("open");
+}
+
+function cambiarImg(d) {
+  idx = (idx + d + galeria.length) % galeria.length;
+  document.getElementById("lb-img").src = "data/" + galeria[idx];
 }
 
 function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
 
-  const btnTodos = document.createElement("button");
-  btnTodos.textContent = "TODOS";
-  btnTodos.onclick = () => {
+  const todosBtn = document.createElement("button");
+  todosBtn.textContent = "TODOS";
+  todosBtn.onclick = () => {
     currentFilter = null;
     renderizarTodo();
   };
-  f.appendChild(btnTodos);
+  f.appendChild(todosBtn);
 
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
@@ -134,7 +149,12 @@ function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}"> ${k}</div>`;
+    c.innerHTML += `
+      <div class="leyenda-item">
+        <img src="data/${v.icono}">
+        ${k}
+      </div>
+    `;
   });
 }
 
@@ -142,30 +162,19 @@ function bindControls() {
   document.getElementById("btn-edit").onclick = () => {
     editMode = !editMode;
     markerSeleccionado = null;
+    document.getElementById("btn-edit").textContent =
+      editMode ? "🟢 Modo edición activo" : "Entrar en modo edición";
   };
 
   document.getElementById("bp-close").onclick = () =>
     document.getElementById("bottom-panel").classList.remove("open");
 
+  document.getElementById("lb-close").onclick = () =>
+    document.getElementById("lightbox").classList.remove("open");
+
   document.getElementById("leyenda-bar").onclick = () =>
     document.getElementById("leyenda-drawer").classList.toggle("open");
+
+  const reset = document.getElementById("btn-reset-server");
+  if (reset) reset.onclick = () => false;
 }
-
-/* GALERÍA */
-let galeria = [];
-let idx = 0;
-
-function abrirGaleria(arr) {
-  galeria = arr;
-  idx = 0;
-  document.getElementById("lb-img").src = "data/" + galeria[0];
-  document.getElementById("lightbox").classList.add("open");
-}
-
-function cambiarImg(d) {
-  idx = (idx + d + galeria.length) % galeria.length;
-  document.getElementById("lb-img").src = "data/" + galeria[idx];
-}
-
-document.getElementById("lb-close").onclick = () =>
-  document.getElementById("lightbox").classList.remove("open");
