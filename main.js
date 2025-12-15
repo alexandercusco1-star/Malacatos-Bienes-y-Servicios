@@ -37,9 +37,28 @@ let galleryIndex = 0;
 
 // INICIO
 async function iniciar() {
-  ALL.bienes = await cargar("data/bienes.json");
-  ALL.servicios = await cargar("data/servicios.json");
-  ALL.categorias = await cargar("data/categorias.json");
+  try {
+    const bienes = await cargar("data/bienes.json");
+    const servicios = await cargar("data/servicios.json");
+    const categorias = await cargar("data/categorias.json");
+
+    ALL.bienes = Array.isArray(bienes)
+      ? bienes.filter(datoSeguro)
+      : [];
+
+    ALL.servicios = Array.isArray(servicios)
+      ? servicios.filter(datoSeguro)
+      : [];
+
+    ALL.categorias =
+      categorias && typeof categorias === "object"
+        ? categorias
+        : {};
+
+  } catch (e) {
+    alert("Error cargando datos. El sistema seguirá funcionando.");
+    ALL = { bienes: [], servicios: [], categorias: {} };
+  }
 
   generarFiltros();
   renderizarTodo();
