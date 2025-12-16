@@ -27,7 +27,7 @@
   "optica": { "icono": "icon-optica.jpeg" },
   "vidreria": { "icono": "icon-vidreria.jpeg" },
   "veterinaria": { "icono": "icon-veterinaria.jpeg" },
-
+  "comida-rapida": { "icono": "icon-comida-rapida.jpeg" },
   "canchas-futbol": { "icono": "icon-canchas-futbol.jpeg" },
   "canchas-ecuavoley": { "icono": "icon-canchas-ecuavoley.jpeg" }
 }
