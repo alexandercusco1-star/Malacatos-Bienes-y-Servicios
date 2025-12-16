@@ -47,6 +47,22 @@
       "s4-tienda-narcisa-jesus.jpg"
     ],
     "destacado": true
+  },
+    {
+    "nombre": "Ferretería Disensa",
+    "tipo": "servicios",
+    "categoria": "ferreteria",
+    "descripcion": "Venta de materiales para la construcción.",
+    "direccion": "Av.Loja e ingreso a Calera esquina.",
+    "telefono": "+593959007258",
+    "latitud": -4.2162736,
+    "longitud": -79.25480778,
+    "icono": "icon-ferreteria.jpeg",
+    "imagenes": [
+      "s5-ferreteria-disensa.jpg",
+      "s5.1.jpg",
+      "s5.2.jpg"
+    ]
   }
 
 ]
