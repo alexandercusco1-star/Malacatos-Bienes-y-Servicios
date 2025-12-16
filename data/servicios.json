@@ -32,6 +32,21 @@
       "s2-lavadora-carros.jpg",
       "s2.1.jpg"
     ]
+  },
+    {
+    "nombre": "Comercial Narcisa de Jesús",
+    "tipo": "servicios",
+    "categoria": "tienda",
+    "descripcion": "Venta de insumos y alimentos para el hogar.",
+    "direccion": "pio montufar y lauro coronel, esquina",
+    "telefono": "+593959007258",
+    "latitud": -4.225111,
+    "longitud": -79.2592,
+    "icono": "icon-tienda.jpeg",
+    "imagenes": [
+      "s4-narcisa-jesus-premiun.jpg"
+    ],
+    "destacado": true
   }
 
 ]
