@@ -10,9 +10,9 @@
   "panaderia": { "icono": "icon-panaderia.jpeg" },
   "farmacia": { "icono": "icon-farmacia.jpeg" },
 
-  "transporte": { "icono": "icon-transporte.jpeg" },
-  "transporte1": { "icono": "icon-transporte1.jpeg" },
-  "transporte2": { "icono": "icon-transporte2.jpeg" },
+  "bus": { "icono": "icon-bus.jpeg" },
+  "camioneta": { "icono": "icon-camioneta.jpeg" },
+  "taxi": { "icono": "icon-taxi.jpeg" },
 
   "hostal": { "icono": "icon-hostal.jpeg" },
   "hosteria": { "icono": "icon-hosteria.jpeg" },
