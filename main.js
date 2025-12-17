@@ -179,6 +179,13 @@ function mostrarDetalle(item) {
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
+
+    <div class="bp-galeria">
+      ${(item.imagenes || []).map(
+        img =>
+          `<img src="data/${img}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
+      ).join("")}
+    </div>
   `;
   document.getElementById("bottom-panel").classList.add("open");
 }
