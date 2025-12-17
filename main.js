@@ -1,3 +1,35 @@
+// 🌍 IDIOMAS
+let LANG = "es";
+
+const TEXTOS = {
+  es: {
+    titulo: "Malacatos",
+    subtitulo: "Lugares turísticos y servicios",
+    buscar: "Buscar...",
+    editar: "Entrar en modo edición",
+    salir: "Salir de modo edición",
+    leyendas: "Leyendas",
+    verTodos: "Ver todos los bienes y servicios",
+    bienesServicios: "Bienes y Servicios",
+    verMas: "Ver más",
+    claveError: "Clave incorrecta",
+    mover: "Toca el mapa para mover este ícono"
+  },
+  en: {
+    titulo: "Malacatos",
+    subtitulo: "Tourist places and services",
+    buscar: "Search...",
+    editar: "Enter edit mode",
+    salir: "Exit edit mode",
+    leyendas: "Legend",
+    verTodos: "View all goods and services",
+    bienesServicios: "Goods & Services",
+    verMas: "See more",
+    claveError: "Wrong password",
+    mover: "Tap the map to move this marker"
+  }
+};
+
 // MAPA
 const map = L.map("map").setView([-4.219167, -79.258333], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
@@ -7,14 +39,17 @@ async function cargar(ruta) {
   const r = await fetch(ruta);
   return r.json();
 }
+
 function datoSeguro(item) {
-  if (!item) return false;
-  if (!item.nombre) return false;
-  if (isNaN(item.latitud)) return false;
-  if (isNaN(item.longitud)) return false;
-  if (!item.categoria) return false;
-  return true;
+  return (
+    item &&
+    item.nombre &&
+    !isNaN(item.latitud) &&
+    !isNaN(item.longitud) &&
+    item.categoria
+  );
 }
+
 function iconoDe(ruta) {
   return L.icon({
     iconUrl: "data/" + ruta,
@@ -38,25 +73,10 @@ let galleryIndex = 0;
 // INICIO
 async function iniciar() {
   try {
-    const bienes = await cargar("data/bienes.json");
-    const servicios = await cargar("data/servicios.json");
-    const categorias = await cargar("data/categorias.json");
-
-    ALL.bienes = Array.isArray(bienes)
-      ? bienes.filter(datoSeguro)
-      : [];
-
-    ALL.servicios = Array.isArray(servicios)
-      ? servicios.filter(datoSeguro)
-      : [];
-
-    ALL.categorias =
-      categorias && typeof categorias === "object"
-        ? categorias
-        : {};
-
-  } catch (e) {
-    alert("Error cargando datos. El sistema seguirá funcionando.");
+    ALL.bienes = (await cargar("data/bienes.json")).filter(datoSeguro);
+    ALL.servicios = (await cargar("data/servicios.json")).filter(datoSeguro);
+    ALL.categorias = await cargar("data/categorias.json");
+  } catch {
     ALL = { bienes: [], servicios: [], categorias: {} };
   }
 
@@ -64,8 +84,23 @@ async function iniciar() {
   renderizarTodo();
   pintarLeyenda();
   bindControls();
+  aplicarIdioma();
 }
 iniciar();
+
+// APLICAR IDIOMA
+function aplicarIdioma() {
+  const t = TEXTOS[LANG];
+
+  document.querySelector("header h1").textContent = t.titulo;
+  document.querySelector("header p").textContent = t.subtitulo;
+  document.getElementById("search-input").placeholder = t.buscar;
+  document.getElementById("btn-edit").textContent =
+    editMode ? t.salir : t.editar;
+  document.getElementById("leyenda-bar").textContent = t.leyendas;
+  document.querySelector("#destacados h2").textContent = t.bienesServicios;
+  document.querySelector(".btn-ver-todos").textContent = t.verTodos;
+}
 
 // MAPA
 function renderizarTodo() {
@@ -75,8 +110,7 @@ function renderizarTodo() {
   const todos = [...ALL.bienes, ...ALL.servicios];
 
   todos.forEach(item => {
-  if (!datoSeguro(item)) return;
-    if (isNaN(item.latitud)) return;
+    if (!datoSeguro(item)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
 
     const icono =
@@ -94,7 +128,7 @@ function renderizarTodo() {
     marker.on("click", () => {
       if (editMode) {
         markerSeleccionado = marker;
-        alert("Toca el mapa para mover este ícono");
+        alert(TEXTOS[LANG].mover);
       } else {
         mostrarDetalle(item);
       }
@@ -106,18 +140,13 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// 👉 MOVER ÍCONO EN MODO EDICIÓN
+// MOVER ÍCONO
 map.on("click", e => {
   if (!editMode || !markerSeleccionado) return;
 
-  const { lat, lng } = e.latlng;
-
-  markerSeleccionado.setLatLng([lat, lng]);
-  markerSeleccionado.__data.latitud = lat;
-  markerSeleccionado.__data.longitud = lng;
-
-  alert(`Nuevas coordenadas:\nLat: ${lat}\nLng: ${lng}`);
-
+  markerSeleccionado.setLatLng(e.latlng);
+  markerSeleccionado.__data.latitud = e.latlng.lat;
+  markerSeleccionado.__data.longitud = e.latlng.lng;
   markerSeleccionado = null;
 });
 
@@ -127,24 +156,21 @@ function renderDestacados(arr) {
   c.innerHTML = "";
 
   arr.forEach(it => {
-  const img =
-    Array.isArray(it.imagenes) && it.imagenes.length > 0
-      ? "data/" + it.imagenes[0]
-      : null;
+    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
 
-  c.innerHTML += `
-    <div class="tarjeta">
-      ${img ? `<img src="${img}" onerror="this.style.display='none'">` : ""}
-      <h3>${it.nombre}</h3>
-      <p>${it.descripcion || ""}</p>
-      ${
-        Array.isArray(it.imagenes) && it.imagenes.length > 1
-          ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>Ver más</button>`
-          : ""
-      }
-    </div>
-  `;
-});
+    c.innerHTML += `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : ""}
+        <h3>${it.nombre}</h3>
+        <p>${it.descripcion || ""}</p>
+        ${
+          it.imagenes?.length > 1
+            ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>${TEXTOS[LANG].verMas}</button>`
+            : ""
+        }
+      </div>
+    `;
+  });
 }
 
 // DETALLE
@@ -153,11 +179,6 @@ function mostrarDetalle(item) {
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
-    <div class="bp-galeria">
-      ${(item.imagenes || []).map(
-        i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
-      ).join("")}
-    </div>
   `;
   document.getElementById("bottom-panel").classList.add("open");
 }
@@ -166,7 +187,7 @@ function mostrarDetalle(item) {
 function abrirGaleria(imagenes) {
   currentGallery = imagenes;
   galleryIndex = 0;
-  document.getElementById("lb-img").src = "data/" + currentGallery[0];
+  document.getElementById("lb-img").src = "data/" + imagenes[0];
   document.getElementById("lightbox").classList.add("open");
 }
 
@@ -183,13 +204,13 @@ function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
 
-  const btnTodos = document.createElement("button");
-  btnTodos.textContent = "TODOS";
-  btnTodos.onclick = () => {
+  const btn = document.createElement("button");
+  btn.textContent = "TODOS";
+  btn.onclick = () => {
     currentFilter = null;
     renderizarTodo();
   };
-  f.appendChild(btnTodos);
+  f.appendChild(btn);
 
   Object.keys(ALL.categorias).forEach(cat => {
     const b = document.createElement("button");
@@ -207,32 +228,31 @@ function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `
-      <div class="leyenda-item">
-        <img src="data/${v.icono}">
-        ${k}
-      </div>
-    `;
+    c.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}">${k}</div>`;
   });
 }
 
+// CONTROLES
 function bindControls() {
-
   document.getElementById("btn-edit").onclick = () => {
     if (!editMode) {
-      const clave = prompt("Clave para entrar en modo edición:");
+      const clave = prompt("Clave:");
       if (clave !== CLAVE_EDICION) {
-        alert("Clave incorrecta");
+        alert(TEXTOS[LANG].claveError);
         return;
       }
     }
-
     editMode = !editMode;
-    markerSeleccionado = null;
-
-    document.getElementById("btn-edit").textContent =
-      editMode ? "Salir de modo edición" : "Entrar en modo edición";
+    aplicarIdioma();
   };
+
+  document.querySelectorAll("#lang-switch button").forEach(btn => {
+    btn.onclick = () => {
+      LANG = btn.dataset.lang;
+      aplicarIdioma();
+      renderizarTodo();
+    };
+  });
 
   document.getElementById("bp-close").onclick = () =>
     document.getElementById("bottom-panel").classList.remove("open");
