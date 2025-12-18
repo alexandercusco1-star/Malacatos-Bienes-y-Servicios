@@ -12,7 +12,9 @@
       "b1_parque.jpg",
       "b1.1.jpg",
       "b1.2.jpg",
-      "b1.3.jpg"
+      "b1.3.jpg",
+      "b1.4.jpg",
+      "b1.5.jpg"
     ],
     "destacado": true
   },
@@ -29,8 +31,10 @@
       "b2_iglesia.jpg",
       "b2.1.jpg",
       "b2.2.jpg",
-      "b2.3.jpg"
+      "b2.3.jpg",
+      "b2.4.jpg",
+      "b2.5.jpg"
     ],
-    "destacado": false
+    "destacado": true
   }
 ]
