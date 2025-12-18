@@ -22,6 +22,9 @@
   "barberia": { "icono": "icon-barberia.jpeg" },
   "material-petreo": { "icono": "icon-material-petreo.jpeg" },
   "carpinteria": { "icono": "icon-carpinteria.jpeg" },
+  "electronica": { "icono": "icon-electronica.jpeg" },
+  "artesanias-cuero": { "icono": "icon-artesanias-cuero.jpeg" },
+  
   
   "mecanica": { "icono": "icon-mecanica.jpeg" },
   "vulcanizadora": { "icono": "icon-llantera.jpeg" },
