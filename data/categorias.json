@@ -20,9 +20,10 @@
 
   "peluqueria": { "icono": "icon-peluqueria.jpeg" },
   "barberia": { "icono": "icon-barberia.jpeg" },
-
+  "material-petreo": { "icono": "icon-material-petreo.jpeg" },
+  
   "mecanica": { "icono": "icon-mecanica.jpeg" },
-  "llantera": { "icono": "icon-llantera.jpeg" },
+  "vulcanizadora": { "icono": "icon-llantera.jpeg" },
   "heladeria": { "icono": "icon-heladeria.jpeg" },
   "optica": { "icono": "icon-optica.jpeg" },
   "vidreria": { "icono": "icon-vidreria.jpeg" },
