@@ -50,6 +50,38 @@
     ],
     "destacado": true
   },
+  {
+    "nombre": "Carpinteria Medina",
+    "tipo": "servicios",
+    "categoria": "carpinteria",
+    "descripcion": "Diseño y construcción en madera.",
+    "direccion": "Av. Loja diagonal a la entrada a Calera",
+    "telefono": "+593959007258",
+    "latitud": -4.22060002,
+    "longitud": -79.25902836,
+    "icono": "icon-carpinteria.jpeg",
+    "imagenes": [
+      "s6-carpinteria-medina-avenida.jpg",
+      "s6.1.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "NCS Materiales",
+    "tipo": "servicios",
+    "categoria": "material petreo",
+    "descripcion": "Venta de materiales para la costruccion y alquiler de equipo para la construcción.",
+    "direccion": "Av.Loja y entrada a calera, esquina",
+    "telefono": "+593959007258",
+    "latitud": -4.22071322,
+    "longitud": -79.25902836,
+    "icono": "icon-material-petreo.jpeg",
+    "imagenes": [
+      "s7-material-petreo-ncs.jpg",
+      "s7.1.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
