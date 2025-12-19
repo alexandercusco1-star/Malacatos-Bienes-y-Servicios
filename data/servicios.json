@@ -113,6 +113,22 @@
     ],
     "destacado": false
   },
+
+  {
+    "nombre": "GABRIELA, bar restaurante, cafeteria",
+    "tipo": "servicios",
+    "categoria": "restaurante",
+    "descripcion": "Gastronomia local y sevicios gastronomicas.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.22051122,
+    "longitud": -79.25902836,
+    "icono": "icon-restaurante.jpeg",
+    "imagenes": [
+      "s10-restaurante.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
