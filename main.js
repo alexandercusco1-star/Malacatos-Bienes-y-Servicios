@@ -30,6 +30,9 @@ const TEXTOS = {
   }
 };
 
+// 🔍 BUSCADOR
+let searchText = "";
+
 // MAPA
 const map = L.map("map").setView([-4.219167, -79.258333], 15);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
@@ -91,12 +94,10 @@ iniciar();
 // APLICAR IDIOMA
 function aplicarIdioma() {
   const t = TEXTOS[LANG];
-
   document.querySelector("header h1").textContent = t.titulo;
   document.querySelector("header p").textContent = t.subtitulo;
   document.getElementById("search-input").placeholder = t.buscar;
-  document.getElementById("btn-edit").textContent =
-    editMode ? t.salir : t.editar;
+  document.getElementById("btn-edit").textContent = editMode ? t.salir : t.editar;
   document.getElementById("leyenda-bar").textContent = t.leyendas;
   document.querySelector("#destacados h2").textContent = t.bienesServicios;
   document.querySelector(".btn-ver-todos").textContent = t.verTodos;
@@ -112,6 +113,17 @@ function renderizarTodo() {
   todos.forEach(item => {
     if (!datoSeguro(item)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
+
+    // 🔍 FILTRO BUSCADOR
+    if (searchText) {
+      const n = (item.nombre || "").toLowerCase();
+      const d = (item.descripcion || "").toLowerCase();
+      const c = (item.categoria || "").toLowerCase();
+
+      if (!n.includes(searchText) && !d.includes(searchText) && !c.includes(searchText)) {
+        return;
+      }
+    }
 
     const icono =
       item.icono ||
@@ -142,11 +154,7 @@ function renderizarTodo() {
 
 // MOVER ÍCONO
 map.on("click", e => {
-  if (!editMode) return;
-  if (!markerSeleccionado) {
-    alert("Primero toca un ícono para moverlo");
-    return;
-  }
+  if (!editMode || !markerSeleccionado) return;
 
   const lat = e.latlng.lat.toFixed(6);
   const lng = e.latlng.lng.toFixed(6);
@@ -155,12 +163,7 @@ map.on("click", e => {
   markerSeleccionado.__data.latitud = lat;
   markerSeleccionado.__data.longitud = lng;
 
-  alert(
-    "Coordenadas actualizadas:\n" +
-    "Latitud: " + lat + "\n" +
-    "Longitud: " + lng
-  );
-
+  alert(`Coordenadas:\nLat: ${lat}\nLng: ${lng}`);
   markerSeleccionado = null;
 });
 
@@ -171,7 +174,6 @@ function renderDestacados(arr) {
 
   arr.forEach(it => {
     const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
-
     c.innerHTML += `
       <div class="tarjeta">
         ${img ? `<img src="${img}">` : ""}
@@ -193,11 +195,9 @@ function mostrarDetalle(item) {
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
-
     <div class="bp-galeria">
       ${(item.imagenes || []).map(
-        img =>
-          `<img src="data/${img}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
+        i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
       ).join("")}
     </div>
   `;
@@ -225,22 +225,22 @@ function generarFiltros() {
   const f = document.getElementById("filters");
   f.innerHTML = "";
 
-  const btn = document.createElement("button");
-  btn.textContent = "TODOS";
-  btn.onclick = () => {
+  const b = document.createElement("button");
+  b.textContent = "TODOS";
+  b.onclick = () => {
     currentFilter = null;
     renderizarTodo();
   };
-  f.appendChild(btn);
+  f.appendChild(b);
 
   Object.keys(ALL.categorias).forEach(cat => {
-    const b = document.createElement("button");
-    b.textContent = cat;
-    b.onclick = () => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.onclick = () => {
       currentFilter = cat;
       renderizarTodo();
     };
-    f.appendChild(b);
+    f.appendChild(btn);
   });
 }
 
@@ -267,12 +267,9 @@ function bindControls() {
     aplicarIdioma();
   };
 
-  document.querySelectorAll("#lang-switch button").forEach(btn => {
-    btn.onclick = () => {
-      LANG = btn.dataset.lang;
-      aplicarIdioma();
-      renderizarTodo();
-    };
+  document.getElementById("search-input").addEventListener("input", e => {
+    searchText = e.target.value.toLowerCase().trim();
+    renderizarTodo();
   });
 
   document.getElementById("bp-close").onclick = () =>
