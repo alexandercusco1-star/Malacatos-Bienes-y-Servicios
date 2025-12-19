@@ -130,6 +130,36 @@
     "destacado": false
   },
     {
+    "nombre": "Supermercado JALEK",
+    "tipo": "servicios",
+    "categoria": "super-mercado",
+    "descripcion": "Venta de todo tipo de insumos para el hogar.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.22053322,
+    "longitud": -79.25902836,
+    "icono": "icon-super-mercado.jpeg",
+    "imagenes": [
+      "s11-super-mercado-halek.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Panadería Sabor Lojano",
+    "tipo": "servicios",
+    "categoria": "panaderia",
+    "descripcion": "Panadería y pastelería.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.22054322,
+    "longitud": -79.25902836,
+    "icono": "icon-hosteria.jpeg",
+    "imagenes": [
+      "s12-panaderia.jpg"
+    ],
+    "destacado": false
+  },
+    {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
     "categoria": "ferreteria",
