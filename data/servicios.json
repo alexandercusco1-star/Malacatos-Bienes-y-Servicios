@@ -221,7 +221,21 @@
     ],
     "destacado": false
   },
-  
+  {
+    "nombre": "Supermercado Sumba",
+    "tipo": "servicios",
+    "categoria": "supermercado",
+    "descripcion": "Venta de todo tipo de insumos para el hogar.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.217557,
+    "longitud": -79.257198,
+    "icono": "icon-supermercado.jpeg",
+    "imagenes": [
+      "s18-supermercado-sumba.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Agropecuaria El finquero",
     "tipo": "servicios",
@@ -234,6 +248,36 @@
     "icono": "icon-agropecuaria.jpeg",
     "imagenes": [
       "s17-agropecuaria.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Agropecuaria Vilcagro",
+    "tipo": "servicios",
+    "categoria": "agropecuaria",
+    "descripcion": "Venta de producto agropecuario",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.214514,
+    "longitud": -79.257331,
+    "icono": "icon-agropecuaria.jpeg",
+    "imagenes": [
+      "s19-agropecuaria.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Restaurante Rojas",
+    "tipo": "servicios",
+    "categoria": "restaurante",
+    "descripcion": "Gastronomia local y sevicios gastronomicas.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.217181,
+    "longitud": -79.256879,
+    "icono": "icon-restaurante.jpeg",
+    "imagenes": [
+      "s20-restaurante-rojas.jpg"
     ],
     "destacado": false
   },
