@@ -167,7 +167,7 @@
     "descripcion": "Panadería y pastelería.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217414,
+    "latitud": -4.224614,
     "longitud": -79.257331,
     "icono": "icon-hosteria.jpeg",
     "imagenes": [
@@ -182,11 +182,58 @@
     "descripcion": "Venta de bebidas alcoholicas y no alcoholicas.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217414,
+    "latitud": -4.214714,
     "longitud": -79.257331,
     "icono": "icon-licoreria.jpeg",
     "imagenes": [
       "s14-licoreria.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Tecni Centro Delgado",
+    "tipo": "servicios",
+    "categoria": "Mecanica",
+    "descripcion": "Arreglo, lavado de autos y servicio de torno.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.214894,
+    "longitud": -79.257331,
+    "icono": "icon-mecanica.jpeg",
+    "imagenes": [
+      "s15-mecanica.jpg"
+    ],
+    "destacado": false
+  },
+  
+    {
+    "nombre": "CODECA materiales de construcción",
+    "tipo": "servicios",
+    "categoria": "agropecuaria",
+    "descripcion": "Venta de productos de construcción",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.222294,
+    "longitud": -79.257331,
+    "icono": "icon-ferreteria.jpeg",
+    "imagenes": [
+      "s16-ferreteria.jpg"
+    ],
+    "destacado": false
+  },
+  
+    {
+    "nombre": "Agropecuaria El finquero",
+    "tipo": "servicios",
+    "categoria": "agropecuaria",
+    "descripcion": "Venta de producto agropecuario",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.214494,
+    "longitud": -79.257331,
+    "icono": "icon-agropecuaria.jpeg",
+    "imagenes": [
+      "s17-agropecuaria.jpg"
     ],
     "destacado": false
   },
