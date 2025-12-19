@@ -167,8 +167,8 @@
     "descripcion": "recreación y hospedaje.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.224614,
-    "longitud": -79.257331,
+    "latitud": -4.214117,
+    "longitud": -79.251013,
     "icono": "icon-hosteria.jpeg",
     "imagenes": [
       "s13-hosteria-cabañas-sol.jpg"
@@ -182,8 +182,8 @@
     "descripcion": "Venta de bebidas alcoholicas y no alcoholicas.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.214714,
-    "longitud": -79.257331,
+    "latitud": -4.217141,
+    "longitud": -79.256367,
     "icono": "icon-licoreria.jpeg",
     "imagenes": [
       "s14-licoreria.jpg"
@@ -197,8 +197,8 @@
     "descripcion": "Arreglo, lavado de autos y servicio de torno.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.214894,
-    "longitud": -79.257331,
+    "latitud": -4.217648,
+    "longitud": -79.257414,
     "icono": "icon-mecanica.jpeg",
     "imagenes": [
       "s15-mecanica.jpg"
@@ -213,8 +213,8 @@
     "descripcion": "Venta de productos de construcción",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.222294,
-    "longitud": -79.257331,
+    "latitud": -4.217630,
+    "longitud": -79.257771,
     "icono": "icon-ferreteria.jpeg",
     "imagenes": [
       "s16-ferreteria.jpg"
@@ -229,8 +229,8 @@
     "descripcion": "Venta de todo tipo de insumos para el hogar.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217557,
-    "longitud": -79.257198,
+    "latitud": -4.217488,
+    "longitud": -79.257537,
     "icono": "icon-supermercado.jpeg",
     "imagenes": [
       "s18-supermercado-sumba.jpg"
@@ -244,8 +244,8 @@
     "descripcion": "Venta de producto agropecuario",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.214494,
-    "longitud": -79.257331,
+    "latitud": -4.217793,
+    "longitud": -79.257629,
     "icono": "icon-agropecuaria.jpeg",
     "imagenes": [
       "s17-agropecuaria.jpg"
@@ -259,8 +259,8 @@
     "descripcion": "Venta de producto agropecuario",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.214514,
-    "longitud": -79.257331,
+    "latitud": -4.217739,
+    "longitud": -79.257463,
     "icono": "icon-agropecuaria.jpeg",
     "imagenes": [
       "s19-agropecuaria.jpg"
@@ -274,8 +274,8 @@
     "descripcion": "Gastronomia local y sevicios gastronomicas.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217181,
-    "longitud": -79.256879,
+    "latitud": -4.217557,
+    "longitud": -79.257183,
     "icono": "icon-restaurante.jpeg",
     "imagenes": [
       "s20-restaurante-rojas.jpg"
@@ -289,8 +289,8 @@
     "descripcion": "Medicina y medicamentos para su salud.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217381,
-    "longitud": -79.256879,
+    "latitud": -4.218150,
+    "longitud": -79.258686,
     "icono": "icon-farmacia.jpeg",
     "imagenes": [
       "s21-farmacia-cuxibamba.jpg"
@@ -304,8 +304,8 @@
     "descripcion": "Medicina y medicamentos para su salud.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217221,
-    "longitud": -79.256879,
+    "latitud": -4.218160,
+    "longitud": -79.258302,
     "icono": "icon-farmacia.jpeg",
     "imagenes": [
       "s22-farmacia-economica.jpg"
@@ -319,8 +319,8 @@
     "descripcion": "Medicina y medicamentos para su salud.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.216681,
-    "longitud": -79.256879,
+    "latitud": -4.218023,
+    "longitud": -79.258514,
     "icono": "icon-farmacia.jpeg",
     "imagenes": [
       "s23-farmacia-nuestra-señora-lourdes.jpg"
@@ -330,7 +330,7 @@
     {
     "nombre": "Proton",
     "tipo": "servicios",
-    "categoria": "telefono",
+    "categoria": "celulares",
     "descripcion": "Servicio tectico y accesorios telefonicos.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
