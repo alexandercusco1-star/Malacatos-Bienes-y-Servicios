@@ -20,9 +20,12 @@
   "agropecuaria": { "icono": "icon-agropecuaria.jpeg" },
   "accesorios-carros": { "icono": "icon-accesorios-carros.jpeg" },
   "gimnasio": { "icono": "icon-gimnasio.jpeg" },
+  "jugos-de-caña": { "icono": "icon-jugos-caña.jpeg" },
+  "jugos-aturales": { "icono": "icon-naturales.jpeg" },
+  "productos-naturales": { "icono": "icon-productos-naturales.jpeg" },
   
   "lubricantes": { "icono": "icon-cambio-de-aceite.jpeg" },
-
+  "celulares": { "icono": "icon-celulares.jpeg" },
   "restaurante-cafe-bar": { "icono": "icon-restaurante-cafe-bar.jpeg" },
   "restaurante": { "icono": "icon-restaurante.jpeg" },
   "hostal": { "icono": "icon-hostal.jpeg" },
