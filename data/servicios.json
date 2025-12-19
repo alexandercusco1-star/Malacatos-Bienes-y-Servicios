@@ -84,7 +84,37 @@
     "destacado": false
   },
     {
-    "nombre": "Ferretería Disensa",
+    "nombre": "Hosteria Valto",
+    "tipo": "servicios",
+    "categoria": "hosteria",
+    "descripcion": "Centro reacresion y alojamiento temporal.",
+    "direccion": "Pio montufar y",
+    "telefono": "+593959007258",
+    "latitud": -4.22048322,
+    "longitud": -79.25902836,
+    "icono": "icon-hosteria.jpeg",
+    "imagenes": [
+      "s8-hosteria-valto.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Hosteria Villa Colonial",
+    "tipo": "servicios",
+    "categoria": "hosteria",
+    "descripcion": "Centro reacresion y alojamiento temporal.",
+    "direccion": "Pio montufar y estupiñan",
+    "telefono": "+593959007258",
+    "latitud": -4.22050322,
+    "longitud": -79.25902836,
+    "icono": "icon-hosteria.jpeg",
+    "imagenes": [
+      "s9-hosteria-villa-colonial.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
     "categoria": "ferreteria",
     "descripcion": "Venta de materiales para la construcción.",
