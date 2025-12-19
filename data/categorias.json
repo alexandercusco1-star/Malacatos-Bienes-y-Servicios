@@ -19,6 +19,8 @@
   "departamento-arriendo": { "icono": "icon-departamento-arriendo.jpeg" },
   "agropecuaria": { "icono": "icon-agropecuaria.jpeg" },
   "accesorios-carros": { "icono": "icon-accesorios-carros.jpeg" },
+
+  "restaurante-cafe-bar": { "icono": "icon-restaurante-cafe-bar.jpeg" },
   
   "hostal": { "icono": "icon-hostal.jpeg" },
   "hosteria": { "icono": "icon-hosteria.jpeg" },
