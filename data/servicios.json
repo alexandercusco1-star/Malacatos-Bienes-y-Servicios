@@ -159,6 +159,37 @@
     ],
     "destacado": false
   },
+
+  {
+    "nombre": "Cabañas del sol",
+    "tipo": "servicios",
+    "categoria": "hosteria",
+    "descripcion": "Panadería y pastelería.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.217414,
+    "longitud": -79.257331,
+    "icono": "icon-hosteria.jpeg",
+    "imagenes": [
+      "s13-hosteria-cabañas-sol.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Kita Picas",
+    "tipo": "servicios",
+    "categoria": "licoreria",
+    "descripcion": "Venta de bebidas alcoholicas y no alcoholicas.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.217414,
+    "longitud": -79.257331,
+    "icono": "icon-licoreria.jpeg",
+    "imagenes": [
+      "s14-licoreria.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
