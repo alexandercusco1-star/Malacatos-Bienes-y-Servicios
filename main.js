@@ -142,11 +142,25 @@ function renderizarTodo() {
 
 // MOVER ÍCONO
 map.on("click", e => {
-  if (!editMode || !markerSeleccionado) return;
+  if (!editMode) return;
+  if (!markerSeleccionado) {
+    alert("Primero toca un ícono para moverlo");
+    return;
+  }
 
-  markerSeleccionado.setLatLng(e.latlng);
-  markerSeleccionado.__data.latitud = e.latlng.lat;
-  markerSeleccionado.__data.longitud = e.latlng.lng;
+  const lat = e.latlng.lat.toFixed(6);
+  const lng = e.latlng.lng.toFixed(6);
+
+  markerSeleccionado.setLatLng([lat, lng]);
+  markerSeleccionado.__data.latitud = lat;
+  markerSeleccionado.__data.longitud = lng;
+
+  alert(
+    "Coordenadas actualizadas:\n" +
+    "Latitud: " + lat + "\n" +
+    "Longitud: " + lng
+  );
+
   markerSeleccionado = null;
 });
 
