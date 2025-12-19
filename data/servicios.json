@@ -92,7 +92,7 @@
     "telefono": "+593959007258",
     "latitud": -4.219635,
     "longitud": -79.257843,
-    "icono": "icon-hosteria.jpeg",
+    "icono": "icon-hostal.jpeg",
     "imagenes": [
       "s8-hostal-valto.jpg"
     ],
@@ -109,7 +109,7 @@
     "longitud": -79.257750,
     "icono": "icon-hostal.jpeg",
     "imagenes": [
-      "s9-hosteria-villa-colonial.jpg"
+      "s9-hostal-villa-colonial.jpg"
     ],
     "destacado": false
   },
