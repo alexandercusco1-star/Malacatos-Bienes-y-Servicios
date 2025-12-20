@@ -342,6 +342,21 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "Yunam",
+    "tipo": "servicios",
+    "categoria": "chifa",
+    "descripcion": "Venta de gastronomía China.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.215581,
+    "longitud": -79.256879,
+    "icono": "icon-chifa.jpeg",
+    "imagenes": [
+      "s25-chifa.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
