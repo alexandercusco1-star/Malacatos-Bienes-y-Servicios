@@ -372,6 +372,21 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "Dicoteca Level ONE",
+    "tipo": "servicios",
+    "categoria": "bar-discoteca",
+    "descripcion": "Fiesta y disfrute entre amigos.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.215557,
+    "longitud": -79.257198,
+    "icono": "icon-bar-discoteca.jpeg",
+    "imagenes": [
+      "s11-supermercado-halek.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
