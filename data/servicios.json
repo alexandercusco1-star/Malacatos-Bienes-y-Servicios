@@ -357,6 +357,21 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "LaPampa",
+    "tipo": "servicios",
+    "categoria": "canchas-futbol",
+    "descripcion": "Espacio recreacional, para campionatos de varones y mujeres.",
+    "direccion": "Entrada a la granja 300m ",
+    "telefono": "+593959007258",
+    "latitud": -4.216581,
+    "longitud": -79.256879,
+    "icono": "icon-canchas-futbol.jpeg",
+    "imagenes": [
+      "s26-canchas-la-pampa.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
