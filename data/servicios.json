@@ -383,7 +383,22 @@
     "longitud": -79.257198,
     "icono": "icon-bar-discoteca.jpeg",
     "imagenes": [
-      "s11-supermercado-halek.jpg"
+      "s27-discoteca-level1.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Vulcanizadora Señor de la Caridad",
+    "tipo": "servicios",
+    "categoria": "vulcanizadora",
+    "descripcion": "Arregló y acomodo en vulcanización.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.215657,
+    "longitud": -79.257198,
+    "icono": "icon-vulcanizadora.jpeg",
+    "imagenes": [
+      "s28-vulcanizadora-señor-caridad.jpg"
     ],
     "destacado": false
   },
