@@ -39,6 +39,11 @@
   "electronica": { "icono": "icon-electronica.jpeg" },
   "artesanias-cuero": { "icono": "icon-artesanias-cuero.jpeg" },
   "aserradero": { "icono": "icon-aserradero.jpeg" },
+  "licoreria": { "icono": "icon-licoreria.jpeg" },
+  "bar-discoteca": { "icono": "icon-bar-discoteca.jpeg" },
+  "marisqueria": { "icono": "icon-marisqueria.jpeg" },
+  "carne-frita-chancho": { "icono": "icon-carne-frita-chancho.jpeg" },
+  "distribu": { "icono": "icon-artesanias-cuero.jpeg" },
   
   
   "mecanica": { "icono": "icon-mecanica.jpeg" },
