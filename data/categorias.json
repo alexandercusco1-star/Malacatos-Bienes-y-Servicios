@@ -21,8 +21,8 @@
   "accesorios-carros": { "icono": "icon-accesorios-carros.jpeg" },
   "gimnasio": { "icono": "icon-gimnasio.jpeg" },
   "jugos-de-caña": { "icono": "icon-jugos-caña.jpeg" },
-  "jugos-aturales": { "icono": "icon-naturales.jpeg" },
-  "productos-naturales": { "icono": "icon-productos-naturales.jpeg" },
+  "jugos-naturales": { "icono": "icon-naturales.jpeg" },
+  "medicina-natural": { "icono": "icon-medicina-natural.jpeg" },
   
   "lubricantes": { "icono": "icon-cambio-de-aceite.jpeg" },
   "celulares": { "icono": "icon-celulares.jpeg" },
@@ -43,7 +43,7 @@
   "bar-discoteca": { "icono": "icon-bar-discoteca.jpeg" },
   "marisqueria": { "icono": "icon-marisqueria.jpeg" },
   "carne-frita-chancho": { "icono": "icon-carne-frita-chancho.jpeg" },
-  "distribu": { "icono": "icon-artesanias-cuero.jpeg" },
+  "distribuidora-gas": { "icono": "icon-distribuidora-gas.jpeg" },
   
   
   "mecanica": { "icono": "icon-mecanica.jpeg" },
