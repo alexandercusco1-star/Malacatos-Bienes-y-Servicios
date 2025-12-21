@@ -418,6 +418,21 @@
     "destacado": false
   },
     {
+    "nombre": "Lubricadora Vas del",
+    "tipo": "servicios",
+    "categoria": "lubricadora",
+    "descripcion": "Lubricadora de carros.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.216557,
+    "longitud": -79.257198,
+    "icono": "icon-lubricadora.jpeg",
+    "imagenes": [
+      "s29-lubricadora-vas.jpg"
+    ],
+    "destacado": false
+  },
+    {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
     "categoria": "ferreteria",
