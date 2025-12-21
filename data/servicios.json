@@ -387,18 +387,33 @@
     ],
     "destacado": false
   },
-    {
+  {
     "nombre": "Vulcanizadora Señor de la Caridad",
     "tipo": "servicios",
     "categoria": "vulcanizadora",
     "descripcion": "Arregló y acomodo en vulcanización.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.215657,
+    "latitud": -4.218857,
     "longitud": -79.257198,
     "icono": "icon-vulcanizadora.jpeg",
     "imagenes": [
       "s28-vulcanizadora-señor-caridad.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Lavadora de carros MATHI",
+    "tipo": "servicios",
+    "categoria": "lavadora",
+    "descripcion": "Lavado de carros.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.216657,
+    "longitud": -79.257198,
+    "icono": "icon-lavadora.jpeg",
+    "imagenes": [
+      "s28-lavadora-carros-MATHI.jpg"
     ],
     "destacado": false
   },
