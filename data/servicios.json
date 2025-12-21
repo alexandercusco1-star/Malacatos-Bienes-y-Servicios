@@ -462,16 +462,66 @@
       "s32.1.jpg",
       "s32.2.jpg"
     ],
-    "destacado": true
+    "destacado": false
   },
     {
-    "nombre": "Ferreteria Disensa",
+    "nombre": "Vivero ",
+    "tipo": "servicios",
+    "categoria": "vivero",
+    "descripcion": "Venta de hornamento.",
+    "direccion": "pio m",
+    "telefono": "+593959007258",
+    "latitud": -4.22054422,
+    "longitud": -79.25902836,
+    "icono": "icon-vivero.jpeg",
+    "imagenes": [
+      "s33-vivero.jpg",
+      "s33.1.jpg",
+      "s33.2.jpg"
+    ],
+    "destacado": false
+      
+  },
+
+  {
+    "nombre": "Equipos para piscina",
+    "tipo": "servicios",
+    "categoria": "piscina",
+    "descripcion": "Diseño, accesorios y construcción de piscinas.",
+    "direccion": "pio montufear.",
+    "telefono": "+593959007258",
+    "latitud": -4.21648866,
+    "longitud": -79.25574610,
+    "icono": "icon-piscina.jpeg",
+    "imagenes": [
+      "s34-piscina.jpg",
+      "s34.1.jpg"
+    ]
+  },
+  
+  {
+    "nombre": "Unidad Educativa",
+    "tipo": "servicios",
+    "categoria": "educacion",
+    "descripcion": "Centro Educativo.",
+    "direccion": "pio montufear.",
+    "telefono": "+593959007258",
+    "latitud": -4.21558866,
+    "longitud": -79.25574610,
+    "icono": "icon-educacion.jpeg",
+    "imagenes": [
+      "s35-educacion.jpg",
+      "s35.1.jpg"
+    ]
+  },
+    {
+    "nombre": "Ferretería Disensa",
     "tipo": "servicios",
     "categoria": "ferreteria",
-    "descripcion": "Venta de materiales para la construcción.",
-    "direccion": "Av.Loja e ingreso a Calera esquina.",
+    "descripcion": "Materiales para la construcción.",
+    "direccion": "Av. Loja y entrada a Calera esquina.",
     "telefono": "+593959007258",
-    "latitud": -4.21646366,
+    "latitud": -4.21648866,
     "longitud": -79.25574610,
     "icono": "icon-ferreteria.jpeg",
     "imagenes": [
