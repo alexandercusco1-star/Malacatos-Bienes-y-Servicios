@@ -447,6 +447,23 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "Micromercial Elizabeth",
+    "tipo": "servicios",
+    "categoria": "tienda",
+    "descripcion": "Venta de insumos y alimentos para el hogar.",
+    "direccion": "pio montufar , esquina junto a farmacias MIA",
+    "telefono": "+593959007258",
+    "latitud": -4.22055322,
+    "longitud": -79.25902836,
+    "icono": "icon-tienda.jpeg",
+    "imagenes": [
+      "s32-micromercado-elizabeth.jpg",
+      "s32.1.jpg",
+      "s32.2.jpg"
+    ],
+    "destacado": true
+  },
     {
     "nombre": "Ferreteria Disensa",
     "tipo": "servicios",
