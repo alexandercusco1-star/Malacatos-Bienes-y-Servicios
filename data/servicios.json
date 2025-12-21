@@ -379,8 +379,8 @@
     "descripcion": "Fiesta y disfrute entre amigos.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.217506,
-    "longitud": -79.256423,
+    "latitud": -4.217194,
+    "longitud": -79.256606,
     "icono": "icon-bar-discoteca.jpeg",
     "imagenes": [
       "s27-discoteca-level1.jpg"
@@ -394,8 +394,8 @@
     "descripcion": "Arregló y acomodo en vulcanización.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.218857,
-    "longitud": -79.257198,
+    "latitud": -4.215904,
+    "longitud": -79.254871,
     "icono": "icon-vulcanizadora.jpeg",
     "imagenes": [
       "s28-vulcanizadora-señor-caridad.jpg"
@@ -424,8 +424,8 @@
     "descripcion": "Lubricadora de carros.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.216557,
-    "longitud": -79.257198,
+    "latitud": -4.217520,
+    "longitud": -79.257892,
     "icono": "icon-lubricadora.jpeg",
     "imagenes": [
       "s30-lubricadora-vas.jpg"
@@ -439,8 +439,8 @@
     "descripcion": "Venta de electronicos y muebles en general.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.216557,
-    "longitud": -79.257198,
+    "latitud": -4.217961,
+    "longitud": -79.257935,
     "icono": "icon-comercial.jpeg",
     "imagenes": [
       "s31-comercial-sol.jpg"
@@ -454,8 +454,8 @@
     "descripcion": "Venta de insumos y alimentos para el hogar.",
     "direccion": "pio montufar , esquina junto a farmacias MIA",
     "telefono": "+593959007258",
-    "latitud": -4.22055322,
-    "longitud": -79.25902836,
+    "latitud": -4.218381,
+    "longitud": -79.258637,
     "icono": "icon-tienda.jpeg",
     "imagenes": [
       "s32-micromercado-elizabeth.jpg",
@@ -471,8 +471,8 @@
     "descripcion": "Venta de hornamento.",
     "direccion": "pio m",
     "telefono": "+593959007258",
-    "latitud": -4.22054422,
-    "longitud": -79.25902836,
+    "latitud": -4.218295,
+    "longitud": -79.258840,
     "icono": "icon-vivero.jpeg",
     "imagenes": [
       "s33-vivero.jpg",
@@ -490,8 +490,8 @@
     "descripcion": "Diseño, accesorios y construcción de piscinas.",
     "direccion": "pio montufear.",
     "telefono": "+593959007258",
-    "latitud": -4.21648866,
-    "longitud": -79.25574610,
+    "latitud": -4.218472,
+    "longitud": -79.258739,
     "icono": "icon-piscina.jpeg",
     "imagenes": [
       "s34-piscina.jpg",
@@ -506,8 +506,8 @@
     "descripcion": "Centro Educativo.",
     "direccion": "pio montufear.",
     "telefono": "+593959007258",
-    "latitud": -4.21558866,
-    "longitud": -79.25574610,
+    "latitud": -4.218580,
+    "longitud": -79.258904,
     "icono": "icon-educacion.jpeg",
     "imagenes": [
       "s35-educacion.jpg",
