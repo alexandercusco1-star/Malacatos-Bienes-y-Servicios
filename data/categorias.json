@@ -47,6 +47,9 @@
   "comercial": { "icono": "icon-comercial.jpeg" },
 
   "piscina": { "icono": "icon-piscina.jpeg" },
+  "vivero": { "icono": "icon-vivero.jpeg" },
+  "educativo": { "icono": "icon-educativo.jpeg" },
+  "gad-malacatos": { "icono": "icon-gad-malacatos.jpeg" },
   
   
   "mecanica": { "icono": "icon-mecanica.jpeg" },
