@@ -379,8 +379,8 @@
     "descripcion": "Fiesta y disfrute entre amigos.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.215557,
-    "longitud": -79.257198,
+    "latitud": -4.217506,
+    "longitud": -79.256423,
     "icono": "icon-bar-discoteca.jpeg",
     "imagenes": [
       "s27-discoteca-level1.jpg"
@@ -409,11 +409,11 @@
     "descripcion": "Lavado de carros.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
-    "latitud": -4.216657,
-    "longitud": -79.257198,
+    "latitud": -4.216319,
+    "longitud": -79.255000,
     "icono": "icon-lavadora.jpeg",
     "imagenes": [
-      "s28-lavadora-carros-MATHI.jpg"
+      "s29-lavadora-carros-MATHI.jpg"
     ],
     "destacado": false
   },
