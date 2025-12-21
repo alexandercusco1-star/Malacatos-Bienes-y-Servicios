@@ -428,7 +428,22 @@
     "longitud": -79.257198,
     "icono": "icon-lubricadora.jpeg",
     "imagenes": [
-      "s29-lubricadora-vas.jpg"
+      "s30-lubricadora-vas.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Comercial El Sol",
+    "tipo": "servicios",
+    "categoria": "comercial",
+    "descripcion": "Venta de electronicos y muebles en general.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.216557,
+    "longitud": -79.257198,
+    "icono": "icon-comercial.jpeg",
+    "imagenes": [
+      "s31-comercial-sol.jpg"
     ],
     "destacado": false
   },
