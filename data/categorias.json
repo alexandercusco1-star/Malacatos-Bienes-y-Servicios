@@ -45,7 +45,9 @@
   "carne-frita-chancho": { "icono": "icon-carne-frita-chancho.jpeg" },
   "distribuidora-gas": { "icono": "icon-distribuidora-gas.jpeg" },
   "comercial": { "icono": "icon-comercial.jpeg" },
-
+  "mariscos-crudos": { "icono": "icon-mariscos-crudos.jpeg" },
+  "marisqueria": { "icono": "icon-marisqueria.jpeg" },
+  
   "piscina": { "icono": "icon-piscina.jpeg" },
   "vivero": { "icono": "icon-vivero.jpeg" },
   "educativo": { "icono": "icon-educativo.jpeg" },
