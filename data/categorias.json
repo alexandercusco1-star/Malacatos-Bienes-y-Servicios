@@ -30,7 +30,7 @@
   "restaurante": { "icono": "icon-restaurante.jpeg" },
   "hostal": { "icono": "icon-hostal.jpeg" },
   "hosteria": { "icono": "icon-hosteria.jpeg" },
-  "lugar-eventos": { "icono": "icon-lugar-eventos.jpeg" },
+  "centro-eventos": { "icono": "icon-lugar-eventos.jpeg" },
 
   "peluqueria": { "icono": "icon-peluqueria.jpeg" },
   "barberia": { "icono": "icon-barberia.jpeg" },
