@@ -514,6 +514,38 @@
       "s35.1.jpg"
     ]
   },
+    
+  {
+    "nombre": "Chalan",
+    "tipo": "servicios",
+    "categoria": "taller-electromecanico",
+    "descripcion": "Diseño y construcción en metal.",
+    "direccion": "Av. Loja a 290m entrada a Calera",
+    "telefono": "+593959007258",
+    "latitud": -4.228580,
+    "longitud": -79.258904,
+    "icono": "icon-taller-electromecanico.jpeg",
+    "imagenes": [
+      "s36-taller-electromecanico-chalan.jpg",
+      "s36.1.jpg"
+    ]
+  },
+    {
+    "nombre": "MOTUS",
+    "tipo": "servicios",
+    "categoria": "motos",
+    "descripcion": "Reparacion de motos.",
+    "direccion": "Av. Loja a 290m entrada a Calera",
+    "telefono": "+593959007258",
+    "latitud": -4.228880,
+    "longitud": -79.258904,
+    "icono": "icon-taller-electromecanico.jpeg",
+    "imagenes": [
+      "s37-motos-motus.jpg",
+      "s37.1.jpg"
+    ]
+  },
+  
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
