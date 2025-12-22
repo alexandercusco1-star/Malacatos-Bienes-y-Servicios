@@ -545,7 +545,66 @@
       "s37.1.jpg"
     ]
   },
-  
+  {
+    "nombre": "Hosteria San Antonio",
+    "tipo": "servicios",
+    "categoria": "centro-eventos",
+    "descripcion": "Espacio para la realizacion de eventos.",
+    "direccion": "Av. Loja a 50m entrada a Calera",
+    "telefono": "+593959007258",
+    "latitud": -4.229780,
+    "longitud": -79.258904,
+    "icono": "icon-centro-eventos.jpeg",
+    "imagenes": [
+      "s38-centro-eventos.jpg",
+      "s38.1.jpg"
+    ]
+  },
+    {
+    "nombre": "Aserradero Soto",
+    "tipo": "servicios",
+    "categoria": "aserradero",
+    "descripcion": "Venta de madera al por mayor y menor.",
+    "direccion": "Av. Loja a frente a la entrada a Calera",
+    "telefono": "+593959007258",
+    "latitud": -4.222780,
+    "longitud": -79.258904,
+    "icono": "icon-aserradero.jpeg",
+    "imagenes": [
+      "s39-aserradero-soto.jpg",
+      "s39.1.jpg"
+    ]
+  },
+  {
+    "nombre": "Aserradero Troya",
+    "tipo": "servicios",
+    "categoria": "aserradero",
+    "descripcion": "Venta de madera al por mayor y menor.",
+    "direccion": "Av. Loja a frente de discoteca L1",
+    "telefono": "+593959007258",
+    "latitud": -4.224480,
+    "longitud": -79.258904,
+    "icono": "icon-aserradero.jpeg",
+    "imagenes": [
+      "s40-aserradero-soto.jpg",
+      "s40.1.jpg"
+    ]
+  },
+    {
+    "nombre": "Fabrica de caña Ocampo",
+    "tipo": "servicios",
+    "categoria": "fabrica-caña",
+    "descripcion": "Producción de panela de caña.",
+    "direccion": " a 200m de la Av. Loja ",
+    "telefono": "+593959007258",
+    "latitud": -4.234480,
+    "longitud": -79.258904,
+    "icono": "icon-fabrica-panela.jpeg",
+    "imagenes": [
+      "s41-fabrica-panela-ocampo.jpg",
+      "s41.1.jpg"
+    ]
+  },
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
