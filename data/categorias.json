@@ -53,7 +53,14 @@
   "educativo": { "icono": "icon-educativo.jpeg" },
   "gad-malacatos": { "icono": "icon-gad-malacatos.jpeg" },
   "lavadora": { "icono": "icon-lavadora-carros.jpeg" },
+  "soldadura": { "icono": "icon-soldadura.jpeg" },
+  "marisqueria": { "icono": "icon-marisqueria.jpeg" },
+  "fabrica-de-caña": { "icono": "icon-fabrica-de-caña.jpeg" },
+  "jugos-caña": { "icono": "icon-lavadora-carros.jpeg" },
+  "educativa": { "icono": "icon-educativa.jpeg" },
+  "Gad-Malacatos": { "icono": "icon-gad-malacatos.jpeg" },
   
+  "mariscos-crudos": { "icono": "icon-mariscos-crudos.jpeg" },
   
   "mecanica": { "icono": "icon-mecanica.jpeg" },
   "vulcanizadora": { "icono": "icon-vulcanizadora.jpeg" },
