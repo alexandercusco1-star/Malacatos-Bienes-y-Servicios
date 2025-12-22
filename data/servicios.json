@@ -193,15 +193,15 @@
     {
     "nombre": "Tecni Centro Delgado",
     "tipo": "servicios",
-    "categoria": "Mecanica",
+    "categoria": "lubricadora",
     "descripcion": "Arreglo, lavado de autos y servicio de torno.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
     "latitud": -4.217648,
     "longitud": -79.257414,
-    "icono": "icon-mecanica.jpeg",
+    "icono": "icon-lubricadora.jpeg",
     "imagenes": [
-      "s15-mecanica.jpg"
+      "s15-lubricadora-delgado.jpg"
     ],
     "destacado": false
   },
@@ -336,7 +336,7 @@
     "telefono": "+593959007258",
     "latitud": -4.218467,
     "longitud": -79.258359,
-    "icono": "icon-celular.jpeg",
+    "icono": "icon-celulares.jpeg",
     "imagenes": [
       "s24-celulares-proton.jpg"
     ],
@@ -508,7 +508,7 @@
     "telefono": "+593959007258",
     "latitud": -4.218580,
     "longitud": -79.258904,
-    "icono": "icon-educacion.jpeg",
+    "icono": "icon-educativo.jpeg",
     "imagenes": [
       "s35-educacion.jpg",
       "s35.1.jpg"
@@ -518,15 +518,15 @@
   {
     "nombre": "Chalan",
     "tipo": "servicios",
-    "categoria": "taller-electromecanico",
+    "categoria": "soldadura",
     "descripcion": "Diseño y construcción en metal.",
     "direccion": "Av. Loja a 290m entrada a Calera",
     "telefono": "+593959007258",
     "latitud": -4.228580,
     "longitud": -79.258904,
-    "icono": "icon-lubricadora.jpeg",
+    "icono": "icon-soldadura.jpeg",
     "imagenes": [
-      "s36-taller-electromecanico-chalan.jpg",
+      "s36-soldadura-chalan.jpg",
       "s36.1.jpg"
     ]
   },
