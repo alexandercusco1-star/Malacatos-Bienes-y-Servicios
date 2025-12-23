@@ -330,15 +330,15 @@
     {
     "nombre": "Proton",
     "tipo": "servicios",
-    "categoria": "celular",
+    "categoria": "celulares",
     "descripcion": "Servicio tectico y accesorios telefonicos.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
     "latitud": -4.218467,
     "longitud": -79.258359,
-    "icono": "icon-celular.jpeg",
+    "icono": "icon-celulares.jpeg",
     "imagenes": [
-      "s24-celular-proton.jpg"
+      "s24-celulares-proton.jpg"
     ],
     "destacado": false
   },
@@ -358,7 +358,7 @@
     "destacado": false
   },
   {
-    "nombre": "LaPampa",
+    "nombre": "La Pampa",
     "tipo": "servicios",
     "categoria": "canchas-futbol",
     "descripcion": "Espacio recreacional, para campionatos de varones y mujeres.",
