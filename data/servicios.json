@@ -330,15 +330,15 @@
     {
     "nombre": "Proton",
     "tipo": "servicios",
-    "categoria": "celulares",
+    "categoria": "celular",
     "descripcion": "Servicio tectico y accesorios telefonicos.",
     "direccion": "Av. Loja y ",
     "telefono": "+593959007258",
     "latitud": -4.218467,
     "longitud": -79.258359,
-    "icono": "icon-celulares.jpeg",
+    "icono": "icon-celular.jpeg",
     "imagenes": [
-      "s24-celulares-proton.jpg"
+      "s24-celular-proton.jpg"
     ],
     "destacado": false
   },
@@ -599,9 +599,9 @@
     "telefono": "+593959007258",
     "latitud": -4.234480,
     "longitud": -79.258904,
-    "icono": "icon-fabrica-panela.jpeg",
+    "icono": "icon-fabrica-caña.jpeg",
     "imagenes": [
-      "s41-fabrica-panela-ocampo.jpg",
+      "s41-fabrica-caña-ocampo.jpg",
       "s41.1.jpg"
     ]
   },
