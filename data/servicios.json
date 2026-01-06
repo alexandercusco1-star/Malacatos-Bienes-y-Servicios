@@ -621,6 +621,21 @@
     "destacado": false
   },
     {
+    "nombre": "Restaurante Maria",
+    "tipo": "servicios",
+    "categoria": "polleria",
+    "descripcion": "Pollo asado y Gastronomia local.",
+    "direccion": "Av. Pio Jaramillo y Alejandro  Bravo",
+    "telefono": "+593959007258",
+    "latitud": -4.221,
+    "longitud": -79.241,
+    "icono": "icon-polleria.jpeg",
+    "imagenes": [
+      "s43-polleria-maria.jpg"
+    ],
+    "destacado": false
+  },
+    {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
     "categoria": "ferreteria",
