@@ -605,6 +605,21 @@
       "s41.1.jpg"
     ]
   },
+   {
+    "nombre": "Farmacia MIAS",
+    "tipo": "servicios",
+    "categoria": "farmacia",
+    "descripcion": "Medicina y medicamentos para su salud.",
+    "direccion": "Av. Loja y ",
+    "telefono": "+593959007258",
+    "latitud": -4.218023,
+    "longitud": -79.258534,
+    "icono": "icon-farmacia.jpeg",
+    "imagenes": [
+      "s42-farmacia-MIAS.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
