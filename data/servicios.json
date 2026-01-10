@@ -682,7 +682,143 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "Distribuidora Loja gas",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Venta y distribución de gas.",
+    "direccion": "Av. Loja y Pio Jaramillo",
+    "telefono": "+593959007258",
+    "latitud": -4.2235,
+    "longitud": -79.242,
+    "icono": "icon-distribuidora-gas.jpeg",
+    "imagenes": [
+      "s47-distribuidora-gas.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Distribuidora Loja gas",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Venta y distribución de gas.",
+    "direccion": "Av.Pio Jaramillo y alejandro bravo",
+    "telefono": "+593959007258",
+    "latitud": -4.2237,
+    "longitud": -79.242,
+    "icono": "icon-distribuidora-gas.jpeg",
+    "imagenes": [
+      "s48-distribuidora-gas-riofrio.jpg"
+    ],
+    "destacado": false
+  },
+      {
+    "nombre": "Cooperativa CACPE",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cooperativa de ahorro y crédito.",
+    "direccion": "Av.Loja y Pio Jaramillo",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.242,
+    "icono": "icon-cooperativa.jpeg",
+    "imagenes": [
+      "s49-cooperativa-cacpe.jpg"
+    ],
+    "destacado": false
+  },
   
+      {
+    "nombre": "Papelería Lanche",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Todo en papeleria en general.",
+    "direccion": "Av.Loja y Pio Jaramillo",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2441,
+    "icono": "icon-papeleria.jpeg",
+    "imagenes": [
+      "s50-papeleria-lanche.jpg"
+    ],
+    "destacado": false
+  },
+  
+      {
+    "nombre": "Peluquería Rocio",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cortes y peinados para hombre y mujer.",
+    "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2442,
+    "icono": "icon-peluqueria.jpeg",
+    "imagenes": [
+      "s51-peluqueria-rocio.jpg"
+    ],
+    "destacado": false
+  },
+     {
+    "nombre": "Barbería 1",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cortes y peinados para hombre.",
+    "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2444,
+    "icono": "icon-barberia.jpeg",
+    "imagenes": [
+      "s52-barberia-1.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Barbería 2",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cortes y peinados para hombre.",
+    "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2443,
+    "icono": "icon-barberia.jpeg",
+    "imagenes": [
+      "s53-barberia-2.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Barbería 3",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cortes y peinados para hombre.",
+    "direccion": "Miguel Riofrio y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2445,
+    "icono": "icon-odontologia.jpeg",
+    "imagenes": [
+      "s55-odontologia-1.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Odontología",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cortes y peinados para hombre.",
+    "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.2239,
+    "longitud": -79.2445,
+    "icono": "icon-barberia.jpeg",
+    "imagenes": [
+      "s54-barberia-3.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
