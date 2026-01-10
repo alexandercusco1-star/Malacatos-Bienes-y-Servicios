@@ -52,6 +52,9 @@
   "piscina": { "icono": "icon-piscina.jpeg" },
   "vivero": { "icono": "icon-vivero.jpeg" },
   "educativo": { "icono": "icon-educativo.jpeg" },
+
+    
+  "comida-rapida-mexicana": { "icono": "icon-comida-rapida-mexicana.jpeg" },
   
   "lavadora": { "icono": "icon-lavadora-carros.jpeg" },
   "soldadura": { "icono": "icon-soldadura.jpeg" },
