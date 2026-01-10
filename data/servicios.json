@@ -623,18 +623,66 @@
     {
     "nombre": "Restaurante Maria",
     "tipo": "servicios",
-    "categoria": "polleria",
+    "categoria": "asadero-pollo",
     "descripcion": "Pollo asado y Gastronomia local.",
     "direccion": "Av. Pio Jaramillo y Alejandro  Bravo",
     "telefono": "+593959007258",
     "latitud": -4.221,
     "longitud": -79.241,
-    "icono": "icon-polleria.jpeg",
+    "icono": "icon-asdero-pollo.jpeg",
     "imagenes": [
-      "s43-polleria-maria.jpg"
+      "s43-asadero-pollo-maria.jpg"
     ],
     "destacado": false
   },
+      {
+    "nombre": "Restaurante Comida Mexicana",
+    "tipo": "servicios",
+    "categoria": "comida-rapida-mexicana",
+    "descripcion": "Comida Mexicana.",
+    "direccion": "Av. Pio Jaramillo y Alejandro  Bravo",
+    "telefono": "+593959007258",
+    "latitud": -4.222,
+    "longitud": -79.242,
+    "icono": "icon-comida-rapida-mexicana.jpeg",
+    "imagenes": [
+      "s44-comida-rapida-mexicana.jpg"
+    ],
+    "destacado": false
+  },
+  
+      {
+    "nombre": "Encebollados y algo mas",
+    "tipo": "servicios",
+    "categoria": "marisqueria",
+    "descripcion": "Comida manaba, marisqueria.",
+    "direccion": "Av. Pio Jaramillo y Alejandro  Bravo",
+    "telefono": "+593959007258",
+    "latitud": -4.223,
+    "longitud": -79.242,
+    "icono": "icon-marisqueria.jpeg",
+    "imagenes": [
+      "s45-marisqueria.jpg"
+    ],
+    "destacado": false
+  },
+  
+      {
+    "nombre": "Perú Mar",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Marisqueria.",
+    "direccion": "Av. Loja y Pio Jaramillo",
+    "telefono": "+593959007258",
+    "latitud": -4.224,
+    "longitud": -79.242,
+    "icono": "icon-marisqueria.jpeg",
+    "imagenes": [
+      "s46-marisqueria.jpg"
+    ],
+    "destacado": false
+  },
+  
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
