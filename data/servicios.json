@@ -798,9 +798,9 @@
     "telefono": "+593959007258",
     "latitud": -4.2239,
     "longitud": -79.2445,
-    "icono": "icon-odontologia.jpeg",
+    "icono": "icon-barbeia.jpeg",
     "imagenes": [
-      "s55-odontologia-1.jpg"
+      "s54-barberia-3.jpg"
     ],
     "destacado": false
   },
@@ -808,14 +808,59 @@
     "nombre": "Odontología",
     "tipo": "servicios",
     "categoria": "",
-    "descripcion": "Cortes y peinados para hombre.",
+    "descripcion": "Trabajos en odontología.",
     "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
     "telefono": "+593959007258",
-    "latitud": -4.2239,
+    "latitud": -4.223956,
     "longitud": -79.2445,
-    "icono": "icon-barberia.jpeg",
+    "icono": "icon-odontologia.jpeg",
     "imagenes": [
-      "s54-barberia-3.jpg"
+      "s55-dontologia-1.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Cajero banco de Loja",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cajero automático .",
+    "direccion": "Justiano Estupiñan",
+    "telefono": "+593959007258",
+    "latitud": -4.223755676,
+    "longitud": -79.242,
+    "icono": "icon-corporacion-financiera.jpeg",
+    "imagenes": [
+      "s56-corporacion-financiera-fases.jpg"
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Cajero JEP",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Cajero automático.",
+    "direccion": "Justiniano Estupiñan",
+    "telefono": "+593959007258",
+    "latitud": -4.223757566,
+    "longitud": -79.242,
+    "icono": "icon-corporacion-financiera.jpeg",
+    "imagenes": [
+      "s57-corporacion-financiera-jep.jpg"
+    ],
+    "destacado": false
+  },
+    {
+    "nombre": "Odontología 2",
+    "tipo": "servicios",
+    "categoria": "",
+    "descripcion": "Trabajos en odontología.",
+    "direccion": "Av. Pio Jaramillo y Manuel Ignacio Godoy",
+    "telefono": "+593959007258",
+    "latitud": -4.223965,
+    "longitud": -79.2445,
+    "icono": "icon-odontologia.jpeg",
+    "imagenes": [
+      "s58-dontologia-2.jpg"
     ],
     "destacado": false
   },
