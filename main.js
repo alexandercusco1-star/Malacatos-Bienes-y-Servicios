@@ -189,18 +189,32 @@ function renderDestacados(arr) {
   });
 }
 
-// DETALLE
+// 🔗 DETALLE (AQUÍ SE AÑADEN LOS LINKS)
 function mostrarDetalle(item) {
+  const links = item.links || {};
+
+  const linksHTML = Object.entries(links)
+    .map(([tipo, url]) => {
+      if (!url) return "";
+      const label = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+      return `<p><a href="${url}" target="_blank" rel="noopener">🔗 ${label}</a></p>`;
+    })
+    .join("");
+
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
     <p>${item.direccion || ""}</p>
+
+    ${linksHTML ? `<div class="bp-links">${linksHTML}</div>` : ""}
+
     <div class="bp-galeria">
       ${(item.imagenes || []).map(
         i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
       ).join("")}
     </div>
   `;
+
   document.getElementById("bottom-panel").classList.add("open");
 }
 
