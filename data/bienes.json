@@ -20,7 +20,53 @@
     "destacado": true
   },
   
-
+{
+    "nombre": "Vilcabambaturis",
+    "tipo": "bienes",
+    "categoria": "bus",
+    "descripcion": "Oficina de transporte Vilcabambaturis y agencia de Coop. Loja.",
+    "ubicacion": "Estupiñan",
+    "latitud": -4.21935865,
+    "longitud": -79.258833,
+    "icono": "icon-bus.jpeg",
+    "imagenes": [
+      "b5-bus-vilcabambaturis.jpg"
+      
+    ],
+    "destacado": false
+  },
+    
+{
+    "nombre": "Sur Oriente",
+    "tipo": "bienes",
+    "categoria": "bus",
+    "descripcion": "Oficina de transporte Sur Oriente.",
+    "ubicacion": "Estupiñan",
+    "latitud": -4.21935865,
+    "longitud": -79.258833,
+    "icono": "icon-bus.jpeg",
+    "imagenes": [
+      "b6-bus-sur-oriente.jpg"
+      
+    ],
+    "destacado": false
+  },
+  {
+    "nombre": "Coop. de transporte 27 de febrero",
+    "tipo": "bienes",
+    "categoria": "camionetas",
+    "descripcion": "Oficina de transporte 27 de febrero.",
+    "ubicacion": "Estupiñan",
+    "latitud": -4.21935865,
+    "longitud": -79.258833,
+    "icono": "icon-camionetas.jpeg",
+    "imagenes": [
+      "b7-camionetas-27-febrero.jpg"
+      
+    ],
+    "destacado": false
+  },
+  
     {
     "nombre": "Estadio Central de Malacatos",
     "tipo": "bienes",
