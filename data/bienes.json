@@ -19,21 +19,7 @@
     ],
     "destacado": true
   },
-  {
-    "nombre": "Complejo de Malacatos",
-    "tipo": "bienes",
-    "categoria": "areas-verdes",
-    "descripcion": "Espacio publico de diversion y entretenimiento de Malacatos.",
-    "ubicacion": "Manuel Ignacio godoy",
-    "latitud": -4.2193584,
-    "longitud": -79.258833,
-    "icono": "icon-areas-verdes.jpeg",
-    "imagenes": [
-      "b3-complejo.jpg"
-      
-    ],
-    "destacado": false
-  },
+  
 
     {
     "nombre": "Estadio Central de Malacatos",
