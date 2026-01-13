@@ -114,7 +114,6 @@ function renderizarTodo() {
     if (!datoSeguro(item)) return;
     if (currentFilter && item.categoria !== currentFilter) return;
 
-    // 🔍 FILTRO BUSCADOR
     if (searchText) {
       const n = (item.nombre || "").toLowerCase();
       const d = (item.descripcion || "").toLowerCase();
@@ -152,69 +151,26 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// MOVER ÍCONO
-map.on("click", e => {
-  if (!editMode || !markerSeleccionado) return;
-
-  const lat = e.latlng.lat.toFixed(6);
-  const lng = e.latlng.lng.toFixed(6);
-
-  markerSeleccionado.setLatLng([lat, lng]);
-  markerSeleccionado.__data.latitud = lat;
-  markerSeleccionado.__data.longitud = lng;
-
-  alert(`Coordenadas:\nLat: ${lat}\nLng: ${lng}`);
-  markerSeleccionado = null;
-});
-
-// DESTACADOS
-function renderDestacados(arr) {
-  const c = document.getElementById("destacados-contenedor");
-  c.innerHTML = "";
-
-  arr.forEach(it => {
-    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
-    c.innerHTML += `
-      <div class="tarjeta">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${it.nombre}</h3>
-        <p>${it.descripcion || ""}</p>
-        ${
-          it.imagenes?.length > 1
-            ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>${TEXTOS[LANG].verMas}</button>`
-            : ""
-        }
-      </div>
-    `;
-  });
-}
-
-// 🔗 DETALLE (AQUÍ SE AÑADEN LOS LINKS)
+// DETALLE (AQUÍ SOLO SE LEYERON LINKS, NO SE CREARON)
 function mostrarDetalle(item) {
   const links = item.links || {};
 
   const linksHTML = Object.entries(links)
-    .map(([tipo, url]) => {
-      if (!url) return "";
-      const label = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-      return `<p><a href="${url}" target="_blank" rel="noopener">🔗 ${label}</a></p>`;
-    })
-    .join("");
+    .filter(([_, v]) => v)
+    .map(([k, v]) => `<a href="${v}" target="_blank">${k}</a>`)
+    .join(" | ");
 
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
-    <p>${item.direccion || ""}</p>
-
-    ${linksHTML ? `<div class="bp-links">${linksHTML}</div>` : ""}
-
+    <p>${item.ubicacion || ""}</p>
+    ${linksHTML ? `<p>${linksHTML}</p>` : ""}
     <div class="bp-galeria">
       ${(item.imagenes || []).map(
         i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
       ).join("")}
     </div>
   `;
-
   document.getElementById("bottom-panel").classList.add("open");
 }
 
@@ -225,14 +181,6 @@ function abrirGaleria(imagenes) {
   document.getElementById("lb-img").src = "data/" + imagenes[0];
   document.getElementById("lightbox").classList.add("open");
 }
-
-function cambiarImg(dir) {
-  galleryIndex = (galleryIndex + dir + currentGallery.length) % currentGallery.length;
-  document.getElementById("lb-img").src = "data/" + currentGallery[galleryIndex];
-}
-
-document.getElementById("lb-close").onclick = () =>
-  document.getElementById("lightbox").classList.remove("open");
 
 // FILTROS
 function generarFiltros() {
@@ -263,7 +211,7 @@ function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}">${k}</div>`;
+    c.innerHTML += `<div><img src="data/${v.icono}"> ${k}</div>`;
   });
 }
 
