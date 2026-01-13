@@ -864,6 +864,21 @@
     ],
     "destacado": false
   },
+  {
+    "nombre": "Alex Cell",
+    "tipo": "servicios",
+    "categoria": "celulares",
+    "descripcion": "Servicio tectico y accesorios telefonicos.",
+    "direccion": "Av.Pio Jaramillo y Av. Loja ",
+    "telefono": "+593959007258",
+    "latitud": -4.218465677,
+    "longitud": -79.258359,
+    "icono": "icon-celulares.jpeg",
+    "imagenes": [
+      "s24-celulares-proton.jpg"
+    ],
+    "destacado": false
+  },
     {
     "nombre": "Ferretería Disensa",
     "tipo": "servicios",
