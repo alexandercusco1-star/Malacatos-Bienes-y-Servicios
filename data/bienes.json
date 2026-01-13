@@ -15,12 +15,18 @@
       "b1.2.jpg",
       "b1.3.jpg",
       "b1.4.jpg"
-      
     ],
-    "destacado": true
+    "destacado": true,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
-  
-{
+
+  {
     "nombre": "Vilcabambaturis",
     "tipo": "bienes",
     "categoria": "bus",
@@ -31,12 +37,18 @@
     "icono": "icon-bus.jpeg",
     "imagenes": [
       "b5-bus-vilcabambaturis.jpg"
-      
     ],
-    "destacado": false
+    "destacado": false,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
-    
-{
+
+  {
     "nombre": "Sur Oriente",
     "tipo": "bienes",
     "categoria": "bus",
@@ -47,10 +59,17 @@
     "icono": "icon-bus.jpeg",
     "imagenes": [
       "b6-bus-sur-oriente.jpg"
-      
     ],
-    "destacado": false
+    "destacado": false,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
+
   {
     "nombre": "Coop. de transporte 27 de febrero",
     "tipo": "bienes",
@@ -62,12 +81,18 @@
     "icono": "icon-camioneta.jpeg",
     "imagenes": [
       "b7-camionetas-27-febrero.jpg"
-      
     ],
-    "destacado": false
+    "destacado": false,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
-  
-    {
+
+  {
     "nombre": "Estadio Central de Malacatos",
     "tipo": "bienes",
     "categoria": "areas-verdes",
@@ -78,12 +103,18 @@
     "icono": "icon-areas-verdes.jpeg",
     "imagenes": [
       "b4-estadio.jpg"
-      
     ],
-    "destacado": false
+    "destacado": false,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
-  
-    {
+
+  {
     "nombre": "Complejo de Malacatos",
     "tipo": "bienes",
     "categoria": "areas-verdes",
@@ -94,10 +125,17 @@
     "icono": "icon-areas-verdes.jpeg",
     "imagenes": [
       "b3-complejo.jpg"
-      
     ],
-    "destacado": false
+    "destacado": false,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   },
+
   {
     "nombre": "Iglesia de Malacatos",
     "tipo": "bienes",
@@ -115,6 +153,13 @@
       "b2.3.jpg",
       "b2.4.jpg"
     ],
-    "destacado": true
+    "destacado": true,
+    "links": {
+      "whatsapp": "",
+      "tiktok": "",
+      "instagram": "",
+      "facebook": "",
+      "web": ""
+    }
   }
 ]
