@@ -28,12 +28,12 @@
     "ubicacion": "Manuel Ignacio Godoy",
     "latitud": -4.2193586,
     "longitud": -79.258833,
-    "icono": "icon-parque.jpeg",
+    "icono": "icon-areas-vetdes.jpeg",
     "imagenes": [
       "b4-estadio.jpg"
       
     ],
-    "destacado": true
+    "destacado": false
   },
   {
     "nombre": "Complejo de Malacatos",
@@ -43,12 +43,12 @@
     "ubicacion": "Manuel ignasio godoy",
     "latitud": -4.2193584,
     "longitud": -79.258833,
-    "icono": "icon-parque.jpeg",
+    "icono": "icon-areas-verdes.jpeg",
     "imagenes": [
       "b3-complejo.jpg"
       
     ],
-    "destacado": true
+    "destacado": false
   },
   {
     "nombre": "Iglesia de Malacatos",
