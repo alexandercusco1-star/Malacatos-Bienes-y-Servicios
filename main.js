@@ -61,33 +61,6 @@ function iconoDe(ruta) {
   });
 }
 
-// 🆕 LINKS (SOLO AÑADIDO)
-function renderLinks(links) {
-  if (!links) return "";
-
-  const icons = {
-    whatsapp: "📱",
-    tiktok: "🎵",
-    instagram: "📸",
-    facebook: "📘",
-    web: "🌐"
-  };
-
-  let html = `<div class="bp-links">`;
-
-  Object.entries(links).forEach(([k, url]) => {
-    if (!url) return;
-    html += `
-      <a href="${url}" target="_blank" rel="noopener">
-        ${icons[k] || "🔗"} ${k}
-      </a>
-    `;
-  });
-
-  html += `</div>`;
-  return html;
-}
-
 // ESTADO
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
@@ -175,7 +148,22 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// DESTACADOS (NO TOCADO)
+// MOVER ÍCONO
+map.on("click", e => {
+  if (!editMode || !markerSeleccionado) return;
+
+  const lat = e.latlng.lat.toFixed(6);
+  const lng = e.latlng.lng.toFixed(6);
+
+  markerSeleccionado.setLatLng([lat, lng]);
+  markerSeleccionado.__data.latitud = lat;
+  markerSeleccionado.__data.longitud = lng;
+
+  alert(`Coordenadas:\nLat: ${lat}\nLng: ${lng}`);
+  markerSeleccionado = null;
+});
+
+// DESTACADOS
 function renderDestacados(arr) {
   const c = document.getElementById("destacados-contenedor");
   c.innerHTML = "";
@@ -197,13 +185,21 @@ function renderDestacados(arr) {
   });
 }
 
-// DETALLE (SOLO AÑADÍ LINKS)
+// DETALLE + LINKS
 function mostrarDetalle(item) {
+  const links = item.links || {};
+  const linksHTML = Object.entries(links)
+    .filter(([_, v]) => v)
+    .map(([k, v]) => `<a href="${v}" target="_blank" class="bp-link">${k}</a>`)
+    .join("");
+
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
-    <p>${item.direccion || ""}</p>
-    ${renderLinks(item.links)}
+    <p>${item.ubicacion || ""}</p>
+
+    ${linksHTML ? `<div class="bp-links">${linksHTML}</div>` : ""}
+
     <div class="bp-galeria">
       ${(item.imagenes || []).map(
         i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
