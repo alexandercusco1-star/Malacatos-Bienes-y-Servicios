@@ -23,12 +23,12 @@
   {
     "nombre": "Estadio deportivo de Malacatos",
     "tipo": "bienes",
-    "categoria": "parque",
+    "categoria": "areas-verdes",
     "descripcion": "Espacio publico recreación de Malacatos.",
     "ubicacion": "Manuel Ignacio Godoy",
     "latitud": -4.2193586,
     "longitud": -79.258833,
-    "icono": "icon-areas-vetdes.jpeg",
+    "icono": "icon-areas-verdes.jpeg",
     "imagenes": [
       "b4-estadio.jpg"
       
