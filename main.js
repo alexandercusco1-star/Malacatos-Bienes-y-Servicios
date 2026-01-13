@@ -61,6 +61,33 @@ function iconoDe(ruta) {
   });
 }
 
+// 🆕 LINKS (SOLO AÑADIDO)
+function renderLinks(links) {
+  if (!links) return "";
+
+  const icons = {
+    whatsapp: "📱",
+    tiktok: "🎵",
+    instagram: "📸",
+    facebook: "📘",
+    web: "🌐"
+  };
+
+  let html = `<div class="bp-links">`;
+
+  Object.entries(links).forEach(([k, url]) => {
+    if (!url) return;
+    html += `
+      <a href="${url}" target="_blank" rel="noopener">
+        ${icons[k] || "🔗"} ${k}
+      </a>
+    `;
+  });
+
+  html += `</div>`;
+  return html;
+}
+
 // ESTADO
 let ALL = { bienes: [], servicios: [], categorias: {} };
 let markers = [];
@@ -118,10 +145,7 @@ function renderizarTodo() {
       const n = (item.nombre || "").toLowerCase();
       const d = (item.descripcion || "").toLowerCase();
       const c = (item.categoria || "").toLowerCase();
-
-      if (!n.includes(searchText) && !d.includes(searchText) && !c.includes(searchText)) {
-        return;
-      }
+      if (!n.includes(searchText) && !d.includes(searchText) && !c.includes(searchText)) return;
     }
 
     const icono =
@@ -151,20 +175,35 @@ function renderizarTodo() {
   renderDestacados(todos.filter(x => x.destacado));
 }
 
-// DETALLE (AQUÍ SOLO SE LEYERON LINKS, NO SE CREARON)
+// DESTACADOS (NO TOCADO)
+function renderDestacados(arr) {
+  const c = document.getElementById("destacados-contenedor");
+  c.innerHTML = "";
+
+  arr.forEach(it => {
+    const img = it.imagenes?.[0] ? "data/" + it.imagenes[0] : "";
+    c.innerHTML += `
+      <div class="tarjeta">
+        ${img ? `<img src="${img}">` : ""}
+        <h3>${it.nombre}</h3>
+        <p>${it.descripcion || ""}</p>
+        ${
+          it.imagenes?.length > 1
+            ? `<button onclick='abrirGaleria(${JSON.stringify(it.imagenes)})'>${TEXTOS[LANG].verMas}</button>`
+            : ""
+        }
+      </div>
+    `;
+  });
+}
+
+// DETALLE (SOLO AÑADÍ LINKS)
 function mostrarDetalle(item) {
-  const links = item.links || {};
-
-  const linksHTML = Object.entries(links)
-    .filter(([_, v]) => v)
-    .map(([k, v]) => `<a href="${v}" target="_blank">${k}</a>`)
-    .join(" | ");
-
   document.getElementById("bp-content").innerHTML = `
     <h3>${item.nombre}</h3>
     <p>${item.descripcion || ""}</p>
-    <p>${item.ubicacion || ""}</p>
-    ${linksHTML ? `<p>${linksHTML}</p>` : ""}
+    <p>${item.direccion || ""}</p>
+    ${renderLinks(item.links)}
     <div class="bp-galeria">
       ${(item.imagenes || []).map(
         i => `<img src="data/${i}" onclick='abrirGaleria(${JSON.stringify(item.imagenes)})'>`
@@ -181,6 +220,14 @@ function abrirGaleria(imagenes) {
   document.getElementById("lb-img").src = "data/" + imagenes[0];
   document.getElementById("lightbox").classList.add("open");
 }
+
+function cambiarImg(dir) {
+  galleryIndex = (galleryIndex + dir + currentGallery.length) % currentGallery.length;
+  document.getElementById("lb-img").src = "data/" + currentGallery[galleryIndex];
+}
+
+document.getElementById("lb-close").onclick = () =>
+  document.getElementById("lightbox").classList.remove("open");
 
 // FILTROS
 function generarFiltros() {
@@ -211,7 +258,7 @@ function pintarLeyenda() {
   const c = document.getElementById("leyenda-items");
   c.innerHTML = "";
   Object.entries(ALL.categorias).forEach(([k, v]) => {
-    c.innerHTML += `<div><img src="data/${v.icono}"> ${k}</div>`;
+    c.innerHTML += `<div class="leyenda-item"><img src="data/${v.icono}">${k}</div>`;
   });
 }
 
