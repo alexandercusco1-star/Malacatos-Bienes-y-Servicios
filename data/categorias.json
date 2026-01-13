@@ -1,7 +1,7 @@
 {
   "parque": { "icono": "icon-parque.jpeg" },
   "iglesia": { "icono": "icon-iglesia.jpeg" },
-  "areas verdes": { "icono": "icon-areas-verdes.jpeg" },
+  "areas-verdes": { "icono": "icon-areas-verdes.jpeg" },
   "mirador": { "icono": "icon-mirador.jpeg" },
   "motos": { "icono": "icon-motos.jpeg" },
   "tienda": { "icono": "icon-tienda.jpeg" },
