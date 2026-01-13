@@ -54,12 +54,12 @@
   {
     "nombre": "Coop. de transporte 27 de febrero",
     "tipo": "bienes",
-    "categoria": "camionetas",
+    "categoria": "camioneta",
     "descripcion": "Oficina de transporte 27 de febrero.",
     "ubicacion": "Estupiñan",
     "latitud": -4.21935865,
     "longitud": -79.258833,
-    "icono": "icon-camionetas.jpeg",
+    "icono": "icon-camioneta.jpeg",
     "imagenes": [
       "b7-camionetas-27-febrero.jpg"
       
